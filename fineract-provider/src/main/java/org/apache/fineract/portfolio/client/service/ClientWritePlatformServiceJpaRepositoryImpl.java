@@ -185,7 +185,11 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             final String mobileNo = command.stringValueOfParameterNamed("mobileNo");
             throw new PlatformDataIntegrityException("error.msg.client.duplicate.mobileNo", "Client with mobileNo `" + mobileNo
                     + "` already exists", "mobileNo", mobileNo);
-        }
+        } else if (realCause.getMessage().contains("email_address")) {
+            final String emailAddress = command.stringValueOfParameterNamed("email_address");
+            throw new PlatformDataIntegrityException("error.msg.client.duplicate.emailAdress", "Client with emailAdress `" + emailAddress
+                    + "` already exists", "emailAddress", emailAddress);
+        } 
 
         logAsErrorUnexpectedDataIntegrityException(dve);
         throw new PlatformDataIntegrityException("error.msg.client.unknown.data.integrity.issue",
@@ -225,6 +229,29 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             if (genderId != null) {
                 gender = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.GENDER, genderId);
             }
+            
+            CodeValue marital = null;
+            final Long maritalId = command.longValueOfParameterNamed(ClientApiConstants.maritalIdParamName);
+            if (maritalId != null) {
+            	marital = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.MARITAL, maritalId);
+            	
+            }
+            CodeValue religion = null;
+            final Long religionId = command.longValueOfParameterNamed(ClientApiConstants.religionIdParamName);
+            if (religionId != null){
+            	religion = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.RELIGION, religionId);
+            }
+
+            CodeValue dependent = null;
+            final Long dependentId = command.longValueOfParameterNamed(ClientApiConstants.dependentIdParamName);
+            if (dependentId != null){
+            	dependent = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.DEPENDENT, dependentId);
+            }
+            CodeValue education = null;
+            final Long educationId = command.longValueOfParameterNamed(ClientApiConstants.educationIdParamName);
+            if (educationId != null){
+            	education = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.EDUCATION, educationId);
+            }
 
             CodeValue clientType = null;
             final Long clientTypeId = command.longValueOfParameterNamed(ClientApiConstants.clientTypeIdParamName);
@@ -261,8 +288,8 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 }
             }
             
-            final Client newClient = Client.createNew(currentUser, clientOffice, clientParentGroup, staff, savingsProduct, gender,
-                    clientType, clientClassification, legalFormValue, command);
+            final Client newClient = Client.createNew(currentUser, clientOffice, clientParentGroup, staff, savingsProduct, gender, marital, religion, 
+            		dependent, education, clientType, clientClassification, legalFormValue, command);
             boolean rollbackTransaction = false;
             if (newClient.isActive()) {
                 validateParentGroupRulesBeforeClientActivation(newClient);
@@ -375,6 +402,39 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 clientForUpdate.updateGender(gender);
             }
 
+            if (changes.containsKey(ClientApiConstants.maritalIdParamName)) {
+                final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.maritalIdParamName);
+                CodeValue marital = null;
+                if (newValue != null) {
+                    marital = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.MARITAL, newValue);
+                }
+                clientForUpdate.updateMarital(marital);
+            }
+            if (changes.containsKey(ClientApiConstants.religionIdParamName)) {
+                final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.religionIdParamName);
+                CodeValue religion = null;
+                if (newValue != null) {
+                    religion = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.RELIGION, newValue);
+                }
+                clientForUpdate.updateReligion(religion);
+            }
+            if (changes.containsKey(ClientApiConstants.dependentIdParamName)) {
+                final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.dependentIdParamName);
+                CodeValue dependent = null;
+                if (newValue != null) {
+                    dependent = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.DEPENDENT, newValue);
+                }
+                clientForUpdate.updateDependent(dependent);
+            }
+            if (changes.containsKey(ClientApiConstants.educationIdParamName)) {
+                final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.educationIdParamName);
+                CodeValue education = null;
+                if (newValue != null) {
+                	education = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.EDUCATION, newValue);
+                }
+                clientForUpdate.updateEducation(education);
+            }
+
             if (changes.containsKey(ClientApiConstants.savingsProductIdParamName)) {
                 if (clientForUpdate.isActive()) { throw new ClientActiveForUpdateException(clientId,
                         ClientApiConstants.savingsProductIdParamName); }
@@ -387,14 +447,14 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 clientForUpdate.updateSavingsProduct(savingsProduct);
             }
 
-            if (changes.containsKey(ClientApiConstants.genderIdParamName)) {
+           /* if (changes.containsKey(ClientApiConstants.genderIdParamName)) {
                 final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.genderIdParamName);
                 CodeValue newCodeVal = null;
                 if (newValue != null) {
                     newCodeVal = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.GENDER, newValue);
                 }
                 clientForUpdate.updateGender(newCodeVal);
-            }
+            }*/
 
             if (changes.containsKey(ClientApiConstants.clientTypeIdParamName)) {
                 final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.clientTypeIdParamName);
