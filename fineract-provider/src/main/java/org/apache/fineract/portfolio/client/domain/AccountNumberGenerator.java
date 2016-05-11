@@ -46,7 +46,7 @@ public class AccountNumberGenerator {
     private final static String OFFICE_NAME = "officeName";
     private final static String LOAN_PRODUCT_SHORT_NAME = "loanProductShortName";
     private final static String SAVINGS_PRODUCT_SHORT_NAME = "savingsProductShortName";
-    private final static String OFFICE_AND_LOAD_PRODUCT_NAME ="officeAndLoanProductName";
+    private final static String OFFICE_AND_LOAN_PRODUCT_NAME ="officeAndLoanProductName";
     private final static String SHARE_PRODUCT_SHORT_NAME = "sharesProductShortName" ;
     public String generate(Client client, AccountNumberFormat accountNumberFormat) {
         Map<String, String> propertyMap = new HashMap<>();
@@ -64,7 +64,7 @@ public class AccountNumberGenerator {
         propertyMap.put(ID, loan.getId().toString());
         propertyMap.put(OFFICE_NAME, loan.getOffice().getName());
         propertyMap.put(LOAN_PRODUCT_SHORT_NAME, loan.loanProduct().getShortName());
-        propertyMap.put(OFFICE_AND_LOAD_PRODUCT_NAME, loan.getOffice().getName()+ loan.loanProduct().getShortName());
+        propertyMap.put(OFFICE_AND_LOAN_PRODUCT_NAME, getFirstLetters(loan.getOffice().getName()).concat(loan.loanProduct().getShortName()));
         return generateAccountNumber(propertyMap, accountNumberFormat);
     }
 
@@ -102,7 +102,7 @@ public class AccountNumberGenerator {
                 break;
 
                 case OFFICE_AND_LOAN_PRODUCT_NAME:
-                	  prefix = getFirstLetters(propertyMap.get(OFFICE_NAME)).concat(propertyMap.get(LOAN_PRODUCT_SHORT_NAME));
+                	  prefix = propertyMap.get(OFFICE_AND_LOAN_PRODUCT_NAME);
                 break;
 
                 case SAVINGS_PRODUCT_SHORT_NAME:
