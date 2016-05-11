@@ -120,7 +120,7 @@ public final class Client extends AbstractPersistable<Long> {
     @Column(name = "display_name", length = 100, nullable = false)
     private String displayName;
 
-    @Column(name = "email_address", length = 200, nullable = true)
+    @Column(name = "emailaddress", length = 200, nullable = true)
     private String emailAddress;
     
     @Column(name = "mobile_no", length = 50, nullable = false, unique = true)
