@@ -16,6 +16,8 @@ buildscript {
   }
 }
 
+
+
 apply plugin: 'rebel'
 apply plugin: 'license'
 apply plugin: 'war'
@@ -228,6 +230,7 @@ task setBlankPassword<<{
 
 
 apply plugin: 'flyway'
+
 buildscript {
     repositories {
         mavenCentral()
@@ -344,3 +347,5 @@ springBoot {
 bootRepackage {
     mainClass = 'org.apache.fineract.ServerWithMariaDB4jApplication'
 }
+
+
