@@ -20,9 +20,9 @@ package org.apache.fineract.portfolio.shareaccounts.service;
 
 import java.util.Collection;
 
-import org.apache.fineract.portfolio.shareaccounts.data.PurchasedSharesData;
+import org.apache.fineract.portfolio.shareaccounts.data.ShareAccountTransactionData;
 
 public interface PurchasedSharesReadPlatformService {
 
-	public Collection<PurchasedSharesData> retrievePurchasedShares(final Long accountId) ;
+	public Collection<ShareAccountTransactionData> retrievePurchasedShares(final Long accountId) ;
 }
