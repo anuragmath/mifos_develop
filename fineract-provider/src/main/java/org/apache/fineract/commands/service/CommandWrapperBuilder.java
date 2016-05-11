@@ -420,6 +420,32 @@ public class CommandWrapperBuilder {
         this.href = "/clients/" + clientId + "/identifiers/" + clientIdentifierId;
         return this;
     }
+    
+    public CommandWrapperBuilder createClientAddress(final Long clientId){
+        this.actionName = "CREATE";
+        this.entityName = "CLIENTADDRESS";
+        this.entityId = null;
+        this.clientId = clientId;
+        this.href = "/clients/"+ clientId + "/addresses/template";
+        return this;
+    }
+    public CommandWrapperBuilder updateClientAddress(final Long clientId, final Long clientAddressId){
+        this.actionName = "UPDATE";
+        this.entityName = "CLIENTADDRESS";
+        this.entityId = clientAddressId;
+        this.clientId = clientId;
+        this.href = "/clients/" + clientId + "/addresses/" + clientAddressId;
+        return this;
+    }
+    public CommandWrapperBuilder deleteClientAddress(final Long clientId, final Long clientAddressId){
+        this.actionName = "DELETE";
+        this.entityName = "CLIENTADDRESS";
+        this.entityId = clientAddressId;
+        this.clientId = clientId;
+        this.href = "/clients/" + clientId + "/addresses" + clientAddressId;
+        return this;
+    }
+
 
     public CommandWrapperBuilder createClient() {
         this.actionName = "CREATE";
@@ -2702,4 +2728,29 @@ public class CommandWrapperBuilder {
         this.href = "/savingsaccounts/" + accountId + "?commad=updateTaxWithHoldTax";
         return this;
     }
+
+	public CommandWrapperBuilder addSelfServiceBeneficiaryTPT() {
+        this.actionName = "CREATE";
+        this.entityName = "SSBENEFICIARYTPT";
+        this.entityId = null;
+        this.href = "/self/beneficiaries/tpt";
+        return this;
+	}
+
+	public CommandWrapperBuilder updateSelfServiceBeneficiaryTPT(final Long beneficiaryId) {
+        this.actionName = "UPDATE";
+        this.entityName = "SSBENEFICIARYTPT";
+        this.entityId = beneficiaryId;
+        this.href = "/self/beneficiaries/tpt/"+beneficiaryId;
+        return this;
+	}
+
+	public CommandWrapperBuilder deleteSelfServiceBeneficiaryTPT(final Long beneficiaryId) {
+        this.actionName = "DELETE";
+        this.entityName = "SSBENEFICIARYTPT";
+        this.entityId = beneficiaryId;
+        this.href = "/self/beneficiaries/tpt/"+beneficiaryId;
+        return this;
+	}
+
 }

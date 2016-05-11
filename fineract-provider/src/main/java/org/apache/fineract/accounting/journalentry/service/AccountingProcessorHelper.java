@@ -781,6 +781,12 @@ public class AccountingProcessorHelper {
             final Long loanProductId, final Long paymentTypeId, final Long loanId, final String transactionId, final Date transactionDate,
             final BigDecimal amount, final Boolean isReversal) {
         final GLAccount account = getLinkedGLAccountForLoanProduct(loanProductId, accountMappingTypeId, paymentTypeId);
+        createCreditJournalEntryOrReversalForLoan(office, currencyCode, loanId, transactionId, transactionDate, amount, isReversal, account);
+    }
+
+    public void createCreditJournalEntryOrReversalForLoan(final Office office, final String currencyCode, final Long loanId,
+            final String transactionId, final Date transactionDate, final BigDecimal amount, final Boolean isReversal,
+            final GLAccount account) {
         if (isReversal) {
             createDebitJournalEntryForLoan(office, currencyCode, account, loanId, transactionId, transactionDate, amount);
         } else {
@@ -1001,6 +1007,37 @@ public class AccountingProcessorHelper {
                 "Recent Portfolio changes w.r.t Charges for shares have Broken the accounting code"); }
     }
 
+    public void revertCashBasedJournalEntryForSharesCharges(final Office office, final String currencyCode,
+            final CASH_ACCOUNTS_FOR_SHARES accountTypeToBeCredited, final Long shareProductId, final Long shareAccountId,
+            final String transactionId, final Date transactionDate, final BigDecimal totalAmount,
+            final List<ChargePaymentDTO> chargePaymentDTOs) {
+        final Map<GLAccount, BigDecimal> creditDetailsMap = new LinkedHashMap<>();
+        for (final ChargePaymentDTO chargePaymentDTO : chargePaymentDTOs) {
+            final GLAccount chargeSpecificAccount = getLinkedGLAccountForShareCharges(shareProductId, accountTypeToBeCredited.getValue(),
+                    chargePaymentDTO.getChargeId());
+            BigDecimal chargeSpecificAmount = chargePaymentDTO.getAmount();
+
+            // adjust net credit amount if the account is already present in the
+            // map
+            if (creditDetailsMap.containsKey(chargeSpecificAccount)) {
+                final BigDecimal existingAmount = creditDetailsMap.get(chargeSpecificAccount);
+                chargeSpecificAmount = chargeSpecificAmount.add(existingAmount);
+            }
+            creditDetailsMap.put(chargeSpecificAccount, chargeSpecificAmount);
+        }
+
+        BigDecimal totalCreditedAmount = BigDecimal.ZERO;
+        for (final Map.Entry<GLAccount, BigDecimal> entry : creditDetailsMap.entrySet()) {
+            final GLAccount account = entry.getKey();
+            final BigDecimal amount = entry.getValue();
+            totalCreditedAmount = totalCreditedAmount.add(amount);
+            createDebitJournalEntryForShares(office, currencyCode, account, shareAccountId, transactionId, transactionDate, amount);
+        }
+        if (totalAmount.compareTo(totalCreditedAmount) != 0) { throw new PlatformDataIntegrityException(
+                "Recent Portfolio changes w.r.t Charges for shares have Broken the accounting code",
+                "Recent Portfolio changes w.r.t Charges for shares have Broken the accounting code"); }
+    }
+    
     private void createDebitJournalEntryForShares(final Office office, final String currencyCode, final GLAccount account,
             final Long shareAccountId, final String transactionId, final Date transactionDate, final BigDecimal amount) {
         final boolean manualEntry = false;
@@ -1039,7 +1076,7 @@ public class AccountingProcessorHelper {
         this.glJournalEntryRepository.save(journalEntry);
     }
 
-    private GLAccount getLinkedGLAccountForLoanProduct(final Long loanProductId, final int accountMappingTypeId, final Long paymentTypeId) {
+    public GLAccount getLinkedGLAccountForLoanProduct(final Long loanProductId, final int accountMappingTypeId, final Long paymentTypeId) {
         GLAccount glAccount = null;
         if (isOrganizationAccount(accountMappingTypeId)) {
             FinancialActivityAccount financialActivityAccount = this.financialActivityAccountRepository
