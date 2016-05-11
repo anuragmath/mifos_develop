@@ -46,13 +46,8 @@ public class AccountNumberGenerator {
     private final static String OFFICE_NAME = "officeName";
     private final static String LOAN_PRODUCT_SHORT_NAME = "loanProductShortName";
     private final static String SAVINGS_PRODUCT_SHORT_NAME = "savingsProductShortName";
-<<<<<<< HEAD
     private final static String OFFICE_AND_LOAD_PRODUCT_NAME ="officeAndLoanProductName";
-
-=======
     private final static String SHARE_PRODUCT_SHORT_NAME = "sharesProductShortName" ;
-    
->>>>>>> upstream/develop
     public String generate(Client client, AccountNumberFormat accountNumberFormat) {
         Map<String, String> propertyMap = new HashMap<>();
         propertyMap.put(ID, client.getId().toString());
