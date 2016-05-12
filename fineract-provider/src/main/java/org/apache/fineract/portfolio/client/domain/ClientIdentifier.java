@@ -18,6 +18,7 @@
  */
 package org.apache.fineract.portfolio.client.domain;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,6 +27,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +36,7 @@ import org.apache.fineract.infrastructure.codes.domain.CodeValue;
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.domain.AbstractAuditableCustom;
 import org.apache.fineract.useradministration.domain.AppUser;
+import org.joda.time.LocalDate;
 
 @Entity
 @Table(name = "m_client_identifier", uniqueConstraints = {
@@ -47,9 +51,20 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
     @ManyToOne
     @JoinColumn(name = "document_type_id", nullable = false)
     private CodeValue documentType;
+    
+    @ManyToOne
+    @JoinColumn(name ="proof_type_id", nullable = false)
+    private CodeValue proofType;
 
     @Column(name = "document_key", length = 1000)
     private String documentKey;
+    
+    @Column(name = "validity" , nullable = true )
+    @Temporal(TemporalType.DATE)
+    private Date validity;
+    
+    @Column(name = "is_life_time", nullable = true)
+    private Boolean isLifeTime;
     
     @Column(name = "status", nullable = false)
     private Integer status;
@@ -60,21 +75,32 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
     @Column(name = "active")
     private Integer active;
     
-    public static ClientIdentifier fromJson(final Client client, final CodeValue documentType, final JsonCommand command) {
+    public static ClientIdentifier fromJson(final Client client, final CodeValue documentType, final CodeValue proofType, final JsonCommand command) {
         final String documentKey = command.stringValueOfParameterNamed("documentKey");
+        final LocalDate validity = command.localDateValueOfParameterNamed("validity");
+        final boolean isLifeTime = command.booleanPrimitiveValueOfParameterNamed("isLifeTime");
         final String description = command.stringValueOfParameterNamed("description");
         final String status = command.stringValueOfParameterNamed("status");
-        return new ClientIdentifier(client, documentType, documentKey, status, description);
+        return new ClientIdentifier(client, documentType, proofType, documentKey, validity, isLifeTime, status, description);
     }
 
     protected ClientIdentifier() {
         //
     }
 
-    private ClientIdentifier(final Client client, final CodeValue documentType, final String documentKey, final String statusName, String description) {
+    private ClientIdentifier(final Client client, final CodeValue documentType, final CodeValue proofType, final String documentKey, final LocalDate validity,final Boolean isLifeTime, final String statusName, String description) {
         this.client = client;
         this.documentType = documentType;
+        this.proofType = proofType;
         this.documentKey = StringUtils.defaultIfEmpty(documentKey, null);
+        if (validity == null){
+        	this.validity = null;
+        } else {
+        	this.validity = validity.toDate();	
+        }
+        this.isLifeTime = isLifeTime;
+        	
+        // We need to figure out something her
         this.description = StringUtils.defaultIfEmpty(description, null);
         ClientIdentifierStatus statusEnum = ClientIdentifierStatus.valueOf(statusName.toUpperCase());
         this.active = null;      
@@ -84,8 +110,9 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
         this.status = statusEnum.getValue();
     }
 
-    public void update(final CodeValue documentType) {
+    public void update(final CodeValue documentType, final CodeValue proofType) {
         this.documentType = documentType;
+        this.proofType = proofType;
     }
 
     public Map<String, Object> update(final JsonCommand command) {
@@ -96,6 +123,12 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
         if (command.isChangeInLongParameterNamed(documentTypeIdParamName, this.documentType.getId())) {
             final Long newValue = command.longValueOfParameterNamed(documentTypeIdParamName);
             actualChanges.put(documentTypeIdParamName, newValue);
+        }
+
+        final String proofTypeIdParamName = "proofTypeId";
+        if (command.isChangeInLongParameterNamed(proofTypeIdParamName,this.proofType.getId())){
+        	final Long newValue = command.longValueOfParameterNamed(proofTypeIdParamName);
+        	actualChanges.put(proofTypeIdParamName, newValue);
         }
 
         final String documentKeyParamName = "documentKey";
@@ -112,6 +145,15 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
             this.description = StringUtils.defaultIfEmpty(newValue, null);
         }
         
+        final String validityParamName = "validity";
+        if (command.isChangeInLocalDateParameterNamed(validityParamName, new LocalDate(this.validity))) {
+        	final Date newValue = command.DateValueOfParameterNamed(validityParamName);
+        	actualChanges.put(validityParamName,newValue);
+        	this.validity = newValue;
+        }
+        
+        //Implementation of Update is not done with fields such as isLifeTime Valid
+
         final String statusParamName = "status";
         if(command.isChangeInStringParameterNamed(statusParamName, ClientIdentifierStatus.fromInt(this.status).getCode())){
             final String newValue = command.stringValueOfParameterNamed(descriptionParamName);
@@ -128,5 +170,9 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
 
     public Long documentTypeId() {
         return this.documentType.getId();
+    }
+    
+    public Long proofTypeId(){
+    	return this.proofType.getId();
     }
 }
