@@ -767,6 +767,83 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             return ClientData.lookup(id, displayName, officeId, officeName);
         }
     }
+    
+    @Override
+   	public ClientData retrieveClientByAddress(final Long addressTypeId, final String address_line){
+       	try {
+       		final ClientAddressMapper mapper = new ClientAddressMapper();
+       		
+       		final String sql = "select " + mapper.clientLookUpByAddressSchema();
+       		
+       		return this.jdbcTemplate.queryForObject(sql, mapper, new Object[] {addressTypeId, address_line});
+       	}catch (final EmptyResultDataAccessException e){
+       		return null;
+       	}
+       }
+       private static final class ClientAddressMapper implements RowMapper<ClientData>{
+       	public String clientLookUpByAddressSchema() {
+       		return "c.id as id , c.account_no as accountNo, c.firstname as firstname, c.middlename as middlename, c.lastname as lastname, "
+       				+"c.fullname as fullname, c.display_name as displayName, " + "c.office_id as officeId, o.name as officeName "
+       				+" from m_client c, m_office o, m_client_address ca " + "where o.id = c.office_id and c.id=ca.client_id "
+       				+"and ca.address_type_id = ? and ca.address_line like ? ";
+       	}
+       	
+       	@Override
+       	public ClientData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum)throws SQLException{
+       		final Long id = rs.getLong("id");
+       		final String accountNo = rs.getString("accountNo");
+       		final String firstname = rs.getString("firstname");
+       		final String middlename = rs.getString("middlename");
+       		final String lastname = rs.getString("lastname");
+       		final String fullname = rs.getString("fullname");
+       		final String displayName = rs.getString("displayName");
+       		
+       		final Long officeId = rs.getLong("officeId");
+       		final String officeName = rs.getString("officeName");
+       		
+       		return ClientData.clientAddress(id, accountNo, firstname, middlename, lastname, fullname, displayName,officeId, officeName);
+       	}
+       
+       }
+       @Override
+       public ClientData retrieveClientByIsBoth(final Long addressTypeId, final Boolean isBoth){
+       	try {
+       		final ClientAddressMapperIsBoth mapper = new ClientAddressMapperIsBoth();
+       		
+       		final String sql = "select " + mapper.clientLookUpByAddressIsBothSchema();
+       		
+       		return this.jdbcTemplate.queryForObject(sql, mapper, new Object[] {addressTypeId, isBoth});
+       		
+       		
+       	}catch (final EmptyResultDataAccessException e){
+       		return null;
+       	}
+       }
+       private static final class ClientAddressMapperIsBoth implements RowMapper<ClientData>{
+       	public String clientLookUpByAddressIsBothSchema() {
+       		return "c.id as id , c.account_no as accountNo, c.firstname as firstname, c.middlename as middlename, c.lastname as lastname, "
+       				+"c.fullname as fullname, c.display_name as displayName, " + "c.office_id as officeId, o.name as officeName "
+       				+" from m_client c, m_office o, m_client_address ca " + "where o.id = c.office_id and c.id=ca.client_id "
+       				+"and ca.address_type_id = ? and ca.isBoth_perma_same like ? ";
+       	}
+       	@Override
+       	public ClientData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum)throws SQLException{
+       		final Long id = rs.getLong("id");
+       		final String accountNo = rs.getString("accountNo");
+       		final String firstname = rs.getString("firstname");
+       		final String middlename = rs.getString("middlename");
+       		final String lastname = rs.getString("lastname");
+       		final String fullname = rs.getString("fullname");
+       		final String displayName = rs.getString("displayName");
+       		  
+       		final Long officeId = rs.getLong("officeId");
+       		final String officeName = rs.getString("officeName");
+       		
+       		return ClientData.clientAddress(id, accountNo, firstname, middlename, lastname, fullname, displayName,officeId, officeName);
+       	}
+       
+       }
+       
 
     @Override
     public ClientData retrieveClientByIdentifier(final Long identifierTypeId, final String identifierKey) {

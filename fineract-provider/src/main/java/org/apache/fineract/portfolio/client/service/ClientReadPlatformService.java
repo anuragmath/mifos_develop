@@ -37,6 +37,10 @@ public interface ClientReadPlatformService {
     Collection<ClientData> retrieveAllForLookupByOfficeId(Long officeId);
 
     ClientData retrieveClientByIdentifier(Long identifierTypeId, String identifierKey);
+    
+    ClientData retrieveClientByAddress(Long addressTypeId, String address_line);
+    
+    ClientData retrieveClientByIsBoth(Long addressTypeId, Boolean isBoth);
 
     Collection<ClientData> retrieveClientMembersOfGroup(Long groupId);
 
