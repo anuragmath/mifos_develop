@@ -90,6 +90,8 @@ public class LoanProductData {
     private final BigDecimal defaultDifferentialLendingRate;
     private final BigDecimal maxDifferentialLendingRate;
     private final boolean isFloatingInterestRateCalculationAllowed;
+    //Advance EMI boolean 
+    private final boolean isAdvanceEmi;
 
     // Variable Installments Settings
     private final boolean allowVariableInstallments;
@@ -209,6 +211,7 @@ public class LoanProductData {
         final BigDecimal defaultDifferentialLendingRate = null;
         final BigDecimal maxDifferentialLendingRate = null;
         final boolean isFloatingInterestRateCalculationAllowed = false;
+        final boolean isAdvanceEmi = false;
         final boolean isVariableInstallmentsAllowed = false;
         final Integer minimumGap = null;
         final Integer maximumGap = null;
@@ -269,7 +272,7 @@ public class LoanProductData {
                 accountMovesOutOfNPAOnlyOnArrearsCompletion, canDefineInstallmentAmount, installmentAmountInMultiplesOf,
                 loanProductConfigurableAttributes, isLinkedToFloatingInterestRates, floatingRateId, floatingRateName,
                 interestRateDifferential, minDifferentialLendingRate, defaultDifferentialLendingRate, maxDifferentialLendingRate,
-                isFloatingInterestRateCalculationAllowed, isVariableInstallmentsAllowed, minimumGap, maximumGap);
+                isFloatingInterestRateCalculationAllowed,isAdvanceEmi, isVariableInstallmentsAllowed, minimumGap, maximumGap);
 
     }
 
@@ -296,6 +299,7 @@ public class LoanProductData {
         final BigDecimal defaultDifferentialLendingRate = null;
         final BigDecimal maxDifferentialLendingRate = null;
         final boolean isFloatingInterestRateCalculationAllowed = false;
+        final boolean isAdvanceEmi = false;
         final boolean isVariableInstallmentsAllowed = false;
         final Integer minimumGap = null;
         final Integer maximumGap = null;
@@ -358,7 +362,7 @@ public class LoanProductData {
                 accountMovesOutOfNPAOnlyOnArrearsCompletion, canDefineInstallmentAmount, installmentAmountInMultiplesOf,
                 loanProductConfigurableAttributes, isLinkedToFloatingInterestRates, floatingRateId, floatingRateName,
                 interestRateDifferential, minDifferentialLendingRate, defaultDifferentialLendingRate, maxDifferentialLendingRate,
-                isFloatingInterestRateCalculationAllowed, isVariableInstallmentsAllowed, minimumGap, maximumGap);
+                isFloatingInterestRateCalculationAllowed,isAdvanceEmi, isVariableInstallmentsAllowed, minimumGap, maximumGap);
 
     }
 
@@ -389,6 +393,7 @@ public class LoanProductData {
         final BigDecimal defaultDifferentialLendingRate = null;
         final BigDecimal maxDifferentialLendingRate = null;
         final boolean isFloatingInterestRateCalculationAllowed = false;
+        final boolean isAdvanceEmi = false;
         final boolean isVariableInstallmentsAllowed = false;
         final Integer minimumGap = null;
         final Integer maximumGap = null;
@@ -454,7 +459,7 @@ public class LoanProductData {
                 principalThresholdForLastInstallment, accountMovesOutOfNPAOnlyOnArrearsCompletion, canDefineInstallmentAmount,
                 installmentAmountInMultiplesOf, loanProductConfigurableAttributes, isLinkedToFloatingInterestRates, floatingRateId,
                 floatingRateName, interestRateDifferential, minDifferentialLendingRate, defaultDifferentialLendingRate,
-                maxDifferentialLendingRate, isFloatingInterestRateCalculationAllowed, isVariableInstallmentsAllowed, minimumGap, maximumGap);
+                maxDifferentialLendingRate, isFloatingInterestRateCalculationAllowed, isAdvanceEmi,isVariableInstallmentsAllowed, minimumGap, maximumGap);
 
     }
 
@@ -492,7 +497,7 @@ public class LoanProductData {
             Integer installmentAmountInMultiplesOf, LoanProductConfigurableAttributes allowAttributeOverrides,
             boolean isLinkedToFloatingInterestRates, Integer floatingRateId, String floatingRateName, BigDecimal interestRateDifferential,
             BigDecimal minDifferentialLendingRate, BigDecimal defaultDifferentialLendingRate, BigDecimal maxDifferentialLendingRate,
-            boolean isFloatingInterestRateCalculationAllowed, final boolean isVariableInstallmentsAllowed,
+            boolean isFloatingInterestRateCalculationAllowed,final boolean isAdvanceEmi, final boolean isVariableInstallmentsAllowed,
             final Integer minimumGapBetweenInstallments, final Integer maximumGapBetweenInstallments) {
         this.id = id;
         this.name = name;
@@ -523,6 +528,7 @@ public class LoanProductData {
         this.defaultDifferentialLendingRate = defaultDifferentialLendingRate;
         this.maxDifferentialLendingRate = maxDifferentialLendingRate;
         this.isFloatingInterestRateCalculationAllowed = isFloatingInterestRateCalculationAllowed;
+        this.isAdvanceEmi = isAdvanceEmi;
         this.allowVariableInstallments = isVariableInstallmentsAllowed;
         this.minimumGap = minimumGapBetweenInstallments;
         this.maximumGap = maximumGapBetweenInstallments;
@@ -638,6 +644,7 @@ public class LoanProductData {
         this.defaultDifferentialLendingRate = productData.defaultDifferentialLendingRate;
         this.maxDifferentialLendingRate = productData.maxDifferentialLendingRate;
         this.isFloatingInterestRateCalculationAllowed = productData.isFloatingInterestRateCalculationAllowed;
+        this.isAdvanceEmi = productData.isAdvanceEmi;
         this.allowVariableInstallments = productData.allowVariableInstallments;
         this.minimumGap = productData.minimumGap;
         this.maximumGap = productData.maximumGap;
@@ -1059,6 +1066,10 @@ public class LoanProductData {
 
     public boolean isFloatingInterestRateCalculationAllowed() {
         return this.isFloatingInterestRateCalculationAllowed;
+    }
+    
+    public boolean isAdvanceEmi(){
+    	return this.isAdvanceEmi;
     }
 
     public boolean isVariableInstallmentsAllowed() {
