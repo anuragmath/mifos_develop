@@ -219,7 +219,7 @@ public class LoanProduct extends AbstractPersistable<Long> {
         BigDecimal maxDifferentialLendingRate = null;
         BigDecimal defaultDifferentialLendingRate = null;
         Boolean isFloatingInterestRateCalculationAllowed = null;
-        Boolean isAdvanceEmi = command.booleanObjectValueOfParameterNamed("isAdvanceEmi");
+        Boolean isAdvanceEmi = null;
 
         Integer minimumGapBetweenInstallments = null;
         Integer maximumGapBetweenInstallments = null;
@@ -619,7 +619,7 @@ public class LoanProduct extends AbstractPersistable<Long> {
         this.includeInBorrowerCycle = includeInBorrowerCycle;
         this.useBorrowerCycle = useBorrowerCycle;
         
-        this.isAdvanceEmi = isAdvanceEmi == null ? false : isAdvanceEmi;
+        this.isAdvanceEmi = isAdvanceEmi == null ? false : isAdvanceEmi();
 
         if (startDate != null) {
             this.startDate = startDate.toDateTimeAtStartOfDay().toDate();

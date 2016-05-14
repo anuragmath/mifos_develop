@@ -1,0 +1,1 @@
+ALTER TABLE `m_loan` ADD COLUMN  `advance_emi_n`DECIMAL(19,6) NULL DEFAULT NULL;

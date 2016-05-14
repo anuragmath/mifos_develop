@@ -82,6 +82,7 @@ public final class LoanApplicationCommandFromApiJsonHelper {
             LoanApiConstants.externalIdParameterName,
             LoanApiConstants.fundIdParameterName,
             LoanApiConstants.loanOfficerIdParameterName, // optional
+            "advanceEmiN",
             LoanApiConstants.loanPurposeIdParameterName,
             LoanApiConstants.inArrearsToleranceParameterName,
             LoanApiConstants.chargesParameterName,
@@ -207,7 +208,17 @@ public final class LoanApplicationCommandFromApiJsonHelper {
         final String numberOfRepaymentsParameterName = "numberOfRepayments";
         final Integer numberOfRepayments = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(numberOfRepaymentsParameterName, element);
         baseDataValidator.reset().parameter(numberOfRepaymentsParameterName).value(numberOfRepayments).notNull().integerGreaterThanZero();
-
+        
+        if(loanProduct.isAdvanceEmi()){
+        		
+        	final String advanceEmiNParameterName = "advanceEmiN";
+        	final BigDecimal advanceEmiN = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(
+        			advanceEmiNParameterName, element);
+            baseDataValidator.reset().parameter(advanceEmiNParameterName).value(advanceEmiN).notNull()
+                    .zeroOrPositiveAmount();
+            
+        }
+        
         final String repaymentEveryParameterName = "repaymentEvery";
         final Integer repaymentEvery = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(repaymentEveryParameterName, element);
         baseDataValidator.reset().parameter(repaymentEveryParameterName).value(repaymentEvery).notNull().integerGreaterThanZero();
@@ -583,6 +594,16 @@ public final class LoanApplicationCommandFromApiJsonHelper {
                     element);
             baseDataValidator.reset().parameter(numberOfRepaymentsParameterName).value(numberOfRepayments).notNull()
                     .integerGreaterThanZero();
+        }
+        
+        if(loanProduct.isAdvanceEmi()){
+    		
+        	final String advanceEmiNParameterName = "advanceEmiN";
+        	final BigDecimal advanceEmiN = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(
+        			advanceEmiNParameterName, element);
+            baseDataValidator.reset().parameter(advanceEmiNParameterName).value(advanceEmiN).notNull()
+                    .zeroOrPositiveAmount();
+            
         }
 
         final String repaymentEveryParameterName = "repaymentEvery";

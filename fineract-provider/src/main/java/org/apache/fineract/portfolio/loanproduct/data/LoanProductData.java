@@ -49,6 +49,8 @@ import org.apache.fineract.portfolio.paymenttype.data.PaymentTypeData;
 import org.joda.time.LocalDate;
 import org.springframework.util.CollectionUtils;
 
+import com.amazonaws.services.ec2.model.ProductCode;
+
 /**
  * Immutable data object to represent loan products.
  */

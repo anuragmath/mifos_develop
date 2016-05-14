@@ -389,6 +389,9 @@ public class Loan extends AbstractPersistable<Long> {
 
     @Column(name = "interest_rate_differential", scale = 6, precision = 19, nullable = true)
     private BigDecimal interestRateDifferential;
+    
+    @Column(name = "advance_emi_n", nullable = true)
+    private Integer advanceEmiN;
 
     public static Loan newIndividualLoanApplication(final String accountNo, final Client client, final Integer loanType,
             final LoanProduct loanProduct, final Fund fund, final Staff officer, final CodeValue loanPurpose,
@@ -396,14 +399,14 @@ public class Loan extends AbstractPersistable<Long> {
             final LoanProductRelatedDetail loanRepaymentScheduleDetail, final Set<LoanCharge> loanCharges,
             final Set<LoanCollateral> collateral, final BigDecimal fixedEmiAmount, final Set<LoanDisbursementDetails> disbursementDetails,
             final BigDecimal maxOutstandingLoanBalance, final Boolean createStandingInstructionAtDisbursement,
-            final Boolean isFloatingInterestRate, final BigDecimal interestRateDifferential) {
+            final Boolean isFloatingInterestRate, final BigDecimal interestRateDifferential, final Integer advanceEmiN) {
         final LoanStatus status = null;
         final Group group = null;
         final Boolean syncDisbursementWithMeeting = null;
         return new Loan(accountNo, client, group, loanType, fund, officer, loanPurpose, transactionProcessingStrategy, loanProduct,
                 loanRepaymentScheduleDetail, status, loanCharges, collateral, syncDisbursementWithMeeting, fixedEmiAmount,
                 disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
-                interestRateDifferential);
+                interestRateDifferential,advanceEmiN);
     }
 
     public static Loan newGroupLoanApplication(final String accountNo, final Group group, final Integer loanType,
@@ -413,13 +416,13 @@ public class Loan extends AbstractPersistable<Long> {
             final Set<LoanCollateral> collateral, final Boolean syncDisbursementWithMeeting, final BigDecimal fixedEmiAmount,
             final Set<LoanDisbursementDetails> disbursementDetails, final BigDecimal maxOutstandingLoanBalance,
             final Boolean createStandingInstructionAtDisbursement, final Boolean isFloatingInterestRate,
-            final BigDecimal interestRateDifferential) {
+            final BigDecimal interestRateDifferential, final Integer advanceEmiN) {
         final LoanStatus status = null;
         final Client client = null;
         return new Loan(accountNo, client, group, loanType, fund, officer, loanPurpose, transactionProcessingStrategy, loanProduct,
                 loanRepaymentScheduleDetail, status, loanCharges, collateral, syncDisbursementWithMeeting, fixedEmiAmount,
                 disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
-                interestRateDifferential);
+                interestRateDifferential,advanceEmiN);
     }
 
     public static Loan newIndividualLoanApplicationFromGroup(final String accountNo, final Client client, final Group group,
@@ -429,12 +432,12 @@ public class Loan extends AbstractPersistable<Long> {
             final Set<LoanCollateral> collateral, final Boolean syncDisbursementWithMeeting, final BigDecimal fixedEmiAmount,
             final Set<LoanDisbursementDetails> disbursementDetails, final BigDecimal maxOutstandingLoanBalance,
             final Boolean createStandingInstructionAtDisbursement, final Boolean isFloatingInterestRate,
-            final BigDecimal interestRateDifferential) {
+            final BigDecimal interestRateDifferential,final Integer advanceEmiN) {
         final LoanStatus status = null;
         return new Loan(accountNo, client, group, loanType, fund, officer, loanPurpose, transactionProcessingStrategy, loanProduct,
                 loanRepaymentScheduleDetail, status, loanCharges, collateral, syncDisbursementWithMeeting, fixedEmiAmount,
                 disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
-                interestRateDifferential);
+                interestRateDifferential,advanceEmiN);
     }
 
     protected Loan() {
@@ -447,13 +450,15 @@ public class Loan extends AbstractPersistable<Long> {
             final Set<LoanCharge> loanCharges, final Set<LoanCollateral> collateral, final Boolean syncDisbursementWithMeeting,
             final BigDecimal fixedEmiAmount, final Set<LoanDisbursementDetails> disbursementDetails,
             final BigDecimal maxOutstandingLoanBalance, final Boolean createStandingInstructionAtDisbursement,
-            final Boolean isFloatingInterestRate, final BigDecimal interestRateDifferential) {
+            final Boolean isFloatingInterestRate, final BigDecimal interestRateDifferential,final Integer advanceEmiN) {
 
         this.loanRepaymentScheduleDetail = loanRepaymentScheduleDetail;
         this.loanRepaymentScheduleDetail.validateRepaymentPeriodWithGraceSettings();
 
         this.isFloatingInterestRate = isFloatingInterestRate;
         this.interestRateDifferential = interestRateDifferential;
+        
+        this.advanceEmiN = advanceEmiN;
 
         if (StringUtils.isBlank(accountNo)) {
             this.accountNumber = new RandomPasswordGenerator(19).generate();
@@ -505,6 +510,10 @@ public class Loan extends AbstractPersistable<Long> {
 
         this.proposedPrincipal = this.loanRepaymentScheduleDetail.getPrincipal().getAmount();
 
+    }
+    
+    public Integer getAdvanceEmiN(){
+    		return this.advanceEmiN;
     }
 
     private LoanSummary updateSummaryWithTotalFeeChargesDueAtDisbursement(final BigDecimal feeChargesDueAtDisbursement) {
@@ -2594,7 +2603,7 @@ public class Loan extends AbstractPersistable<Long> {
          * TODO Vishwas: do we need to be able to pass in payment type details
          * for repayments at disbursements too?
          ***/
-
+    	
         final Money totalFeeChargesDueAtDisbursement = this.summary.getTotalFeeChargesDueAtDisbursement(loanCurrency());
         /**
          * all Charges repaid at disbursal is marked as repaid and
