@@ -81,6 +81,7 @@ public final class LoanApplicationCommandFromApiJsonHelper {
             LoanApiConstants.accountNoParameterName,
             LoanApiConstants.externalIdParameterName,
             LoanApiConstants.fundIdParameterName,
+            LoanApiConstants.flatInterestRatePerPeriodParameterName, //flat interest rate
             LoanApiConstants.loanOfficerIdParameterName, // optional
             LoanApiConstants.loanPurposeIdParameterName,
             LoanApiConstants.inArrearsToleranceParameterName,
@@ -207,6 +208,11 @@ public final class LoanApplicationCommandFromApiJsonHelper {
         final String numberOfRepaymentsParameterName = "numberOfRepayments";
         final Integer numberOfRepayments = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(numberOfRepaymentsParameterName, element);
         baseDataValidator.reset().parameter(numberOfRepaymentsParameterName).value(numberOfRepayments).notNull().integerGreaterThanZero();
+        
+        //Flat Interest Rate Per Period
+        final String flatInterestRatePerPeriodParameterName = "flatInterestRatePerPeriod";
+        final Integer flatInterestRatePerPeriod = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(flatInterestRatePerPeriodParameterName, element);
+        baseDataValidator.reset().parameter(flatInterestRatePerPeriodParameterName).value(flatInterestRatePerPeriod).notNull().integerGreaterThanZero();
 
         final String repaymentEveryParameterName = "repaymentEvery";
         final Integer repaymentEvery = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(repaymentEveryParameterName, element);

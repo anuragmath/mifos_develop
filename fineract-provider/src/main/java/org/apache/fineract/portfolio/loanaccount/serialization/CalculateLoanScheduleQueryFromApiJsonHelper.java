@@ -52,7 +52,7 @@ public final class CalculateLoanScheduleQueryFromApiJsonHelper {
             LoanApiConstants.externalIdParameterName, LoanApiConstants.fundIdParameterName, LoanApiConstants.loanOfficerIdParameterName,
             LoanApiConstants.loanPurposeIdParameterName, LoanApiConstants.transactionProcessingStrategyIdParameterName,
             LoanApiConstants.principalParamName, LoanApiConstants.inArrearsToleranceParameterName,
-            LoanApiConstants.interestRatePerPeriodParameterName, LoanApiConstants.repaymentEveryParameterName,
+            LoanApiConstants.interestRatePerPeriodParameterName, LoanApiConstants.flatInterestRatePerPeriodParameterName, LoanApiConstants.repaymentEveryParameterName,
             LoanApiConstants.numberOfRepaymentsParameterName, LoanApiConstants.loanTermFrequencyParameterName,
             LoanApiConstants.loanTermFrequencyTypeParameterName, LoanApiConstants.repaymentFrequencyTypeParameterName,
             LoanApiConstants.amortizationTypeParameterName, LoanApiConstants.interestTypeParameterName,
@@ -97,7 +97,10 @@ public final class CalculateLoanScheduleQueryFromApiJsonHelper {
         final String numberOfRepaymentsParameterName = "numberOfRepayments";
         final Integer numberOfRepayments = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(numberOfRepaymentsParameterName, element);
 
-        final String repaymentEveryParameterName = "repaymentEvery";
+        /*final String flatInterestRatePerPeriodParameterName = "flatInterestRatePerPeriod";
+        final Integer flatInterestRatePerPeriod = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(flatInterestRatePerPeriodParameterName, element);
+
+*/        final String repaymentEveryParameterName = "repaymentEvery";
         final Integer repaymentEvery = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(repaymentEveryParameterName, element);
 
         final String repaymentEveryFrequencyTypeParameterName = "repaymentFrequencyType";

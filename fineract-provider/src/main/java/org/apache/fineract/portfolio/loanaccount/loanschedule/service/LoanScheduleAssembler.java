@@ -219,13 +219,26 @@ public class LoanScheduleAssembler {
             allowPartialPeriodInterestCalcualtion = loanProduct.getLoanProductRelatedDetail().isAllowPartialPeriodInterestCalcualtion();
         }
 
-        final BigDecimal interestRatePerPeriod = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("interestRatePerPeriod", element);
+        BigDecimal interestRatePerPeriod = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("interestRatePerPeriod", element);
+        final BigDecimal flatInterestRatePerPeriod = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("flatInterestRatePerPeriod", element);
         final PeriodFrequencyType interestRatePeriodFrequencyType = loanProduct.getInterestPeriodFrequencyType();
 
         BigDecimal annualNominalInterestRate = BigDecimal.ZERO;
         if (interestRatePerPeriod != null) {
             annualNominalInterestRate = this.aprCalculator.calculateFrom(interestRatePeriodFrequencyType, interestRatePerPeriod);
         }
+        
+       // BigDecimal nominalInterestRate = BigDecimal.ZERO;
+        double nominalInterestRate = 0.0;
+        if (flatInterestRatePerPeriod != null) {
+        	nominalInterestRate = nominalInterestCalculate(flatInterestRatePerPeriod.doubleValue(), numberOfRepayments);
+        	nominalInterestRate = RateFunction.rate(numberOfRepayments, nominalInterestRate, 100.0, null, null , null)*12*100;
+        	interestRatePerPeriod = BigDecimal.valueOf(nominalInterestRate);
+        	
+        	//System.out.println("Effective Interest Rate "+ nominalInterestRate);
+        	
+        }
+        
 
         // disbursement details
         final BigDecimal principal = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("principal", element);
@@ -448,7 +461,20 @@ public class LoanScheduleAssembler {
                 allowCompoundingOnEod);
 }
 
-    private CalendarInstance createCalendarForSameAsRepayment(final Integer repaymentEvery,
+    private double nominalInterestCalculate(double flatInterestRatePerPeriod, Integer numberOfRepayments) {
+		final float period;
+		final double cal_one;
+		final double cal_two;
+		final double cal;
+		period = (float) (((float)numberOfRepayments)/12.0); 
+		cal_one = flatInterestRatePerPeriod*period;
+		cal_two = cal_one+100;
+		cal = cal_two/numberOfRepayments;
+		//System.out.println("Nominal Interest Calculated"+ cal);
+		return cal;
+	}
+
+	private CalendarInstance createCalendarForSameAsRepayment(final Integer repaymentEvery,
             final PeriodFrequencyType repaymentPeriodFrequencyType, final LocalDate expectedDisbursementDate) {
         final Integer recalculationFrequencyNthDay = null;
         final Integer repeatsOnDay = expectedDisbursementDate.getDayOfWeek();

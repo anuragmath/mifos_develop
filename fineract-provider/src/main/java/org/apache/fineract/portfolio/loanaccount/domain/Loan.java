@@ -467,6 +467,8 @@ public class Loan extends AbstractPersistable<Long> {
         this.fund = fund;
         this.loanOfficer = loanOfficer;
         this.loanPurpose = loanPurpose;
+        
+   
 
         this.transactionProcessingStrategy = transactionProcessingStrategy;
         this.loanProduct = loanProduct;

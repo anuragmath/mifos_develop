@@ -76,6 +76,7 @@ public interface LoanApiConstants {
     public static final String createStandingInstructionAtDisbursementParameterName = "createStandingInstructionAtDisbursement";
     public static final String daysInYearTypeParameterName = "daysInYearType";
     public static final String daysInMonthTypeParameterName = "daysInMonthType";
+    public static final String flatInterestRatePerPeriodParameterName = "flatInterestRatePerPeriod";			//Added flat interest rate to calculate nominal interest rate
 
     // Interest recalculation related
     public static final String isInterestRecalculationEnabledParameterName = "isInterestRecalculationEnabled";
