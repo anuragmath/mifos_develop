@@ -1,1 +1,1 @@
-ALTER TABLE `m_loan` ADD COLUMN  `flat_interest_rate_per_per` int(5) DEFAULT NULL; 
+ALTER TABLE `m_loan` ADD COLUMN  `flat_interest_rate_per_period` int(5) DEFAULT NULL; 
