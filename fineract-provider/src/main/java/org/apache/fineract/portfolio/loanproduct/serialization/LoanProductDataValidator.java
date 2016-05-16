@@ -70,7 +70,7 @@ public final class LoanProductDataValidator {
             "transactionProcessingStrategyId", "graceOnPrincipalPayment", "recurringMoratoriumOnPrincipalPeriods", "graceOnInterestPayment", "graceOnInterestCharged", "charges",
             "accountingRule", "includeInBorrowerCycle", "startDate", "closeDate", "externalId", "isLinkedToFloatingInterestRates",
             "floatingRatesId", "interestRateDifferential", "minDifferentialLendingRate", "defaultDifferentialLendingRate",
-            "maxDifferentialLendingRate", "isFloatingInterestRateCalculationAllowed","recurringMoratoriumOnPrincipalPeriods",
+            "maxDifferentialLendingRate", "isFloatingInterestRateCalculationAllowed","recurringMoratoriumOnPrincipalPeriods","isAdvanceEmi",
             LOAN_PRODUCT_ACCOUNTING_PARAMS.FEES_RECEIVABLE.getValue(), LOAN_PRODUCT_ACCOUNTING_PARAMS.FUND_SOURCE.getValue(),
             LOAN_PRODUCT_ACCOUNTING_PARAMS.INCOME_FROM_FEES.getValue(), LOAN_PRODUCT_ACCOUNTING_PARAMS.INCOME_FROM_PENALTIES.getValue(),
             LOAN_PRODUCT_ACCOUNTING_PARAMS.INTEREST_ON_LOANS.getValue(), LOAN_PRODUCT_ACCOUNTING_PARAMS.INTEREST_RECEIVABLE.getValue(),
@@ -303,12 +303,16 @@ public final class LoanProductDataValidator {
                 LoanProductConstants.isInterestRecalculationEnabledParameterName, element);
         baseDataValidator.reset().parameter(LoanProductConstants.isInterestRecalculationEnabledParameterName)
                 .value(isInterestRecalculationEnabled).notNull().isOneOfTheseValues(true, false);
+        
 
         if (isInterestRecalculationEnabled != null) {
             if (isInterestRecalculationEnabled.booleanValue()) {
                 validateInterestRecalculationParams(element, baseDataValidator, null);
             }
         }
+        
+        final Boolean isAdvanceEmi = this.fromApiJsonHelper.extractBooleanNamed("isAdvanceEmi", element);
+        baseDataValidator.reset().parameter("isAdvanceEmi").value(isAdvanceEmi).notNull().isOneOfTheseValues(true,false);
 
         // interest rates
         if (this.fromApiJsonHelper.parameterExists("isLinkedToFloatingInterestRates", element)

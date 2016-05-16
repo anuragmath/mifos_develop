@@ -1,0 +1,1 @@
+ALTER TABLE `m_loan` MODIFY  `advance_emi_n` int DEFAULT NULL;

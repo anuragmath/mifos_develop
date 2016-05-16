@@ -610,7 +610,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     + " lir.is_compounding_to_be_posted_as_transaction as isCompoundingToBePostedAsTransaction, "
                     + " lir.allow_compounding_on_eod as allowCompoundingOnEod, "
                     + " l.is_floating_interest_rate as isFloatingInterestRate, "
-                    + " l.interest_rate_differential as interestRateDifferential, "
+                    + " l.interest_rate_differential as interestRateDifferential,l.advance_emi_n as advanceEmiN, "
                     + " l.create_standing_instruction_at_disbursement as createStandingInstructionAtDisbursement, "
                     + " lpvi.minimum_gap as minimuminstallmentgap, lpvi.maximum_gap as maximuminstallmentgap "
                     + " from m_loan l" //
@@ -745,6 +745,8 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
             final BigDecimal annualInterestRate = rs.getBigDecimal("annualInterestRate");
             final BigDecimal interestRateDifferential = rs.getBigDecimal("interestRateDifferential");
             final boolean isFloatingInterestRate = rs.getBoolean("isFloatingInterestRate");
+            
+            final Integer advanceEmiN = JdbcSupport.getIntegerDefaultToNullIfZero(rs, "advanceEmiN");
 
             final Integer graceOnPrincipalPayment = JdbcSupport.getIntegerDefaultToNullIfZero(rs, "graceOnPrincipalPayment");
             final Integer recurringMoratoriumOnPrincipalPeriods = JdbcSupport.getIntegerDefaultToNullIfZero(rs, "recurringMoratoriumOnPrincipalPeriods");
@@ -923,8 +925,13 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     isLoanProductLinkedToFloatingRate, fundId, fundName, loanPurposeId, loanPurposeName, loanOfficerId, loanOfficerName,
                     currencyData, proposedPrincipal, principal, approvedPrincipal, totalOverpaid, inArrearsTolerance, termFrequency,
                     termPeriodFrequencyType, numberOfRepayments, repaymentEvery, repaymentFrequencyType, null, null, transactionStrategyId,
+<<<<<<< HEAD
                     transactionStrategyName, amortizationType, interestRatePerPeriod, flatInterestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
                     interestType, isFloatingInterestRate, interestRateDifferential, interestCalculationPeriodType,
+=======
+                    transactionStrategyName, amortizationType, interestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
+                    interestType, isFloatingInterestRate, interestRateDifferential,advanceEmiN, interestCalculationPeriodType,
+>>>>>>> saransh/develop
                     allowPartialPeriodInterestCalcualtion, expectedFirstRepaymentOnDate, graceOnPrincipalPayment,
                     recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment, graceOnInterestCharged, interestChargedFromDate,
                     timeline, loanSummary, feeChargesDueAtDisbursementCharged, syncDisbursementWithMeeting, loanCounter,
