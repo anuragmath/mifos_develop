@@ -102,11 +102,8 @@ public class LoanAccountData {
     private final BigDecimal annualInterestRate;
     private final boolean isFloatingInterestRate;
     private final BigDecimal interestRateDifferential;
-<<<<<<< HEAD
     private final BigDecimal flatInterestRatePerPeriod; // flat Interest rate
-=======
     private final Integer advanceEmiN;
->>>>>>> saransh/develop
 
     // settings
     private final EnumOptionData amortizationType;
@@ -329,13 +326,8 @@ public class LoanAccountData {
                 loanPurposeId, loanPurposeName, loanOfficerId, loanOfficerName, currencyData, proposedPrincipal, principal, principal,
                 totalOverpaid, inArrearsTolerance, termFrequency, termPeriodFrequencyType, numberOfRepayments, repaymentEvery,
                 repaymentFrequencyType, repaymentFrequencyNthDayType, repaymentFrequencyDayOfWeekType, transactionProcessingStrategyId,
-<<<<<<< HEAD
                 transactionProcessingStrategyName, amortizationType, interestRatePerPeriod, flatInterestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
-                interestType, isFloatingInterestRate, interestRateDifferential, interestCalculationPeriodType,
-=======
-                transactionProcessingStrategyName, amortizationType, interestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
                 interestType, isFloatingInterestRate, interestRateDifferential,advanceEmiN, interestCalculationPeriodType,
->>>>>>> saransh/develop
                 allowPartialPeriodInterestCalcualtion, expectedFirstRepaymentOnDate, graceOnPrincipalPayment, recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment,
                 graceOnInterestCharged, interestChargedFromDate, timeline, summary, feeChargesDueAtDisbursementCharged, repaymentSchedule,
                 transactions, charges, collateral, guarantors, calendarData, productOptions, termFrequencyTypeOptions,
@@ -469,13 +461,8 @@ public class LoanAccountData {
                 loanPurposeId, loanPurposeName, loanOfficerId, loanOfficerName, currencyData, proposedPrincipal, principal, principal,
                 totalOverpaid, inArrearsTolerance, termFrequency, termPeriodFrequencyType, numberOfRepayments, repaymentEvery,
                 repaymentFrequencyType, repaymentFrequencyNthDayType, repaymentFrequencyDayOfWeekType, transactionProcessingStrategyId,
-<<<<<<< HEAD
                 transactionProcessingStrategyName, amortizationType, interestRatePerPeriod, flatInterestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
-                interestType, isFloatingInterestRate, interestRateDifferential, interestCalculationPeriodType,
-=======
-                transactionProcessingStrategyName, amortizationType, interestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
                 interestType, isFloatingInterestRate, interestRateDifferential,advanceEmiN, interestCalculationPeriodType,
->>>>>>> saransh/develop
                 allowPartialPeriodInterestCalcualtion, expectedFirstRepaymentOnDate, graceOnPrincipalPayment, recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment,
                 graceOnInterestCharged, interestChargedFromDate, timeline, summary, feeChargesDueAtDisbursementCharged, repaymentSchedule,
                 transactions, charges, collateral, guarantors, calendarData, productOptions, termFrequencyTypeOptions,
@@ -500,13 +487,8 @@ public class LoanAccountData {
                 acc.approvedPrincipal, acc.totalOverpaid, acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType,
                 acc.numberOfRepayments, acc.repaymentEvery, acc.repaymentFrequencyType, acc.repaymentFrequencyNthDayType,
                 acc.repaymentFrequencyDayOfWeekType, acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName,
-<<<<<<< HEAD
                 acc.amortizationType, acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.amortizationType, acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment, acc.recurringMoratoriumOnPrincipalPeriods,
                 acc.graceOnInterestPayment, acc.graceOnInterestCharged, acc.interestChargedFromDate, clientAcc.timeline, acc.summary,
                 acc.feeChargesAtDisbursementCharged, acc.repaymentSchedule, acc.transactions, acc.charges, acc.collateral, acc.guarantors,
@@ -644,13 +626,8 @@ public class LoanAccountData {
                 loanPurposeId, loanPurposeName, loanOfficerId, loanOfficerName, currencyData, proposedPrincipal, principal, principal,
                 totalOverpaid, inArrearsTolerance, termFrequency, termPeriodFrequencyType, numberOfRepayments, repaymentEvery,
                 repaymentFrequencyType, repaymentFrequencyNthDayType, repaymentFrequencyDayOfWeekType, transactionProcessingStrategyId,
-<<<<<<< HEAD
                 transactionProcessingStrategyName, amortizationType, interestRatePerPeriod, flatInterestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
-                interestType, isFloatingInterestRate, interestRateDifferential, interestCalculationPeriodType,
-=======
-                transactionProcessingStrategyName, amortizationType, interestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
                 interestType, isFloatingInterestRate, interestRateDifferential,advanceEmiN, interestCalculationPeriodType,
->>>>>>> saransh/develop
                 allowPartialPeriodInterestCalcualtion, expectedFirstRepaymentOnDate, graceOnPrincipalPayment, recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment,
                 graceOnInterestCharged, interestChargedFromDate, timeline, summary, feeChargesDueAtDisbursementCharged, repaymentSchedule,
                 transactions, charges, collateral, guarantors, calendarData, productOptions, termFrequencyTypeOptions,
@@ -675,13 +652,8 @@ public class LoanAccountData {
                 acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType, acc.numberOfRepayments, acc.repaymentEvery,
                 acc.repaymentFrequencyType, acc.repaymentFrequencyNthDayType, acc.repaymentFrequencyDayOfWeekType,
                 acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName, acc.amortizationType,
-<<<<<<< HEAD
                 acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment, acc.recurringMoratoriumOnPrincipalPeriods,
                 acc.graceOnInterestPayment, acc.graceOnInterestCharged, acc.interestChargedFromDate, groupAcc.timeline, acc.summary,
                 acc.feeChargesAtDisbursementCharged, acc.repaymentSchedule, acc.transactions, acc.charges, acc.collateral, acc.guarantors,
@@ -979,13 +951,8 @@ public class LoanAccountData {
                 loanPurposeId, loanPurposeName, loanOfficerId, loanOfficerName, currencyData, proposedPrincipal, principal,
                 approvedPrincipal, totalOverpaid, inArrearsTolerance, termFrequency, termPeriodFrequencyType, numberOfRepayments,
                 repaymentEvery, repaymentFrequencyType, repaymentFrequencyNthDayType, repaymentFrequencyDayOfWeekType,
-<<<<<<< HEAD
                 transactionStrategyId, transactionStrategyName, amortizationType, interestRatePerPeriod, flatInterestRatePerPeriod, interestRateFrequencyType,
-                annualInterestRate, interestType, isFloatingInterestRate, interestRateDifferential, interestCalculationPeriodType,
-=======
-                transactionStrategyId, transactionStrategyName, amortizationType, interestRatePerPeriod, interestRateFrequencyType,
                 annualInterestRate, interestType, isFloatingInterestRate, interestRateDifferential,advanceEmiN, interestCalculationPeriodType,
->>>>>>> saransh/develop
                 allowPartialPeriodInterestCalcualtion, expectedFirstRepaymentOnDate, graceOnPrincipalPayment, recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment,
                 graceOnInterestCharged, interestChargedFromDate, timeline, loanSummary, feeChargesDueAtDisbursementCharged,
                 repaymentSchedule, transactions, charges, collateral, guarantors, calendarData, productOptions, termFrequencyTypeOptions,
@@ -1033,13 +1000,8 @@ public class LoanAccountData {
                 acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType, acc.numberOfRepayments, acc.repaymentEvery,
                 acc.repaymentFrequencyType, acc.repaymentFrequencyNthDayType, acc.repaymentFrequencyDayOfWeekType,
                 acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName, acc.amortizationType,
-<<<<<<< HEAD
                 acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment, acc.recurringMoratoriumOnPrincipalPeriods,
                 acc.graceOnInterestPayment, acc.graceOnInterestCharged, acc.interestChargedFromDate, acc.timeline, acc.summary,
                 acc.feeChargesAtDisbursementCharged, repaymentSchedule, transactions, charges, collateral, guarantors, calendarData,
@@ -1078,13 +1040,8 @@ public class LoanAccountData {
                 acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType, acc.numberOfRepayments, acc.repaymentEvery,
                 acc.repaymentFrequencyType, acc.repaymentFrequencyNthDayType, acc.repaymentFrequencyDayOfWeekType,
                 acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName, acc.amortizationType,
-<<<<<<< HEAD
                 acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment, acc.recurringMoratoriumOnPrincipalPeriods,
                 acc.graceOnInterestPayment, acc.graceOnInterestCharged, acc.interestChargedFromDate, acc.timeline, acc.summary,
                 acc.feeChargesAtDisbursementCharged, acc.repaymentSchedule, acc.transactions, acc.charges, acc.collateral, acc.guarantors,
@@ -1147,13 +1104,8 @@ public class LoanAccountData {
                 acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType, acc.numberOfRepayments, acc.repaymentEvery,
                 acc.repaymentFrequencyType, acc.repaymentFrequencyNthDayType, acc.repaymentFrequencyDayOfWeekType,
                 acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName, acc.amortizationType,
-<<<<<<< HEAD
                 acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment, acc.recurringMoratoriumOnPrincipalPeriods,
                 acc.graceOnInterestPayment, acc.graceOnInterestCharged, acc.interestChargedFromDate, acc.timeline, acc.summary,
                 acc.feeChargesAtDisbursementCharged, acc.repaymentSchedule, acc.transactions, acc.charges, acc.collateral, acc.guarantors,
@@ -1185,13 +1137,8 @@ public class LoanAccountData {
                 acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType, acc.numberOfRepayments, acc.repaymentEvery,
                 acc.repaymentFrequencyType, acc.repaymentFrequencyNthDayType, acc.repaymentFrequencyDayOfWeekType,
                 acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName, acc.amortizationType,
-<<<<<<< HEAD
                 acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment, acc.recurringMoratoriumOnPrincipalPeriods,
                 acc.graceOnInterestPayment, acc.graceOnInterestCharged, acc.interestChargedFromDate, acc.timeline, acc.summary,
                 acc.feeChargesAtDisbursementCharged, acc.repaymentSchedule, acc.transactions, acc.charges, acc.collateral, acc.guarantors,
@@ -1217,13 +1164,8 @@ public class LoanAccountData {
                 acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType, acc.numberOfRepayments, acc.repaymentEvery,
                 acc.repaymentFrequencyType, calendarData.getRepeatsOnNthDayOfMonth(), calendarData.getRepeatsOnDay(),
                 acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName, acc.amortizationType,
-<<<<<<< HEAD
                 acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment,
                 acc.recurringMoratoriumOnPrincipalPeriods, acc.graceOnInterestPayment, acc.graceOnInterestCharged,
                 acc.interestChargedFromDate, acc.timeline, acc.summary, acc.feeChargesAtDisbursementCharged, acc.repaymentSchedule,
@@ -1250,13 +1192,8 @@ public class LoanAccountData {
                 acc.inArrearsTolerance, acc.termFrequency, acc.termPeriodFrequencyType, acc.numberOfRepayments, acc.repaymentEvery,
                 acc.repaymentFrequencyType, acc.repaymentFrequencyNthDayType, acc.repaymentFrequencyDayOfWeekType,
                 acc.transactionProcessingStrategyId, acc.transactionProcessingStrategyName, acc.amortizationType,
-<<<<<<< HEAD
                 acc.interestRatePerPeriod, acc.flatInterestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
-                acc.isFloatingInterestRate, acc.interestRateDifferential, acc.interestCalculationPeriodType,
-=======
-                acc.interestRatePerPeriod, acc.interestRateFrequencyType, acc.annualInterestRate, acc.interestType,
                 acc.isFloatingInterestRate, acc.interestRateDifferential,acc.advanceEmiN, acc.interestCalculationPeriodType,
->>>>>>> saransh/develop
                 acc.allowPartialPeriodInterestCalcualtion, acc.expectedFirstRepaymentOnDate, acc.graceOnPrincipalPayment, acc.recurringMoratoriumOnPrincipalPeriods,
                 acc.graceOnInterestPayment, acc.graceOnInterestCharged, acc.interestChargedFromDate, acc.timeline, acc.summary,
                 acc.feeChargesAtDisbursementCharged, acc.repaymentSchedule, acc.transactions, acc.charges, acc.collateral, acc.guarantors,
