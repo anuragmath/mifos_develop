@@ -1,5 +1,8 @@
 package org.apache.fineract.portfolio.loanaccount.loanschedule.service;
+
+
 public class RateFunction {
+	
 	final static Double rate(int paymentsPerYear,Double paymentAmount,Double presentValue, Double futureValue, Double dueEndOrBeginning,Double interest){
 	    //If interest, futureValue, dueEndorBeginning was not set, set now
 					paymentAmount= -paymentAmount;
