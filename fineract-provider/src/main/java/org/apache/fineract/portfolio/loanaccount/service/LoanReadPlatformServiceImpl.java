@@ -611,6 +611,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     + " lir.allow_compounding_on_eod as allowCompoundingOnEod, "
                     + " l.is_floating_interest_rate as isFloatingInterestRate, "
                     + " l.interest_rate_differential as interestRateDifferential,l.advance_emi_n as advanceEmiN, "
+                    + " l.interest_rate_differential as interestRateDifferential, "
                     + " l.create_standing_instruction_at_disbursement as createStandingInstructionAtDisbursement, "
                     + " lpvi.minimum_gap as minimuminstallmentgap, lpvi.maximum_gap as maximuminstallmentgap "
                     + " from m_loan l" //
@@ -741,6 +742,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
             final Integer numberOfRepayments = JdbcSupport.getInteger(rs, "numberOfRepayments");
             final Integer repaymentEvery = JdbcSupport.getInteger(rs, "repaymentEvery");
             final BigDecimal interestRatePerPeriod = rs.getBigDecimal("interestRatePerPeriod");
+            final BigDecimal flatInterestRatePerPeriod = rs.getBigDecimal("flatInterestRatePerPeriod");
             final BigDecimal annualInterestRate = rs.getBigDecimal("annualInterestRate");
             final BigDecimal interestRateDifferential = rs.getBigDecimal("interestRateDifferential");
             final boolean isFloatingInterestRate = rs.getBoolean("isFloatingInterestRate");
@@ -924,8 +926,8 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     isLoanProductLinkedToFloatingRate, fundId, fundName, loanPurposeId, loanPurposeName, loanOfficerId, loanOfficerName,
                     currencyData, proposedPrincipal, principal, approvedPrincipal, totalOverpaid, inArrearsTolerance, termFrequency,
                     termPeriodFrequencyType, numberOfRepayments, repaymentEvery, repaymentFrequencyType, null, null, transactionStrategyId,
-                    transactionStrategyName, amortizationType, interestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
-                    interestType, isFloatingInterestRate, interestRateDifferential,advanceEmiN, interestCalculationPeriodType,
+                    transactionStrategyName, amortizationType, interestRatePerPeriod, flatInterestRatePerPeriod, interestRateFrequencyType, annualInterestRate,
+                    interestType, isFloatingInterestRate, interestRateDifferential, interestCalculationPeriodType,
                     allowPartialPeriodInterestCalcualtion, expectedFirstRepaymentOnDate, graceOnPrincipalPayment,
                     recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment, graceOnInterestCharged, interestChargedFromDate,
                     timeline, loanSummary, feeChargesDueAtDisbursementCharged, syncDisbursementWithMeeting, loanCounter,

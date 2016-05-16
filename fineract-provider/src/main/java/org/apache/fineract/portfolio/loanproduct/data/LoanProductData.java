@@ -823,7 +823,7 @@ public class LoanProductData {
     public BigDecimal getInterestRatePerPeriod() {
         return this.interestRatePerPeriod;
     }
-
+    
     public BigDecimal getAnnualInterestRate() {
         return this.annualInterestRate;
     }

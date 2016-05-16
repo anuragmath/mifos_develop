@@ -81,6 +81,7 @@ public final class LoanApplicationCommandFromApiJsonHelper {
             LoanApiConstants.accountNoParameterName,
             LoanApiConstants.externalIdParameterName,
             LoanApiConstants.fundIdParameterName,
+            LoanApiConstants.flatInterestRatePerPeriodParameterName, //flat interest rate
             LoanApiConstants.loanOfficerIdParameterName, // optional
             "advanceEmiN",
             LoanApiConstants.loanPurposeIdParameterName,
@@ -209,16 +210,11 @@ public final class LoanApplicationCommandFromApiJsonHelper {
         final Integer numberOfRepayments = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(numberOfRepaymentsParameterName, element);
         baseDataValidator.reset().parameter(numberOfRepaymentsParameterName).value(numberOfRepayments).notNull().integerGreaterThanZero();
         
-        if(loanProduct.isAdvanceEmi()){
-        		
-        	final String advanceEmiNParameterName = "advanceEmiN";
-        	final BigDecimal advanceEmiN = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(
-        			advanceEmiNParameterName, element);
-            baseDataValidator.reset().parameter(advanceEmiNParameterName).value(advanceEmiN).notNull()
-                    .zeroOrPositiveAmount();
-            
-        }
-        
+        //Flat Interest Rate Per Period
+        final String flatInterestRatePerPeriodParameterName = "flatInterestRatePerPeriod";
+        final Integer flatInterestRatePerPeriod = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(flatInterestRatePerPeriodParameterName, element);
+        baseDataValidator.reset().parameter(flatInterestRatePerPeriodParameterName).value(flatInterestRatePerPeriod).notNull().integerGreaterThanZero();
+
         final String repaymentEveryParameterName = "repaymentEvery";
         final Integer repaymentEvery = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(repaymentEveryParameterName, element);
         baseDataValidator.reset().parameter(repaymentEveryParameterName).value(repaymentEvery).notNull().integerGreaterThanZero();

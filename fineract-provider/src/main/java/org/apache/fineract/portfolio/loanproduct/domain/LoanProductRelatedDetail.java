@@ -246,6 +246,8 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
         return this.annualNominalInterestRate == null ? null : BigDecimal.valueOf(Double.valueOf(this.annualNominalInterestRate
                 .stripTrailingZeros().toString()));
     }
+    
+    
 
     @Override
     public InterestMethod getInterestMethod() {
