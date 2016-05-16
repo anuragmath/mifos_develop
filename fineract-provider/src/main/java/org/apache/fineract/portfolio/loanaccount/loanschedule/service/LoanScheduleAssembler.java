@@ -228,15 +228,11 @@ public class LoanScheduleAssembler {
             annualNominalInterestRate = this.aprCalculator.calculateFrom(interestRatePeriodFrequencyType, interestRatePerPeriod);
         }
         
-       // BigDecimal nominalInterestRate = BigDecimal.ZERO;
         double nominalInterestRate = 0.0;
         if (flatInterestRatePerPeriod != null) {
         	nominalInterestRate = nominalInterestCalculate(flatInterestRatePerPeriod.doubleValue(), numberOfRepayments);
-        	nominalInterestRate = RateFunction.rate(numberOfRepayments, nominalInterestRate, 100.0, null, null , null)*12*100;
+        	nominalInterestRate = (double)Math.round((RateFunction.rate(numberOfRepayments, nominalInterestRate, 100.0, null, null , null)*12*100)*100d)/100d;
         	interestRatePerPeriod = BigDecimal.valueOf(nominalInterestRate);
-        	
-        	//System.out.println("Effective Interest Rate "+ nominalInterestRate);
-        	
         }
         
 
