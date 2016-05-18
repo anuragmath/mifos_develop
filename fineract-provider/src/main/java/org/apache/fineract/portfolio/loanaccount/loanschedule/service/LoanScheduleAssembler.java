@@ -189,20 +189,7 @@ public class LoanScheduleAssembler {
     private LoanApplicationTerms assembleLoanApplicationTermsFrom(final JsonElement element, final LoanProduct loanProduct) {
 
         final MonetaryCurrency currency = loanProduct.getCurrency();
-        final ApplicationCurrency applicationCurrency = this.applicationCurrencyRepository.findOneWithNotFoundDetection(currency);
-        
-        double[] values = {-45333d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d};
-        
-        double guess = 0.01d;
-        
-        final double irrcalculator = IrrCalculator.irr(values, guess) * 12;
-        
-        
-        System.out.println(Math.round(irrcalculator));
-        
-        
- 
-        
+        final ApplicationCurrency applicationCurrency = this.applicationCurrencyRepository.findOneWithNotFoundDetection(currency);       
         
         // loan terms
         final Integer loanTermFrequency = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("loanTermFrequency", element);

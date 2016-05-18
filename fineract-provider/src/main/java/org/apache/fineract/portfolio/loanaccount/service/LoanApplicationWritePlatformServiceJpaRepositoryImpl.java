@@ -985,12 +985,12 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             // If loan approved amount is not same as loan amount demanded, then
             // during undo, restore the demand amount to principal amount.
 
-            if (changes.containsKey(LoanApiConstants.approvedLoanAmountParameterName)
+            /*if (changes.containsKey(LoanApiConstants.approvedLoanAmountParameterName)
                     || changes.containsKey(LoanApiConstants.disbursementPrincipalParameterName)) {
                 LocalDate recalculateFrom = null;
                 ScheduleGeneratorDTO scheduleGeneratorDTO = this.loanUtilService.buildScheduleGeneratorDTO(loan, recalculateFrom);
                 loan.regenerateRepaymentSchedule(scheduleGeneratorDTO, currentUser);
-            }
+            }*/
 
             saveAndFlushLoanWithDataIntegrityViolationChecks(loan);
 
