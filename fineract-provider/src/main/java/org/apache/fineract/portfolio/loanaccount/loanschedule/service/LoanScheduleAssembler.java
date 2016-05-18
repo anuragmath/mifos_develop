@@ -234,9 +234,6 @@ public class LoanScheduleAssembler {
         	nominalInterestRate = nominalInterestCalculate(flatInterestRatePerPeriod.doubleValue(), numberOfRepayments);
         	nominalInterestRate = RateFunction.rate(numberOfRepayments, nominalInterestRate, 100.0, null, null , null)*12*100;
         	interestRatePerPeriod = BigDecimal.valueOf(nominalInterestRate);
-        	
-        	//System.out.println("Effective Interest Rate "+ nominalInterestRate);
-        	
         }
         
 
