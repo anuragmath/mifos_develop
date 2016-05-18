@@ -42,7 +42,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoanScheduleWritePlatformServiceImpl implements LoanScheduleWritePlatformService {
 
-    private final LoanAccountDomainService loanAccountDomainService;
+    private static final String Long = null;
+	private final LoanAccountDomainService loanAccountDomainService;
     private final LoanAssembler loanAssembler;
     private final LoanScheduleAssembler loanScheduleAssembler;
     private final PlatformSecurityContext context;
@@ -62,6 +63,7 @@ public class LoanScheduleWritePlatformServiceImpl implements LoanScheduleWritePl
     @Override
     public CommandProcessingResult addLoanScheduleVariations(final Long loanId, final JsonCommand command) {
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
+     
         Map<Long, LoanTermVariations> loanTermVariations = new HashMap<>();
         for (LoanTermVariations termVariations : loan.getLoanTermVariations()) {
             loanTermVariations.put(termVariations.getId(), termVariations);
