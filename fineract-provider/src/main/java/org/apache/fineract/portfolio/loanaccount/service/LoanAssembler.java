@@ -233,8 +233,7 @@ public class LoanAssembler {
         final String loanTypeParameterName = "loanType";
         final String loanTypeStr = this.fromApiJsonHelper.extractStringNamed(loanTypeParameterName, element);
         final EnumOptionData loanType = AccountEnumerations.loanType(loanTypeStr);
-       
-
+      
         if (clientId != null) {
             client = this.clientRepository.findOneWithNotFoundDetection(clientId);
             if (client.isNotActive()) { throw new ClientNotActiveException(clientId); }

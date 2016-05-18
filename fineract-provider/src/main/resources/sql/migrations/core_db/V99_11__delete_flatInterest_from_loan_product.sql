@@ -1,0 +1,1 @@
+ALTER TABLE `m_product_loan` DROP COLUMN `flat_interest_rate_per_period`;

@@ -63,4 +63,5 @@ public interface LoanProductMinimumRepaymentScheduleRelatedDetail {
     AmortizationMethod getAmortizationMethod();
     
     Integer getGraceOnDueDate();
+
 }
