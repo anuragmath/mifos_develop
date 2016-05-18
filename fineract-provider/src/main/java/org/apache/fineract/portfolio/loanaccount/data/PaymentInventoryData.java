@@ -1,6 +1,10 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
+import java.util.Collection;
+
 public class PaymentInventoryData {
+	
+		
 		
 		@SuppressWarnings("unused")
 		private Long id;
@@ -11,6 +15,8 @@ public class PaymentInventoryData {
 		@SuppressWarnings("unused")
 		private boolean isDirectDebitActive;
 		
+		private final Long loanId;
+		
 		private Collection<PaymentInventoryPdcData> paymentInventoryPdc;
 		
 		
@@ -18,8 +24,13 @@ public class PaymentInventoryData {
 			final boolean isDirectDebitActive = false;
 			final Collection<PaymentInventoryPdcData> paymentInventoryPdc = null;
 			
-			return new PaymentInventoryData(id, Periods, isDirectDebitActive, paymentInventoryPdc);
 			
+			return new PaymentInventoryData(id, Periods, isDirectDebitActive,null, paymentInventoryPdc);
+			
+		}
+		
+		public PaymentInventoryData create(final Integer periods, final boolean isDirectDebitActive, final Collection<PaymentInventoryPdcData> paymentInventorypdc){
+			return new PaymentInventoryData(null, periods, isDirectDebitActive, null, paymentInventorypdc);
 		}
 		
 		
@@ -33,11 +44,14 @@ public class PaymentInventoryData {
 				
 				final boolean isDirectDebitActive,
 				
+				final Long loanid,
+				
 				final Collection<PaymentInventoryPdcData> paymentInventoryPdc){
 			
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
+			this.loanId = loanid;
 			this.paymentInventoryPdc = paymentInventoryPdc;
 			
 		}
@@ -47,5 +61,3 @@ public class PaymentInventoryData {
 	}
 
 	
-
-}

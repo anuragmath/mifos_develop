@@ -8,9 +8,12 @@ import org.joda.time.LocalDate;
 
 import com.sun.corba.se.spi.presentation.rmi.PresentationDefaults;
 
-public class PaymentInventoryPdcData<EnumOptionData> {
+import java.util.Collection;
 
-		
+import org.apache.fineract.infrastructure.core.data.EnumOptionData;
+
+public class PaymentInventoryPdcData {
+
 		private final Long id;
 
 		private final Integer period;
@@ -44,7 +47,7 @@ public class PaymentInventoryPdcData<EnumOptionData> {
 
 
 		
-		public PaymentInventoryPdcData LoanPdcDataForRepaymentTemplate(final Integer period, final LocalDate date, final Collection<EnumOptionData> presentationStatus){
+		public PaymentInventoryPdcData LoanPdcDataForRepaymentTemplate(final Integer period, final LocalDate date, final Collection<PdcPresentationEnumOption> presentationStatus){
 			final Long id = null;
 			final BigDecimal amount = null;
 			final LocalDate chequeDate = null;
@@ -52,9 +55,8 @@ public class PaymentInventoryPdcData<EnumOptionData> {
 			final String ifscCode = null;
 			final boolean makePresentation = false;
 			
-			return new PaymentInventoryPdcData(id, period, date, amount, chequeDate, id, nameOfBank, ifscCode, presentationStatus, makePresentation);
-					
-			
+			return new PaymentInventoryPdcData(id, period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode,
+					presentationStatus, makePresentation);			
 		}
 		
 		
@@ -75,5 +77,7 @@ public class PaymentInventoryPdcData<EnumOptionData> {
 			this.makePresentation = makePresentation;
 			
 		}
+
 }
+
 

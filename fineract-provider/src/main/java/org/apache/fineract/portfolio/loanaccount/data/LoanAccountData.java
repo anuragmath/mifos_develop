@@ -129,6 +129,7 @@ public class LoanAccountData {
     private final LoanSummaryData summary;
     
     private final BigDecimal irr;
+    
 
     // associations
     private final LoanScheduleData repaymentSchedule;
