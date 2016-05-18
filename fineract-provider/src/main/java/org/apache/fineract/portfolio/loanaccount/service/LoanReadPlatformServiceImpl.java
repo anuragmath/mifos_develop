@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.fineract.accounting.common.AccountingRuleType;
 import org.apache.fineract.infrastructure.codes.data.CodeValueData;
@@ -43,6 +45,7 @@ import org.apache.fineract.infrastructure.core.service.Page;
 import org.apache.fineract.infrastructure.core.service.PaginationHelper;
 import org.apache.fineract.infrastructure.core.service.RoutingDataSource;
 import org.apache.fineract.infrastructure.core.service.SearchParameters;
+import org.apache.fineract.infrastructure.dataqueries.api.DatatablesApiResource;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
 import org.apache.fineract.organisation.monetary.data.CurrencyData;
 import org.apache.fineract.organisation.monetary.domain.ApplicationCurrency;
@@ -114,6 +117,7 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.pentaho.reporting.libraries.formula.lvalues.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -123,6 +127,11 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.sun.jersey.api.uri.UriBuilderImpl;
+import com.sun.jndi.toolkit.url.Uri;
+
+import sun.net.www.content.text.Generic;
 
 @Service
 public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
@@ -383,7 +392,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
     public LoanTransactionData retrieveLoanTransactionTemplate(final Long loanId) {
 
         this.context.authenticatedUser();
-
+        
         // TODO - KW - OPTIMIZE - write simple sql query to fetch back date of
         // possible next transaction date.
         final Loan loan = this.loanRepository.findOne(loanId);
