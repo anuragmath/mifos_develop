@@ -149,6 +149,9 @@ public class LoanProduct extends AbstractPersistable<Long> {
 
     @Column(name = "hold_guarantee_funds")
     private boolean holdGuaranteeFunds;
+    
+    @Column(name = "is_advanceEMI")
+    private boolean isAdvanceEmi;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "loanProduct", optional = true, orphanRemoval = true)
@@ -216,6 +219,7 @@ public class LoanProduct extends AbstractPersistable<Long> {
         BigDecimal maxDifferentialLendingRate = null;
         BigDecimal defaultDifferentialLendingRate = null;
         Boolean isFloatingInterestRateCalculationAllowed = null;
+        Boolean isAdvanceEmi = null;
 
         Integer minimumGapBetweenInstallments = null;
         Integer maximumGapBetweenInstallments = null;
@@ -337,7 +341,7 @@ public class LoanProduct extends AbstractPersistable<Long> {
                 principalThresholdForLastInstallment, accountMovesOutOfNPAOnlyOnArrearsCompletion, canDefineEmiAmount,
                 installmentAmountInMultiplesOf, loanConfigurableAttributes, isLinkedToFloatingInterestRates, floatingRate,
                 interestRateDifferential, minDifferentialLendingRate, maxDifferentialLendingRate, defaultDifferentialLendingRate,
-                isFloatingInterestRateCalculationAllowed, isVariableInstallmentsAllowed, minimumGapBetweenInstallments,
+                isFloatingInterestRateCalculationAllowed,isAdvanceEmi, isVariableInstallmentsAllowed, minimumGapBetweenInstallments,
                 maximumGapBetweenInstallments);
 
     }
@@ -568,7 +572,7 @@ public class LoanProduct extends AbstractPersistable<Long> {
             final Integer installmentAmountInMultiplesOf, final LoanProductConfigurableAttributes loanProductConfigurableAttributes,
             Boolean isLinkedToFloatingInterestRates, FloatingRate floatingRate, BigDecimal interestRateDifferential,
             BigDecimal minDifferentialLendingRate, BigDecimal maxDifferentialLendingRate, BigDecimal defaultDifferentialLendingRate,
-            Boolean isFloatingInterestRateCalculationAllowed, final Boolean isVariableInstallmentsAllowed,
+            Boolean isFloatingInterestRateCalculationAllowed, final Boolean isAdvanceEmi,final Boolean isVariableInstallmentsAllowed,
             final Integer minimumGapBetweenInstallments, final Integer maximumGapBetweenInstallments) {
         this.fund = fund;
         this.transactionProcessingStrategy = transactionProcessingStrategy;
@@ -597,7 +601,7 @@ public class LoanProduct extends AbstractPersistable<Long> {
                     maximumGapBetweenInstallments);
         }
 
-        this.loanProductRelatedDetail = new LoanProductRelatedDetail(currency, defaultPrincipal, defaultNominalInterestRatePerPeriod,
+        this.loanProductRelatedDetail = new LoanProductRelatedDetail(currency, defaultPrincipal, defaultNominalInterestRatePerPeriod,null,
                 interestPeriodFrequencyType, defaultAnnualNominalInterestRate, interestMethod, interestCalculationPeriodMethod,
                 considerPartialPeriodInterest, repayEvery, repaymentFrequencyType, defaultNumberOfInstallments, graceOnPrincipalPayment, recurringMoratoriumOnPrincipalPeriods,
                 graceOnInterestPayment, graceOnInterestCharged, amortizationMethod, inArrearsTolerance, graceOnArrearsAgeing,
@@ -614,6 +618,8 @@ public class LoanProduct extends AbstractPersistable<Long> {
         }
         this.includeInBorrowerCycle = includeInBorrowerCycle;
         this.useBorrowerCycle = useBorrowerCycle;
+        
+        this.isAdvanceEmi = isAdvanceEmi == null ? false : isAdvanceEmi();
 
         if (startDate != null) {
             this.startDate = startDate.toDateTimeAtStartOfDay().toDate();
@@ -710,6 +716,13 @@ public class LoanProduct extends AbstractPersistable<Long> {
             final boolean newValue = command.booleanPrimitiveValueOfParameterNamed(isLinkedToFloatingInterestRates);
             actualChanges.put(isLinkedToFloatingInterestRates, newValue);
             this.isLinkedToFloatingInterestRate = newValue;
+        }
+        
+        final String isAdvanceEmi = "isAdvanceEmi";;
+        if(command.isChangeInBooleanParameterNamed(isAdvanceEmi, this.isAdvanceEmi)){
+        	final boolean newValue = command.booleanPrimitiveValueOfParameterNamed(isAdvanceEmi);
+        	actualChanges.put(isAdvanceEmi, newValue);
+        	this.isAdvanceEmi = newValue;
         }
 
         if (this.isLinkedToFloatingInterestRate) {
@@ -1317,6 +1330,9 @@ public class LoanProduct extends AbstractPersistable<Long> {
 
     public LoanProductFloatingRates getFloatingRates() {
         return this.floatingRates;
+    }
+    public boolean isAdvanceEmi(){
+    	return this.isAdvanceEmi;
     }
 
     public Collection<FloatingRatePeriodData> fetchInterestRates(final FloatingRateDTO floatingRateDTO) {

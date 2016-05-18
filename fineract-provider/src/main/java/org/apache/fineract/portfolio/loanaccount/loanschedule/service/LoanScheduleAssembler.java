@@ -114,11 +114,13 @@ import org.apache.fineract.portfolio.loanproduct.domain.RecalculationFrequencyTy
 import org.apache.fineract.portfolio.loanproduct.exception.LoanProductNotFoundException;
 import org.apache.fineract.portfolio.loanproduct.service.LoanEnumerations;
 import org.apache.fineract.useradministration.domain.AppUser;
+import org.apache.poi.ss.formula.functions.Irr;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -188,7 +190,20 @@ public class LoanScheduleAssembler {
 
         final MonetaryCurrency currency = loanProduct.getCurrency();
         final ApplicationCurrency applicationCurrency = this.applicationCurrencyRepository.findOneWithNotFoundDetection(currency);
-
+        
+        double[] values = {-45333d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d,4667d};
+        
+        double guess = 0.01d;
+        
+        final double irrcalculator = IrrCalculator.irr(values, guess) * 12;
+        
+        
+        System.out.println(Math.round(irrcalculator));
+        
+        
+ 
+        
+        
         // loan terms
         final Integer loanTermFrequency = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("loanTermFrequency", element);
         final Integer loanTermFrequencyType = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("loanTermFrequencyType", element);
@@ -205,7 +220,7 @@ public class LoanScheduleAssembler {
         final Integer amortizationType = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("amortizationType", element);
         final AmortizationMethod amortizationMethod = AmortizationMethod.fromInt(amortizationType);
 
-        // interest terms
+        // interest termss
         final Integer interestType = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("interestType", element);
         final InterestMethod interestMethod = InterestMethod.fromInt(interestType);
 
@@ -223,17 +238,19 @@ public class LoanScheduleAssembler {
         final BigDecimal flatInterestRatePerPeriod = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("flatInterestRatePerPeriod", element);
         final PeriodFrequencyType interestRatePeriodFrequencyType = loanProduct.getInterestPeriodFrequencyType();
 
+        
+        
+        BigDecimal nominalInterestRate = BigDecimal.ZERO;
+        if (flatInterestRatePerPeriod != null) {
+        	final BigDecimal twelveHundred = new BigDecimal(1200); 
+        	nominalInterestRate = nominalInterestCalculate(flatInterestRatePerPeriod, numberOfRepayments);
+        	nominalInterestRate = RateFunction.rate(numberOfRepayments, nominalInterestRate, 100.0, null, null , null).multiply(twelveHundred);
+        	interestRatePerPeriod = nominalInterestRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        
         BigDecimal annualNominalInterestRate = BigDecimal.ZERO;
         if (interestRatePerPeriod != null) {
             annualNominalInterestRate = this.aprCalculator.calculateFrom(interestRatePeriodFrequencyType, interestRatePerPeriod);
-        }
-        
-       // BigDecimal nominalInterestRate = BigDecimal.ZERO;
-        double nominalInterestRate = 0.0;
-        if (flatInterestRatePerPeriod != null) {
-        	nominalInterestRate = nominalInterestCalculate(flatInterestRatePerPeriod.doubleValue(), numberOfRepayments);
-        	nominalInterestRate = RateFunction.rate(numberOfRepayments, nominalInterestRate, 100.0, null, null , null)*12*100;
-        	interestRatePerPeriod = BigDecimal.valueOf(nominalInterestRate);
         }
         
 
@@ -447,7 +464,7 @@ public class LoanScheduleAssembler {
         HolidayDetailDTO detailDTO = new HolidayDetailDTO(isHolidayEnabled, holidays, workingDays);
         return LoanApplicationTerms.assembleFrom(applicationCurrency, loanTermFrequency, loanTermPeriodFrequencyType, numberOfRepayments,
                 repaymentEvery, repaymentPeriodFrequencyType, nthDay, weekDayType, amortizationMethod, interestMethod,
-                interestRatePerPeriod, interestRatePeriodFrequencyType, annualNominalInterestRate, interestCalculationPeriodMethod,
+                interestRatePerPeriod, flatInterestRatePerPeriod,interestRatePeriodFrequencyType, annualNominalInterestRate, interestCalculationPeriodMethod,
                 allowPartialPeriodInterestCalcualtion, principalMoney, expectedDisbursementDate, repaymentsStartingFromDate,
                 calculatedRepaymentsStartingFromDate, graceOnPrincipalPayment, recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment, graceOnInterestCharged,
                 interestChargedFromDate, inArrearsToleranceMoney, loanProduct.isMultiDisburseLoan(), emiAmount, disbursementDatas,
@@ -458,16 +475,16 @@ public class LoanScheduleAssembler {
                 allowCompoundingOnEod);
 }
 
-    private double nominalInterestCalculate(double flatInterestRatePerPeriod, Integer numberOfRepayments) {
-		final float period;
-		final double cal_one;
-		final double cal_two;
-		final double cal;
-		period = (float) (((float)numberOfRepayments)/12.0); 
-		cal_one = flatInterestRatePerPeriod*period;
-		cal_two = cal_one+100;
-		cal = cal_two/numberOfRepayments;
-		//System.out.println("Nominal Interest Calculated"+ cal);
+    public  static BigDecimal nominalInterestCalculate(BigDecimal flatInterestRatePerPeriod, Integer numberOfRepayments) {
+		final Integer period;
+		final BigDecimal cal_one;
+		final BigDecimal cal_two;
+		final BigDecimal hundred = BigDecimal.valueOf(100);
+		final BigDecimal cal;
+		period = numberOfRepayments / 12; 
+		cal_one = flatInterestRatePerPeriod.multiply(new BigDecimal(period));
+		cal_two = cal_one.add(hundred);
+		cal = cal_two.divide(new BigDecimal(numberOfRepayments),5, RoundingMode.HALF_UP);
 		return cal;
 	}
 

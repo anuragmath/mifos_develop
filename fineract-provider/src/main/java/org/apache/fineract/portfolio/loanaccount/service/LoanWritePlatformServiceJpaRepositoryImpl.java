@@ -47,6 +47,8 @@ import org.apache.fineract.infrastructure.jobs.annotation.CronTarget;
 import org.apache.fineract.infrastructure.jobs.exception.JobExecutionException;
 import org.apache.fineract.infrastructure.jobs.service.JobName;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
+import org.apache.fineract.integrationtests.ConcurrencyIntegrationTest.LoanRepaymentExecutor;
+import org.apache.fineract.integrationtests.LoanRepaymentRescheduleAtDisbursementTest;
 import org.apache.fineract.organisation.holiday.domain.Holiday;
 import org.apache.fineract.organisation.holiday.domain.HolidayRepositoryWrapper;
 import org.apache.fineract.organisation.monetary.domain.ApplicationCurrency;
@@ -116,6 +118,7 @@ import org.apache.fineract.portfolio.loanaccount.data.HolidayDetailDTO;
 import org.apache.fineract.portfolio.loanaccount.data.LoanChargeData;
 import org.apache.fineract.portfolio.loanaccount.data.LoanChargePaidByData;
 import org.apache.fineract.portfolio.loanaccount.data.LoanInstallmentChargeData;
+import org.apache.fineract.portfolio.loanaccount.data.RepaymentScheduleRelatedLoanData;
 import org.apache.fineract.portfolio.loanaccount.data.ScheduleGeneratorDTO;
 import org.apache.fineract.portfolio.loanaccount.domain.ChangedTransactionDetail;
 import org.apache.fineract.portfolio.loanaccount.domain.DefaultLoanLifecycleStateMachine;
@@ -154,6 +157,7 @@ import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanSchedul
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModelPeriod;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ScheduledDateGenerator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.service.LoanScheduleHistoryWritePlatformService;
+import org.apache.fineract.portfolio.loanaccount.rescheduleloan.domain.LoanRescheduleModelRepaymentPeriod;
 import org.apache.fineract.portfolio.loanaccount.rescheduleloan.domain.LoanRescheduleRequest;
 import org.apache.fineract.portfolio.loanaccount.serialization.LoanApplicationCommandFromApiJsonHelper;
 import org.apache.fineract.portfolio.loanaccount.serialization.LoanEventApiJsonValidator;
@@ -306,6 +310,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
         checkClientOrGroupActive(loan);
+        
+        
+        
 
         final LocalDate nextPossibleRepaymentDate = loan.getNextPossibleRepaymentDateForRescheduling();
         final Date rescheduledRepaymentDate = command.DateValueOfParameterNamed("adjustRepaymentDate");
@@ -348,6 +355,8 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             Money disburseAmount = loan.adjustDisburseAmount(command, actualDisbursementDate);
             boolean recalculateSchedule = amountBeforeAdjust.isNotEqualTo(loan.getPrincpal());
             final String txnExternalId = command.stringValueOfParameterNamedAllowingNull("externalId");
+            
+            
             if (isAccountTransfer) {
                 disburseLoanToSavings(loan, command, disburseAmount, paymentDetail);
                 existingTransactionIds.addAll(loan.findExistingTransactionIds());
@@ -422,6 +431,26 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         this.loanAccountDomainService.recalculateAccruals(loan);
         this.businessEventNotifierService.notifyBusinessEventWasExecuted(BUSINESS_EVENTS.LOAN_DISBURSAL,
                 constructEntityMap(BUSINESS_ENTITY.LOAN, loan));
+
+        if(loan.loanProduct().isAdvanceEmi() && loan.getAdvanceEmiN().compareTo(0) > 0){
+        	
+        	final LoanRepaymentScheduleInstallment repayment = loan.fetchRepaymentScheduleInstallment(1);
+            final MonetaryCurrency currency = loan.getCurrency();
+            final Money total = repayment.getInterestOutstanding(currency).plus(repayment.getPrincipal(currency));
+            final Money advancePayments = total.multipliedBy(loan.getAdvanceEmiN());
+            final String txnExternalId = command.stringValueOfParameterNamedAllowingNull("externalId");
+            LoanTransaction advanceEmiPayment = LoanTransaction.repayment(loan.getOffice(),
+            		advancePayments, paymentDetail, actualDisbursementDate, txnExternalId, DateUtils.getLocalDateTimeOfTenant(), currentUser);
+            
+           
+           
+            loan.makeRepayment(advanceEmiPayment, defaultLoanLifecycleStateMachine() , existingTransactionIds, existingReversedTransactionIds, false, scheduleGeneratorDTO, currentUser, false);
+				
+			
+            
+                          
+        }
+        
         return new CommandProcessingResultBuilder() //
                 .withCommandId(command.commandId()) //
                 .withEntityId(loan.getId()) //
@@ -2236,6 +2265,8 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         }
         checkForProductMixRestrictions(activeLoansLoanProductIds, productId, loan.loanProduct().productName());
     }
+    
+    
 
     private void checkForProductMixRestrictions(final List<Long> activeLoansLoanProductIds, final Long productId, final String productName) {
 

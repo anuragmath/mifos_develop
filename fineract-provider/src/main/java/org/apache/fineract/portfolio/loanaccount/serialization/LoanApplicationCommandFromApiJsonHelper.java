@@ -83,6 +83,7 @@ public final class LoanApplicationCommandFromApiJsonHelper {
             LoanApiConstants.fundIdParameterName,
             LoanApiConstants.flatInterestRatePerPeriodParameterName, //flat interest rate
             LoanApiConstants.loanOfficerIdParameterName, // optional
+            "advanceEmiN",
             LoanApiConstants.loanPurposeIdParameterName,
             LoanApiConstants.inArrearsToleranceParameterName,
             LoanApiConstants.chargesParameterName,
@@ -590,6 +591,16 @@ public final class LoanApplicationCommandFromApiJsonHelper {
             baseDataValidator.reset().parameter(numberOfRepaymentsParameterName).value(numberOfRepayments).notNull()
                     .integerGreaterThanZero();
         }
+        
+        if(loanProduct.isAdvanceEmi()){
+    		
+        	final String advanceEmiNParameterName = "advanceEmiN";
+        	final BigDecimal advanceEmiN = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(
+        			advanceEmiNParameterName, element);
+            baseDataValidator.reset().parameter(advanceEmiNParameterName).value(advanceEmiN).notNull()
+                    .zeroOrPositiveAmount();
+            
+        }
 
         final String repaymentEveryParameterName = "repaymentEvery";
         if (this.fromApiJsonHelper.parameterExists(repaymentEveryParameterName, element)) {
@@ -768,8 +779,7 @@ public final class LoanApplicationCommandFromApiJsonHelper {
                     repaymentsStartingFromDateParameterName, element);
             baseDataValidator.reset().parameter(repaymentsStartingFromDateParameterName).value(repaymentsStartingFromDate).ignoreIfNull();
             if (!existingLoanApplication.getLoanTermVariations().isEmpty()) {
-                baseDataValidator.reset().parameter(repaymentsStartingFromDateParameterName).value(repaymentsStartingFromDate)
-                        .failWithCode("invalid.due.to.variable.installments");
+                baseDataValidator.reset().failWithCodeNoParameterAddedToErrorCode("cannot.modify.application.due.to.variable.installments");
             }
         }
 
