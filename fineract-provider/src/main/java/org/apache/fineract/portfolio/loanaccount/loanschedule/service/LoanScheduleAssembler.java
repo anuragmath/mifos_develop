@@ -201,9 +201,6 @@ public class LoanScheduleAssembler {
         System.out.println(Math.round(irrcalculator));
         
         
- 
-        
-        
         // loan terms
         final Integer loanTermFrequency = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("loanTermFrequency", element);
         final Integer loanTermFrequencyType = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("loanTermFrequencyType", element);
