@@ -309,6 +309,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
         checkClientOrGroupActive(loan);
+        
+        
+        
 
         final LocalDate nextPossibleRepaymentDate = loan.getNextPossibleRepaymentDateForRescheduling();
         final Date rescheduledRepaymentDate = command.DateValueOfParameterNamed("adjustRepaymentDate");
@@ -323,7 +326,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         // validate actual disbursement date against meeting date
         final CalendarInstance calendarInstance = this.calendarInstanceRepository.findCalendarInstaneByEntityId(loan.getId(),
                 CalendarEntityType.LOANS.getValue());
-       if (loan.isSyncDisbursementWithMeeting()) {
+        if (loan.isSyncDisbursementWithMeeting()) {
             
             this.loanEventApiJsonValidator.validateDisbursementDateWithMeetingDate(actualDisbursementDate, calendarInstance, 
                     scheduleGeneratorDTO.isSkipRepaymentOnFirstDayofMonth(), scheduleGeneratorDTO.getNumberOfdays());
@@ -438,8 +441,6 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             LoanTransaction advanceEmiPayment = LoanTransaction.repayment(loan.getOffice(),
             		advancePayments, paymentDetail, actualDisbursementDate, txnExternalId, DateUtils.getLocalDateTimeOfTenant(), currentUser);
             
-           
-           
             loan.makeRepayment(advanceEmiPayment, defaultLoanLifecycleStateMachine() , existingTransactionIds, existingReversedTransactionIds, false, scheduleGeneratorDTO, currentUser, false);
 				
 			

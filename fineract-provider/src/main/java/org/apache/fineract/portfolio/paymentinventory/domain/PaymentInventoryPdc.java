@@ -13,10 +13,11 @@ import javax.persistence.TemporalType;
 
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.useradministration.domain.AppUser;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Table( name = "m_payment_inventory_pdc")
-public class PaymentInventoryPdc {
+public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	
 	@ManyToOne(optional = false)
     @JoinColumn(name = "loan_id", nullable = false)
@@ -67,10 +68,21 @@ public class PaymentInventoryPdc {
     	this.loan = null;
     	this.date = null;
     	this.presentationStatus = null;
-    	
+    	this.amount = null;
+    	this.chequeDate = null;
+    	this.chequeno = null;
+    	this.appUser = null; 
+    	this.ifscCode = null;
+    	this.period = null;
+    	this.nameOfBank = null;
+    	this.makePresentation = false;
+    	this.createdDate = null;	
     }
 
-	
+	private PaymentInventoryPdc(final Loan loan, final Integer period, final Date date, final BigDecimal amount,
+			final Date chequeDate, final Long chequeno, final String nameOfBank, final String ){
+		
+	}
 	
 	
 
