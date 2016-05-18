@@ -1,6 +1,14 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
-public class PaymentInventoryPdcData {
+import java.math.BigDecimal;
+import java.util.Collection;
+
+import org.apache.fineract.portfolio.loanaccount.domain.PdcPresentationEnumOption;
+import org.joda.time.LocalDate;
+
+import com.sun.corba.se.spi.presentation.rmi.PresentationDefaults;
+
+public class PaymentInventoryPdcData<EnumOptionData> {
 
 		
 		private final Long id;
@@ -19,20 +27,19 @@ public class PaymentInventoryPdcData {
 		
 		private final String ifscCode;
 		
-		private final Collection<EnumOptionData> presentationStatus;
+		final Collection<PdcPresentationEnumOption> presentationStatus;
 		
 		private final boolean makePresentation;
 		
 		
-		public static PaymentInventoryPdcData templateOntop(final PaymentInventoryPdcData paymentInventoryPdcData){
-			
+		public static PaymentInventoryPdcData templateOntop(final PaymentInventoryPdcData paymentInventoryPdcData,
+				final Collection<PdcPresentationEnumOption> presentationStatus){
 			return new PaymentInventoryPdcData(paymentInventoryPdcData.id,paymentInventoryPdcData.period,paymentInventoryPdcData.date
 					,paymentInventoryPdcData.amount,paymentInventoryPdcData.chequeDate,paymentInventoryPdcData.chequeno,
-					paymentInventoryPdcData.nameOfBank,paymentInventoryPdcData.ifscCode,paymentInventoryPdcData.presentationStatus,
+					paymentInventoryPdcData.nameOfBank,paymentInventoryPdcData.ifscCode, presentationStatus,
 					paymentInventoryPdcData.makePresentation);
-			
-			
 		}
+		
 		
 
 
@@ -53,7 +60,7 @@ public class PaymentInventoryPdcData {
 		
 		
 		private PaymentInventoryPdcData(Long id, final Integer period, final LocalDate date, final BigDecimal amount, 
-				final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, final Collection<EnumOptionData> presentationStatus,
+				final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, final Collection<PdcPresentationEnumOption> presentationStatus,
 				final boolean makePresentation){
 			
 			this.id = id;
@@ -68,9 +75,5 @@ public class PaymentInventoryPdcData {
 			this.makePresentation = makePresentation;
 			
 		}
-		
-		
-
-	}
-
 }
+
