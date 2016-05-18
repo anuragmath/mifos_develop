@@ -1,5 +1,11 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Collection;
+
+import org.apache.fineract.infrastructure.core.data.EnumOptionData;
+
 public class PaymentInventoryPdcData {
 
 		
@@ -72,5 +78,3 @@ public class PaymentInventoryPdcData {
 		
 
 	}
-
-}

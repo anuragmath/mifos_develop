@@ -335,6 +335,7 @@ public class Loan extends AbstractPersistable<Long> {
 
     @Embedded
     private LoanSummary summary;
+    
 
     @Transient
     private boolean accountNumberRequiresAutoGeneration = false;
