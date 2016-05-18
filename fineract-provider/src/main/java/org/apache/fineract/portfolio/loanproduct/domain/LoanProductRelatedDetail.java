@@ -41,6 +41,8 @@ import org.apache.fineract.portfolio.common.domain.DaysInYearType;
 import org.apache.fineract.portfolio.common.domain.PeriodFrequencyType;
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.AprCalculator;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.LoanScheduleAssembler;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.RateFunction;
 import org.apache.fineract.portfolio.loanproduct.LoanProductConstants;
 
 /**
@@ -58,7 +60,8 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
 
     @Column(name = "nominal_interest_rate_per_period", scale = 6, precision = 19, nullable = true)
     private BigDecimal nominalInterestRatePerPeriod;
-
+    
+    
     // FIXME - move away form JPA ordinal use for enums using just integer -
     // requires sql patch for existing users of software.
     @Enumerated(EnumType.ORDINAL)
@@ -129,7 +132,7 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
     private boolean isInterestRecalculationEnabled;
 
     public static LoanProductRelatedDetail createFrom(final MonetaryCurrency currency, final BigDecimal principal,
-            final BigDecimal nominalInterestRatePerPeriod, final PeriodFrequencyType interestRatePeriodFrequencyType,
+            final BigDecimal nominalInterestRatePerPeriod,final BigDecimal flatInterestRatePerPeriod, final PeriodFrequencyType interestRatePeriodFrequencyType,
             final BigDecimal nominalAnnualInterestRate, final InterestMethod interestMethod,
             final InterestCalculationPeriodMethod interestCalculationPeriodMethod, final boolean allowPartialPeriodInterestCalcualtion,
             final Integer repaymentEvery, final PeriodFrequencyType repaymentPeriodFrequencyType, final Integer numberOfRepayments,
@@ -137,7 +140,7 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
             final AmortizationMethod amortizationMethod, final BigDecimal inArrearsTolerance, final Integer graceOnArrearsAgeing,
             final Integer daysInMonthType, final Integer daysInYearType, final boolean isInterestRecalculationEnabled) {
 
-        return new LoanProductRelatedDetail(currency, principal, nominalInterestRatePerPeriod, interestRatePeriodFrequencyType,
+        return new LoanProductRelatedDetail(currency, principal, nominalInterestRatePerPeriod,flatInterestRatePerPeriod, interestRatePeriodFrequencyType,
                 nominalAnnualInterestRate, interestMethod, interestCalculationPeriodMethod, allowPartialPeriodInterestCalcualtion,
                 repaymentEvery, repaymentPeriodFrequencyType, numberOfRepayments, graceOnPrincipalPayment, recurringMoratoriumOnPrincipalPeriods, graceOnInterestPayment,
                 graceOnInterestCharged, amortizationMethod, inArrearsTolerance, graceOnArrearsAgeing, daysInMonthType, daysInYearType,
@@ -149,7 +152,7 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
     }
 
     public LoanProductRelatedDetail(final MonetaryCurrency currency, final BigDecimal defaultPrincipal,
-            final BigDecimal defaultNominalInterestRatePerPeriod, final PeriodFrequencyType interestPeriodFrequencyType,
+            final BigDecimal defaultNominalInterestRatePerPeriod,final BigDecimal flatInterestRatePerPeriod, final PeriodFrequencyType interestPeriodFrequencyType,
             final BigDecimal defaultAnnualNominalInterestRate, final InterestMethod interestMethod,
             final InterestCalculationPeriodMethod interestCalculationPeriodMethod, final boolean allowPartialPeriodInterestCalcualtion,
             final Integer repayEvery, final PeriodFrequencyType repaymentFrequencyType, final Integer defaultNumberOfRepayments,
@@ -235,6 +238,7 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
         return this.nominalInterestRatePerPeriod == null ? null : BigDecimal.valueOf(Double.valueOf(this.nominalInterestRatePerPeriod
                 .stripTrailingZeros().toString()));
     }
+    
 
     @Override
     public PeriodFrequencyType getInterestPeriodFrequencyType() {
@@ -394,6 +398,8 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
             this.nominalInterestRatePerPeriod = newValue;
             updateInterestRateDerivedFields(aprCalculator);
         }
+        
+        
 
         final String interestRateFrequencyTypeParamName = "interestRateFrequencyType";
         final int interestPeriodFrequencyType = this.interestPeriodFrequencyType == null ? PeriodFrequencyType.INVALID.getValue()
@@ -551,7 +557,9 @@ public class LoanProductRelatedDetail implements LoanProductMinimumRepaymentSche
     private void updateInterestRateDerivedFields(final AprCalculator aprCalculator) {
         this.annualNominalInterestRate = aprCalculator.calculateFrom(this.interestPeriodFrequencyType, this.nominalInterestRatePerPeriod);
     }
-
+    
+    
+   
     public boolean hasCurrencyCodeOf(final String currencyCode) {
         return this.currency.getCode().equalsIgnoreCase(currencyCode);
     }

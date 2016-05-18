@@ -1,11 +1,13 @@
 package org.apache.fineract.portfolio.loanaccount.loanschedule.service;
 
+import java.math.BigDecimal;
 
 public class RateFunction {
 	
-	final static Double rate(int paymentsPerYear,Double paymentAmount,Double presentValue, Double futureValue, Double dueEndOrBeginning,Double interest){
+	public final static BigDecimal rate(int paymentsPerYear,BigDecimal paymentAmount,Double presentValue, Double futureValue, Double dueEndOrBeginning,Double interest){
 	    //If interest, futureValue, dueEndorBeginning was not set, set now
-					paymentAmount= -paymentAmount;
+					paymentAmount= paymentAmount.negate();
+					double pay = paymentAmount.doubleValue();
 					
 	                if(interest == null)
 	                interest = 0.01;
@@ -23,13 +25,13 @@ public class RateFunction {
 					double y0, y1, x0, x1 = 0, f = 0, i = 0;
 	                Double rate = interest;
 	                if (Math.abs(rate) < FINANCIAL_PRECISION){
-	                     y = presentValue * (1 + paymentsPerYear * rate) + paymentAmount * (1 + rate * dueEndOrBeginning) * paymentsPerYear + futureValue;
+	                     y = presentValue * (1 + paymentsPerYear * rate) + pay * (1 + rate * dueEndOrBeginning) * paymentsPerYear + futureValue;
 	                    }else{
 	                        f = Math.exp(paymentsPerYear * Math.log(1 + rate));
-	                        y = presentValue * f + paymentAmount * (1 / rate + dueEndOrBeginning) * (f - 1) + futureValue;
+	                        y = presentValue * f + pay * (1 / rate + dueEndOrBeginning) * (f - 1) + futureValue;
 	                    }
-	                y0 = presentValue + paymentAmount * paymentsPerYear + futureValue;
-	                y1 = presentValue * f + paymentAmount * (1 / rate + dueEndOrBeginning) * (f - 1) + futureValue;
+	                y0 = presentValue + pay * paymentsPerYear + futureValue;
+	                y1 = presentValue * f + pay * (1 / rate + dueEndOrBeginning) * (f - 1) + futureValue;
 
 	        // find root by Newton secant method
 	                i = x0 = 0.0;
@@ -41,16 +43,17 @@ public class RateFunction {
 	                x1 = rate;
 
 	                if (Math.abs(rate) < FINANCIAL_PRECISION){
-	                y = presentValue * (1 + paymentsPerYear * rate) + paymentAmount * (1 + rate * dueEndOrBeginning) * paymentsPerYear + futureValue;
+	                y = presentValue * (1 + paymentsPerYear * rate) + pay * (1 + rate * dueEndOrBeginning) * paymentsPerYear + futureValue;
 	                }else{
 	                f = Math.exp(paymentsPerYear * Math.log(1 + rate));
-	                y = presentValue * f + paymentAmount * (1 / rate + dueEndOrBeginning) * (f - 1) + futureValue;
+	                y = presentValue * f + pay * (1 / rate + dueEndOrBeginning) * (f - 1) + futureValue;
 	            }
 
 	                y0 = y1;
 	                y1 = y;
 	                ++i;
 	        }
-	        return rate;
+	                
+	        return BigDecimal.valueOf(rate);
 	    }
 }

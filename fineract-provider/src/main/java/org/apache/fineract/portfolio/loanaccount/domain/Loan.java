@@ -117,6 +117,7 @@ import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplica
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleGenerator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModel;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModelPeriod;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IrrCalculator;
 import org.apache.fineract.portfolio.loanproduct.domain.AmortizationMethod;
 import org.apache.fineract.portfolio.loanproduct.domain.InterestCalculationPeriodMethod;
 import org.apache.fineract.portfolio.loanproduct.domain.InterestMethod;
@@ -142,6 +143,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 @Entity
 @Component
@@ -192,6 +194,12 @@ public class Loan extends AbstractPersistable<Long> {
 
     @Embedded
     private LoanProductRelatedDetail loanRepaymentScheduleDetail;
+    
+    @Column(name = "flat_interest_rate_per_period", scale = 6, precision = 19 , nullable = false)
+    private BigDecimal flatInterestRatePerPeriod;
+    
+    @Column(name = "loan_irr", scale = 6, precision = 12, nullable = false)
+    private BigDecimal irr;
 
     @Column(name = "term_frequency", nullable = false)
     private Integer termFrequency;
@@ -457,6 +465,8 @@ public class Loan extends AbstractPersistable<Long> {
 
         this.isFloatingInterestRate = isFloatingInterestRate;
         this.interestRateDifferential = interestRateDifferential;
+        
+
         
         this.advanceEmiN = advanceEmiN;
 
@@ -1898,7 +1908,9 @@ public class Loan extends AbstractPersistable<Long> {
         if (this.loanStatus != null) {
             from = LoanStatus.fromInt(this.loanStatus);
         }
-
+        
+        
+        this.flatInterestRatePerPeriod = loanApplicationTerms.getFlatInterestRatePerPeriod();
         final LoanStatus statusEnum = lifecycleStateMachine.transition(LoanEvent.LOAN_CREATED, from);
         this.loanStatus = statusEnum.getValue();
 
