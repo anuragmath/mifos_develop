@@ -47,13 +47,35 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  private final String ifscCode;
 		
 	  @Column(name = "present_type_of", nullable = false)
-	  private final Collection<EnumOptionData> presentationStatus;
+	  private final Collection<PdcPresentationEnumOption> presentationStatus;
 		
 	  @Column(name = "make_presentation", nullable = false)
 	  private final boolean makePresentation;
 	  
-	  
-	  
-	 
+	  protected PaymentInventoryPdc(){
+	    	this.date = null;
+	    	this.presentationStatus = null;
+	    	this.amount = null;
+	    	this.chequeDate = null;
+	    	this.chequeno = null;
+	    	this.ifscCode = null;
+	    	this.period = null;
+	    	this.nameOfBank = null;
+	    	this.makePresentation = false;
+	  }
 
+		private PaymentInventoryPdc(final PaymentInventory paymentInventory, final Integer period, final Date date, final BigDecimal amount,
+				final Date chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, final Collection<PdcPresentationEnumOption> presentationStatus, final boolean makePresentation){
+			super();
+			this.paymentinventory = paymentInventory;
+			this.amount = amount;
+			this.period = period;
+			this.date = date;
+			this.chequeDate = chequeDate;
+			this.chequeno = chequeno;
+			this.nameOfBank = nameOfBank;
+			this.ifscCode = ifscCode;
+			this.presentationStatus = presentationStatus;
+			this.makePresentation = makePresentation;
+		}
 }
