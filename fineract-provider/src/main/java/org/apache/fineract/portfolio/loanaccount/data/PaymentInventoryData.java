@@ -20,39 +20,33 @@ public class PaymentInventoryData {
 		private Collection<PaymentInventoryPdcData> paymentInventoryPdc;
 		
 		
-		public PaymentInventoryData template(final Long id, final Integer Periods){
-			final boolean isDirectDebitActive = false;
-			final Collection<PaymentInventoryPdcData> paymentInventoryPdc = null;
-			
-			
-			return new PaymentInventoryData(id, Periods, isDirectDebitActive,null, paymentInventoryPdc);
-			
+		public PaymentInventoryData template(final Integer Periods){
+			return new PaymentInventoryData(null, Periods, false,null,null);
 		}
 		
-		public PaymentInventoryData create(final Integer periods, final boolean isDirectDebitActive, final Collection<PaymentInventoryPdcData> paymentInventorypdc){
-			return new PaymentInventoryData(null, periods, isDirectDebitActive, null, paymentInventorypdc);
+		public PaymentInventoryData newInventoryData(final Integer periods, final boolean isDirectDebitActive, final Collection<PaymentInventoryPdcData> paymentInventoryPdcDatas){
+			return new PaymentInventoryData(null, periods, isDirectDebitActive, null,paymentInventoryPdcDatas);
 		}
 		
 		
-		public PaymentInventoryData defaults(final Long id, final Integer periods, boolean isDirectDebitActive, final Collection<PaymentInventoryData> paymentInventoryPdc){
-			return defaults(id, periods, isDirectDebitActive, paymentInventoryPdc);
+		public PaymentInventoryData defaults(final Long id, final Integer periods, boolean isDirectDebitActive){
+			return defaults(id, periods, isDirectDebitActive);
 		}
 		
 		
-		private PaymentInventoryData(final Long id,
+		public PaymentInventoryData(final Long id,
 				final Integer periods,
 				
 				final boolean isDirectDebitActive,
 				
-				final Long loanid,
+				final Long loanid, final Collection<PaymentInventoryPdcData> paymentInventoryPdcDatas){
 				
-				final Collection<PaymentInventoryPdcData> paymentInventoryPdc){
-			
+
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
 			this.loanId = loanid;
-			this.paymentInventoryPdc = paymentInventoryPdc;
+			this.paymentInventoryPdc = paymentInventoryPdcDatas;
 			
 		}
 		

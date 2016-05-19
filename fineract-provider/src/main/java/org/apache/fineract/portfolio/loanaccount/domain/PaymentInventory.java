@@ -13,18 +13,26 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
+import org.apache.fineract.portfolio.charge.domain.Charge;
+import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.joda.time.LocalDate;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.stereotype.Component;
 
 @Entity
-@Component
 @Table(name = "m_payment_inventory")
 public class PaymentInventory extends AbstractPersistable<Long>{
 	
 
-    @ManyToOne(optional = false)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+	@ManyToOne(optional = false)
     @JoinColumn(name = "loan_id", referencedColumnName = "id", nullable = false)
     private Loan loan;
 
@@ -35,12 +43,36 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	@Column(name = "is_directDebitActive", nullable = false)
     private boolean isDirectDebitactive;
 	
-    @LazyCollection(LazyCollectionOption.FALSE)
+	@LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paymentinventory", orphanRemoval = true)
     private Set<PaymentInventoryPdc> paymentInventoryPdc = new HashSet<>();
+    
+	
+	
+	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Set<PaymentInventoryPdc> paymentInventoryPdc) {
+	        final Integer periods = loan.getLoanRepaymentScheduleDetail().getNumberOfRepayments();
+	        final boolean isDirectDebitActive = command.booleanPrimitiveValueOfParameterNamed("isDirectDebitActive");
+	        
+	        return createNewFromJson(loan,command, periods, isDirectDebitActive, paymentInventoryPdc);
+	    }
+	 
+	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Integer periods, final boolean isDirectDebitActive, final Set<PaymentInventoryPdc> paymentInventoryPdc){
+		 return new PaymentInventory(loan, periods, isDirectDebitActive, paymentInventoryPdc);
+	 }
+	 
+	 
 
 	
-	//
+	
+	public PaymentInventory(final Loan loan, final Integer periods, final boolean isDirectDebiActive, final Set<PaymentInventoryPdc> paymentInventoryPdc){
+		this.loan = loan;
+		this.periods = periods;
+		this.isDirectDebitactive = isDirectDebiActive;
+		this.paymentInventoryPdc = paymentInventoryPdc;
+	}
+
+	
+	
 	
 	
 
