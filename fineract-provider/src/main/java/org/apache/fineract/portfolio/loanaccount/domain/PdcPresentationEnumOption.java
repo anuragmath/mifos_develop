@@ -62,7 +62,5 @@ public enum PdcPresentationEnumOption {
 	
 	public boolean isDeclined(){
 		return this.value.equals(PdcPresentationEnumOption.DECLINED.getValue());
-	}	
+	}
 }
-
-

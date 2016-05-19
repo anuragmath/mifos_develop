@@ -14,15 +14,13 @@ import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 
 public class PaymentInventoryPdcData {
 
-		private final Long id;
-
 		private final Integer period;
 		
-		private final LocalDate date;
+		private final org.joda.time.LocalDate date;
 		
 		private final BigDecimal amount;
 		
-		private final LocalDate chequeDate;
+		private final org.joda.time.LocalDate chequeDate;
 		
 		private final Long chequeno;
 		
@@ -30,52 +28,31 @@ public class PaymentInventoryPdcData {
 		
 		private final String ifscCode;
 		
-		final Collection<PdcPresentationEnumOption> presentationStatus;
+		private final int presentationStatus;
 		
 		private final boolean makePresentation;
 		
 		
-		public static PaymentInventoryPdcData templateOntop(final PaymentInventoryPdcData paymentInventoryPdcData,
-				final Collection<PdcPresentationEnumOption> presentationStatus){
-			return new PaymentInventoryPdcData(paymentInventoryPdcData.id,paymentInventoryPdcData.period,paymentInventoryPdcData.date
-					,paymentInventoryPdcData.amount,paymentInventoryPdcData.chequeDate,paymentInventoryPdcData.chequeno,
-					paymentInventoryPdcData.nameOfBank,paymentInventoryPdcData.ifscCode, presentationStatus,
-					paymentInventoryPdcData.makePresentation);
-		}
 		
-		
-
-
-		
-		public PaymentInventoryPdcData LoanPdcDataForRepaymentTemplate(final Integer period, final LocalDate date, final Collection<PdcPresentationEnumOption> presentationStatus){
-			final Long id = null;
-			final BigDecimal amount = null;
-			final LocalDate chequeDate = null;
-			final String nameOfBank = null;
-			final String ifscCode = null;
-			final boolean makePresentation = false;
-			
-			return new PaymentInventoryPdcData(id, period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode,
-					presentationStatus, makePresentation);			
-		}
-		
-		
-		
-		private PaymentInventoryPdcData(Long id, final Integer period, final LocalDate date, final BigDecimal amount, 
-				final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, final Collection<PdcPresentationEnumOption> presentationStatus,
-				final boolean makePresentation){
-			
-			this.id = id;
+		public PaymentInventoryPdcData(final Integer period,final org.joda.time.LocalDate date, final BigDecimal amount, final org.joda.time.LocalDate chequeDate2
+				,final Long chequeno, final String nameOfBank, final String ifscCode, final int presentationStatus, final boolean makePresentation){
 			this.period = period;
 			this.date = date;
 			this.amount = amount;
-			this.chequeDate = chequeDate;
+			this.chequeDate = chequeDate2;
 			this.chequeno = chequeno;
 			this.nameOfBank = nameOfBank;
 			this.ifscCode = ifscCode;
 			this.presentationStatus = presentationStatus;
 			this.makePresentation = makePresentation;
-			
+		}
+
+		public BigDecimal getAmount() {
+			return amount;
+		}
+
+		public Long getChequeno() {
+			return chequeno;
 		}
 
 }

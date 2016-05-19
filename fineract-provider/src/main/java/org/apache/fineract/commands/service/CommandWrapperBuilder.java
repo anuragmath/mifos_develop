@@ -242,6 +242,8 @@ public class CommandWrapperBuilder {
         this.href = "/funds/template";
         return this;
     }
+    
+    
 
     public CommandWrapperBuilder updateFund(final Long fundId) {
         this.actionName = "UPDATE";
@@ -361,6 +363,8 @@ public class CommandWrapperBuilder {
         this.href = "/charges/template";
         return this;
     }
+    
+    
 
     public CommandWrapperBuilder updateCharge(final Long chargeId) {
         this.actionName = "UPDATE";
@@ -626,6 +630,14 @@ public class CommandWrapperBuilder {
         this.loanId = loanId;
         this.href = "/loans/" + loanId + "/charges";
         return this;
+    }
+    
+    public CommandWrapperBuilder createPaymentInventory(final Long loanId){
+    	this.actionName = "CREATE";
+    	this.entityName = "PAYMENTINVENTORY";
+    	this.loanId = loanId;
+    	this.href = "/loans"+ loanId + "/paymentinventory";
+    	return this;
     }
 
     public CommandWrapperBuilder updateLoanCharge(final Long loanId, final Long loanChargeId) {
