@@ -46,7 +46,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  @Column(name = "name_of_bank", nullable = false)
 	  private final String nameOfBank;
 		
-	  @Column(name = "ifs_code", nullable = false)
+	  @Column(name = "ifsc_code", nullable = false)
 	  private final String ifscCode;
 		
 	  @Column(name = "present_type_of", nullable = false)
@@ -68,7 +68,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  }
 
 	  
-	  public PaymentInventoryPdc(final PaymentInventory paymentInventory, final Integer period, final Date date, 
+	  /*public PaymentInventoryPdc(final PaymentInventory paymentInventory, final Integer period, final Date date, 
 			  final BigDecimal amount, final Date chequeDate, final Long chequeno, 
 			  final String nameOfBank, final String ifscCode, final Integer presentationStatus, final boolean makePresentation){
 		  this.period = period;
@@ -80,7 +80,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		  this.nameOfBank = nameOfBank;
 		  this.presentationStatus = presentationStatus;
 		  this.makePresentation = makePresentation;
-	  }
+	  }*/
 
 
 	  public PaymentInventoryPdc(final Integer period, final org.joda.time.LocalDate date, 

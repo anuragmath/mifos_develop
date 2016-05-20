@@ -3,21 +3,16 @@ package org.apache.fineract.portfolio.loanaccount.data;
 import java.util.Collection;
 
 public class PaymentInventoryData {
-	
 		
+		private final Long id;
 		
-		@SuppressWarnings("unused")
-		private Long id;
+		private final Integer periods;
 		
-		@SuppressWarnings("unused")
-		private Integer periods;
-		
-		@SuppressWarnings("unused")
-		private boolean isDirectDebitActive;
+		private final boolean isDirectDebitActive;
 		
 		private final Long loanId;
 		
-		private Collection<PaymentInventoryPdcData> paymentInventoryPdc;
+		private final Collection<PaymentInventoryPdcData> paymentInventoryPdc;
 		
 		
 		public PaymentInventoryData template(final Integer Periods){
@@ -33,25 +28,32 @@ public class PaymentInventoryData {
 			return defaults(id, periods, isDirectDebitActive);
 		}
 		
-		
-		public PaymentInventoryData(final Long id,
-				final Integer periods,
-				
-				final boolean isDirectDebitActive,
-				
-				final Long loanid, final Collection<PaymentInventoryPdcData> paymentInventoryPdcDatas){
-				
-
+		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive,
+				final Long loanid, final Collection<PaymentInventoryPdcData> paymentInventoryPdcData){		
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
 			this.loanId = loanid;
-			this.paymentInventoryPdc = paymentInventoryPdcDatas;
+			this.paymentInventoryPdc = paymentInventoryPdcData;
 			
 		}
 		
-		
+		public PaymentInventoryData(PaymentInventoryData paymentInventory,
+				Collection<PaymentInventoryPdcData> pdcInventoryData) {
+			this.id = paymentInventory.id;
+			this.loanId = paymentInventory.loanId;
+			this.periods = paymentInventory.periods;
+			this.isDirectDebitActive = paymentInventory.isDirectDebitActive;
+			this.paymentInventoryPdc = pdcInventoryData;
+		}
 
-	}
+		public boolean isDirectDebitActive(){
+			return this.isDirectDebitActive;
+		}
+		
+		public Collection<PaymentInventoryPdcData> getPaymentInventoryPdcData(){
+			return this.paymentInventoryPdc;
+		}
+}
 
 	

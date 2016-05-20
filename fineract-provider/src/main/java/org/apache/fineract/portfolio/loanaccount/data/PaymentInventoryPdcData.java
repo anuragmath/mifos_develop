@@ -1,26 +1,18 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 
-import org.apache.fineract.portfolio.loanaccount.domain.PdcPresentationEnumOption;
 import org.joda.time.LocalDate;
-
-import com.sun.corba.se.spi.presentation.rmi.PresentationDefaults;
-
-import java.util.Collection;
-
-import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 
 public class PaymentInventoryPdcData {
 
 		private final Integer period;
 		
-		private final org.joda.time.LocalDate date;
+		private final LocalDate date;
 		
 		private final BigDecimal amount;
 		
-		private final org.joda.time.LocalDate chequeDate;
+		private final LocalDate chequeDate;
 		
 		private final Long chequeno;
 		
@@ -34,12 +26,12 @@ public class PaymentInventoryPdcData {
 		
 		
 		
-		public PaymentInventoryPdcData(final Integer period,final org.joda.time.LocalDate date, final BigDecimal amount, final org.joda.time.LocalDate chequeDate2
-				,final Long chequeno, final String nameOfBank, final String ifscCode, final int presentationStatus, final boolean makePresentation){
+		public PaymentInventoryPdcData(final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
+				final Long chequeno, final String nameOfBank, final String ifscCode, final int presentationStatus, final boolean makePresentation){
 			this.period = period;
 			this.date = date;
 			this.amount = amount;
-			this.chequeDate = chequeDate2;
+			this.chequeDate = chequeDate;
 			this.chequeno = chequeno;
 			this.nameOfBank = nameOfBank;
 			this.ifscCode = ifscCode;
@@ -54,7 +46,6 @@ public class PaymentInventoryPdcData {
 		public Long getChequeno() {
 			return chequeno;
 		}
-
 }
 
 

@@ -24,18 +24,10 @@ import org.springframework.stereotype.Component;
 @Entity
 @Table(name = "m_payment_inventory")
 public class PaymentInventory extends AbstractPersistable<Long>{
-	
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 
 	@ManyToOne(optional = false)
     @JoinColumn(name = "loan_id", referencedColumnName = "id", nullable = false)
     private Loan loan;
-
 	
 	@Column(name = "periods", nullable = false)
 	private Integer periods;
@@ -48,7 +40,6 @@ public class PaymentInventory extends AbstractPersistable<Long>{
     private Set<PaymentInventoryPdc> paymentInventoryPdc = new HashSet<>();
     
 	
-	
 	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Set<PaymentInventoryPdc> paymentInventoryPdc) {
 	        final Integer periods = loan.getLoanRepaymentScheduleDetail().getNumberOfRepayments();
 	        final boolean isDirectDebitActive = command.booleanPrimitiveValueOfParameterNamed("isDirectDebitActive");
@@ -59,10 +50,6 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Integer periods, final boolean isDirectDebitActive, final Set<PaymentInventoryPdc> paymentInventoryPdc){
 		 return new PaymentInventory(loan, periods, isDirectDebitActive, paymentInventoryPdc);
 	 }
-	 
-	 
-
-	
 	
 	public PaymentInventory(final Loan loan, final Integer periods, final boolean isDirectDebiActive, final Set<PaymentInventoryPdc> paymentInventoryPdc){
 		this.loan = loan;
@@ -70,10 +57,4 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		this.isDirectDebitactive = isDirectDebiActive;
 		this.paymentInventoryPdc = paymentInventoryPdc;
 	}
-
-	
-	
-	
-	
-
 }
