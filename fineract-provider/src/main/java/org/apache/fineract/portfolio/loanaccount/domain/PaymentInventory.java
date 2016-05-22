@@ -1,6 +1,5 @@
 package org.apache.fineract.portfolio.loanaccount.domain;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,13 +12,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
-import org.apache.fineract.portfolio.charge.domain.Charge;
-import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.joda.time.LocalDate;
 import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.springframework.stereotype.Component;
+
 
 @Entity
 @Table(name = "m_payment_inventory")

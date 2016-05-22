@@ -17,11 +17,12 @@ import javax.persistence.TemporalType;
 import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-@SuppressWarnings("serial")
+
 @Entity
 @Table(name = "m_payment_inventory_pdc")
 public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	
+
 	 @ManyToOne(optional = false)
 	 @JoinColumn(name = "payment_inventory_id", referencedColumnName = "id", nullable = false)
 	 private PaymentInventory paymentinventory;

@@ -6,7 +6,7 @@ import org.apache.fineract.commands.annotation.CommandType;
 import org.apache.fineract.commands.handler.NewCommandSourceHandler;
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
-import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryWritePlatformService;
+import org.apache.fineract.portfolio.loanaccount.service.LoanWritePlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @CommandType(entity = "PAYMENTINVENTORY", action = "CREATE")
 public class AddPaymentInventoryCommandHandler  implements NewCommandSourceHandler{
 	
-	private final PaymentInventoryWritePlatformService writePlatformService;
+	private final LoanWritePlatformService writePlatformService;
 	
 	@Autowired
-	public AddPaymentInventoryCommandHandler(final PaymentInventoryWritePlatformService writePlatformService){
+	public AddPaymentInventoryCommandHandler(final LoanWritePlatformService writePlatformService){
 		this.writePlatformService = writePlatformService;
 		
 	}

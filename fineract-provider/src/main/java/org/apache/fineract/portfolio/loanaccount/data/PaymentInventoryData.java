@@ -47,7 +47,10 @@ public class PaymentInventoryData {
 			this.paymentInventoryPdc = pdcInventoryData;
 		}
 
-		public boolean isDirectDebitActive(){
+		public Long getId(){
+			return this.id;
+		}
+		public boolean getIsDirectDebitActive(){
 			return this.isDirectDebitActive;
 		}
 		

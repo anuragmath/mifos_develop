@@ -38,6 +38,42 @@ public class PaymentInventoryPdcData {
 			this.presentationStatus = presentationStatus;
 			this.makePresentation = makePresentation;
 		}
+		
+
+		public Integer getPeriod() {
+			return period;
+		}
+
+
+		public LocalDate getDate() {
+			return date;
+		}
+
+
+		public LocalDate getChequeDate() {
+			return chequeDate;
+		}
+
+
+		public String getNameOfBank() {
+			return nameOfBank;
+		}
+
+
+		public String getIfscCode() {
+			return ifscCode;
+		}
+
+
+		public int getPresentationStatus() {
+			return presentationStatus;
+		}
+
+
+		public boolean isMakePresentation() {
+			return makePresentation;
+		}
+
 
 		public BigDecimal getAmount() {
 			return amount;

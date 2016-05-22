@@ -1,4 +1,4 @@
-package org.apache.fineract.portfolio.loanaccount.service;
+/*package org.apache.fineract.portfolio.loanaccount.service;
 
 import java.util.Set;
 
@@ -35,8 +35,6 @@ public class PaymentInventoryWritePlatformServiceImpl implements PaymentInventor
 		this.fromJsonHelper = fromJsonHelper;
 		this.paymentInventoryRepository = paymentInventoryRepository;
 		this.loanPaymentInventory = loanPaymentInventory;
-	
-		
 	}
 	
 	@Transactional
@@ -63,3 +61,4 @@ public class PaymentInventoryWritePlatformServiceImpl implements PaymentInventor
 }
 
 	
+*/
