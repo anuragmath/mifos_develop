@@ -34,24 +34,30 @@ public class PaymentInventoryData {
 		}
 		
 		
-		public PaymentInventoryData(final Long id,
-				final Integer periods,
-				
-				final boolean isDirectDebitActive,
-				
-				final Long loanid, final Collection<PaymentInventoryPdcData> paymentInventoryPdcDatas){
-				
+		public PaymentInventoryData(final Long id,final Integer periods, final boolean isDirectDebitActive,
+				final Long loanid, final Collection<PaymentInventoryPdcData> paymentInventoryPdcData){		
 
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
 			this.loanId = loanid;
-			this.paymentInventoryPdc = paymentInventoryPdcDatas;
+			this.paymentInventoryPdc = paymentInventoryPdcData;
 			
 		}
 		
+		public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
+				Collection<PaymentInventoryPdcData> pdcInventoryData) {
+			this.id = paymentInventoryData.id;
+			this.loanId = paymentInventoryData.loanId;
+			this.periods = paymentInventoryData.periods;
+			this.isDirectDebitActive = paymentInventoryData.isDirectDebitActive;
+			this.paymentInventoryPdc = pdcInventoryData;
+		}
 		
+		public Collection<PaymentInventoryPdcData> getPaymentInventoryPdcData(){
+			return this.paymentInventoryPdc;
+		}
 
-	}
+}
 
 	

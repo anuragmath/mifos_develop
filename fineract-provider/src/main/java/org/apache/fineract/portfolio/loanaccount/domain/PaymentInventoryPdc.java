@@ -56,6 +56,18 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  private final boolean makePresentation;
 	  
 	  
+	  public PaymentInventoryPdc(){
+		  this.period = null;
+		  this.amount = null;
+		  this.chequeDate = null;
+		  this.chequeno = null;
+		  this.date = null;
+		  this.ifscCode = null;
+		  this.nameOfBank = null;
+		  this.presentationStatus = null;
+		  this.makePresentation = false;
+	  }
+	  
 	  public PaymentInventoryPdc(final PaymentInventory paymentInventory, final Integer period, final Date date, 
 			  final BigDecimal amount, final Date chequeDate, final Long chequeno, 
 			  final String nameOfBank, final String ifscCode, final Integer presentationStatus, final boolean makePresentation){

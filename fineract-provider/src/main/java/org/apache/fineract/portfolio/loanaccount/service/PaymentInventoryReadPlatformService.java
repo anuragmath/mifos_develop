@@ -7,8 +7,10 @@ import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 
 public interface PaymentInventoryReadPlatformService {
 	
-	PaymentInventoryPdcData retrievePdcPaymentDetails(Long pdcId, Long loanId);
+	Collection<PaymentInventoryPdcData> retrievePdcPaymentDetails(Long pdcId);
 	
 	PaymentInventoryData retrievePaymentDetails(Long id, Long loanId);
+	
+	Collection<PaymentInventoryData> retrievePaymentInventory(Long loanId);
 
 }

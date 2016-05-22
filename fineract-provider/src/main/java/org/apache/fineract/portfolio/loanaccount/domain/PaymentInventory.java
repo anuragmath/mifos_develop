@@ -59,10 +59,6 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Integer periods, final boolean isDirectDebitActive, final Set<PaymentInventoryPdc> paymentInventoryPdc){
 		 return new PaymentInventory(loan, periods, isDirectDebitActive, paymentInventoryPdc);
 	 }
-	 
-	 
-
-	
 	
 	public PaymentInventory(final Loan loan, final Integer periods, final boolean isDirectDebiActive, final Set<PaymentInventoryPdc> paymentInventoryPdc){
 		this.loan = loan;
@@ -70,10 +66,4 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		this.isDirectDebitactive = isDirectDebiActive;
 		this.paymentInventoryPdc = paymentInventoryPdc;
 	}
-
-	
-	
-	
-	
-
 }
