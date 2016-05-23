@@ -3,21 +3,16 @@ package org.apache.fineract.portfolio.loanaccount.data;
 import java.util.Collection;
 
 public class PaymentInventoryData {
-	
 		
+		private final Long id;
 		
-		@SuppressWarnings("unused")
-		private Long id;
+		private final Integer periods;
 		
-		@SuppressWarnings("unused")
-		private Integer periods;
-		
-		@SuppressWarnings("unused")
-		private boolean isDirectDebitActive;
+		private final boolean isDirectDebitActive;
 		
 		private final Long loanId;
 		
-		private Collection<PaymentInventoryPdcData> paymentInventoryPdc;
+		private final Collection<PaymentInventoryPdcData> paymentInventoryPdc;
 		
 		
 		public PaymentInventoryData template(final Integer Periods){
@@ -33,10 +28,8 @@ public class PaymentInventoryData {
 			return defaults(id, periods, isDirectDebitActive);
 		}
 		
-		
-		public PaymentInventoryData(final Long id,final Integer periods, final boolean isDirectDebitActive,
+		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive,
 				final Long loanid, final Collection<PaymentInventoryPdcData> paymentInventoryPdcData){		
-
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
@@ -45,6 +38,7 @@ public class PaymentInventoryData {
 			
 		}
 		
+
 		public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
 				Collection<PaymentInventoryPdcData> pdcInventoryData) {
 			this.id = paymentInventoryData.id;
@@ -52,6 +46,14 @@ public class PaymentInventoryData {
 			this.periods = paymentInventoryData.periods;
 			this.isDirectDebitActive = paymentInventoryData.isDirectDebitActive;
 			this.paymentInventoryPdc = pdcInventoryData;
+		}
+		
+
+		public Long getId(){
+			return this.id;
+		}
+		public boolean getIsDirectDebitActive(){
+			return this.isDirectDebitActive;
 		}
 		
 		public Collection<PaymentInventoryPdcData> getPaymentInventoryPdcData(){

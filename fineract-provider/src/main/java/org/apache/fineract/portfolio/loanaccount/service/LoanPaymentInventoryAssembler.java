@@ -2,6 +2,7 @@ package org.apache.fineract.portfolio.loanaccount.service;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -37,8 +38,12 @@ public class LoanPaymentInventoryAssembler {
     	this.paymentInventoryRepository = paymentInventoryRepository;
     }
     
+    
+    
     public Set<PaymentInventoryPdc> fromParsedJson(final JsonElement element){
+    	
     	final Set<PaymentInventoryPdc> paymentInventory = new HashSet<>();
+ 
     	if(element.isJsonObject()){
     		final JsonObject topLevelJsonElement = element.getAsJsonObject();
     		final String dateFormat = this.fromJsonHelper.extractDateFormatParameter(topLevelJsonElement);
@@ -50,6 +55,9 @@ public class LoanPaymentInventoryAssembler {
             	for (int i = 0; i < array.size(); i++) {
             		final JsonObject paymentInventorys = array.get(i).getAsJsonObject();
             		final Long id = this.fromJsonHelper.extractLongNamed("id", paymentInventorys);
+            
+            		
+  
             		
             		final Integer period = this.fromJsonHelper.extractIntegerNamed("period", paymentInventorys, locale);
             		

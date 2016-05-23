@@ -1,5 +1,4 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership. The ASF licenses this file
@@ -142,6 +141,9 @@ import org.apache.fineract.portfolio.loanaccount.domain.LoanTrancheDisbursementC
 import org.apache.fineract.portfolio.loanaccount.domain.LoanTransaction;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanTransactionRepository;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanTransactionType;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
 import org.apache.fineract.portfolio.loanaccount.exception.ExceedingTrancheCountException;
 import org.apache.fineract.portfolio.loanaccount.exception.InvalidPaidInAdvanceAmountException;
 import org.apache.fineract.portfolio.loanaccount.exception.LoanDisbursalException;
@@ -228,6 +230,10 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
     private final GuarantorDomainService guarantorDomainService;
     private final LoanUtilService loanUtilService;
     private final LoanSummaryWrapper loanSummaryWrapper;
+    private final PaymentInventoryRepository paymentInventory;
+	private final FromJsonHelper fromJsonHelper;
+	private final PaymentInventoryRepository paymentInventoryRepository;
+	private final LoanPaymentInventoryAssembler loanPaymentInventory;
     private final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy;
 
     @Autowired
@@ -256,7 +262,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             final AccountTransferDetailRepository accountTransferDetailRepository,
             final BusinessEventNotifierService businessEventNotifierService, final GuarantorDomainService guarantorDomainService,
             final LoanUtilService loanUtilService, final LoanSummaryWrapper loanSummaryWrapper,
-            final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy) {
+            final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy,
+            final PaymentInventoryRepository paymentInventory, final PaymentInventoryRepository paymentInventoryRepository,
+			final FromJsonHelper fromJsonHelper, final LoanPaymentInventoryAssembler loanPaymentInventory) {
         this.context = context;
         this.loanEventApiJsonValidator = loanEventApiJsonValidator;
         this.loanAssembler = loanAssembler;
@@ -293,6 +301,10 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         this.loanUtilService = loanUtilService;
         this.loanSummaryWrapper = loanSummaryWrapper;
         this.transactionProcessingStrategy = transactionProcessingStrategy;
+        this.paymentInventory = paymentInventory;
+		this.fromJsonHelper = fromJsonHelper;
+		this.paymentInventoryRepository = paymentInventoryRepository;
+		this.loanPaymentInventory = loanPaymentInventory;
     }
 
     private LoanLifecycleStateMachine defaultLoanLifecycleStateMachine() {
@@ -310,6 +322,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
         checkClientOrGroupActive(loan);
+        
+        
+        
 
         final LocalDate nextPossibleRepaymentDate = loan.getNextPossibleRepaymentDateForRescheduling();
         final Date rescheduledRepaymentDate = command.DateValueOfParameterNamed("adjustRepaymentDate");
@@ -324,7 +339,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         // validate actual disbursement date against meeting date
         final CalendarInstance calendarInstance = this.calendarInstanceRepository.findCalendarInstaneByEntityId(loan.getId(),
                 CalendarEntityType.LOANS.getValue());
-       if (loan.isSyncDisbursementWithMeeting()) {
+        if (loan.isSyncDisbursementWithMeeting()) {
             
             this.loanEventApiJsonValidator.validateDisbursementDateWithMeetingDate(actualDisbursementDate, calendarInstance, 
                     scheduleGeneratorDTO.isSkipRepaymentOnFirstDayofMonth(), scheduleGeneratorDTO.getNumberOfdays());
@@ -439,11 +454,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             LoanTransaction advanceEmiPayment = LoanTransaction.repayment(loan.getOffice(),
             		advancePayments, paymentDetail, actualDisbursementDate, txnExternalId, DateUtils.getLocalDateTimeOfTenant(), currentUser);
             
-           
-           
             loan.makeRepayment(advanceEmiPayment, defaultLoanLifecycleStateMachine() , existingTransactionIds, existingReversedTransactionIds, false, scheduleGeneratorDTO, currentUser, false);
-				
-			
             
                           
         }
@@ -474,6 +485,30 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
      *            the disbursed loan
      * @return void
      **/
+	
+	@Transactional
+	@Override
+	public CommandProcessingResult addPaymentInventory(final Long loanId, final JsonCommand command){
+		
+
+		final Loan loan = this.loanAssembler.assembleFrom(loanId);	
+		
+		final JsonElement element = command.parsedJson();
+	
+		final Set<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element);
+		
+		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command, paymentInventoryPdc);
+		
+		this.paymentInventoryRepository.save(paymentInventory); 
+		
+		return new CommandProcessingResultBuilder() //
+	                .withCommandId(command.commandId()) //
+	                .withEntityId(paymentInventory.getId()) //
+	                .withLoanId(loanId) //
+	                .build();
+	}
+	
+	
     private void createStandingInstruction(Loan loan) {
 
         if (loan.shouldCreateStandingInstructionAtDisbursement()) {

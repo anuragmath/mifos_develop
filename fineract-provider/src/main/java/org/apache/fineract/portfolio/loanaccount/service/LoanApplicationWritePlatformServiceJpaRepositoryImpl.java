@@ -92,6 +92,8 @@ import org.apache.fineract.portfolio.loanaccount.exception.LoanNotFoundException
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.AprCalculator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplicationTerms;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModel;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IRRCalculate;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IrrCalculator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.service.LoanScheduleAssembler;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.service.LoanScheduleCalculationPlatformService;
 import org.apache.fineract.portfolio.loanaccount.serialization.LoanApplicationCommandFromApiJsonHelper;
@@ -156,7 +158,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
     private final LoanScheduleAssembler loanScheduleAssembler;
     private final LoanUtilService loanUtilService;
     private final CalendarReadPlatformService calendarReadPlatformService;
-
+    private final IRRCalculate IRRCalculate;
     @Autowired
     public LoanApplicationWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context, final FromJsonHelper fromJsonHelper,
             final LoanApplicationTransitionApiJsonValidator loanApplicationTransitionApiJsonValidator,
@@ -175,7 +177,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final AccountNumberFormatRepositoryWrapper accountNumberFormatRepository,
             final BusinessEventNotifierService businessEventNotifierService, final ConfigurationDomainService configurationDomainService,
             final LoanScheduleAssembler loanScheduleAssembler, final LoanUtilService loanUtilService, 
-            final CalendarReadPlatformService calendarReadPlatformService) {
+            final CalendarReadPlatformService calendarReadPlatformService, final IRRCalculate irrCalculate) {
         this.context = context;
         this.fromJsonHelper = fromJsonHelper;
         this.loanApplicationTransitionApiJsonValidator = loanApplicationTransitionApiJsonValidator;
@@ -206,6 +208,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
         this.loanScheduleAssembler = loanScheduleAssembler;
         this.loanUtilService = loanUtilService;
         this.calendarReadPlatformService = calendarReadPlatformService;
+        this.IRRCalculate = irrCalculate;
     }
 
     private LoanLifecycleStateMachine defaultLoanLifecycleStateMachine() {
@@ -250,7 +253,8 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final Loan newLoanApplication = this.loanAssembler.assembleFrom(command, currentUser);
 
             validateSubmittedOnDate(newLoanApplication);
-
+            final Long loanid = newLoanApplication.getId();
+            
             final LoanProductRelatedDetail productRelatedDetail = newLoanApplication.repaymentScheduleDetail();
 
             if (loanProduct.getLoanProductConfigurableAttributes() != null) {
@@ -325,7 +329,13 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                         savingsAccount, AccountAssociationType.LINKED_ACCOUNT_ASSOCIATION.getValue(), isActive);
                 this.accountAssociationsRepository.save(accountAssociations);
             }
-
+            
+            final double[] values = IRRCalculate.IRRCal(loanid);
+            double guess = 0.01d;      
+            final double irrcalculator = IrrCalculator.irr(values, guess) * 12;
+            System.out.println("IRR Calculated" + irrcalculator);
+            
+            System.out.println(Math.round(irrcalculator));
             return new CommandProcessingResultBuilder() //
                     .withCommandId(command.commandId()) //
                     .withEntityId(newLoanApplication.getId()) //

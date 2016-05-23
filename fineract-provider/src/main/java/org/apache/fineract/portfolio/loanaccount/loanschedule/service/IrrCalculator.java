@@ -2,7 +2,7 @@ package org.apache.fineract.portfolio.loanaccount.loanschedule.service;
 
 
 public class IrrCalculator {
-	
+
 
 	    public static double irr(double[] values, double guess) {
 	        int maxIterationCount = 100;

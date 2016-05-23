@@ -1,11 +1,7 @@
 package org.apache.fineract.portfolio.loanaccount.domain;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -14,20 +10,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.fineract.infrastructure.core.data.EnumOptionData;
+import org.drizzle.jdbc.internal.common.GeneratedIdValueObject;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-@SuppressWarnings("serial")
+
 @Entity
 @Table(name = "m_payment_inventory_pdc")
 public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	
-	 @ManyToOne(optional = false)
-	 @JoinColumn(name = "payment_inventory_id", referencedColumnName = "id", nullable = false)
-	 private PaymentInventory paymentinventory;
-	 
-	 @Column(name = "period", nullable = true)
-	 private Integer period;
+
+	
+	  @Column(name = "period", nullable = true)
+	  private Integer period;
 	 
 	  @Temporal(TemporalType.DATE)
 	  @Column(name = "date")
@@ -46,7 +40,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  @Column(name = "name_of_bank", nullable = false)
 	  private final String nameOfBank;
 		
-	  @Column(name = "ifs_code", nullable = false)
+	  @Column(name = "ifsc_code", nullable = false)
 	  private final String ifscCode;
 		
 	  @Column(name = "present_type_of", nullable = false)
@@ -54,8 +48,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		
 	  @Column(name = "make_presentation", nullable = false)
 	  private final boolean makePresentation;
-	  
-	  
+
 	  public PaymentInventoryPdc(){
 		  this.period = null;
 		  this.amount = null;
@@ -66,20 +59,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		  this.nameOfBank = null;
 		  this.presentationStatus = null;
 		  this.makePresentation = false;
-	  }
-	  
-	  public PaymentInventoryPdc(final PaymentInventory paymentInventory, final Integer period, final Date date, 
-			  final BigDecimal amount, final Date chequeDate, final Long chequeno, 
-			  final String nameOfBank, final String ifscCode, final Integer presentationStatus, final boolean makePresentation){
-		  this.period = period;
-		  this.amount = amount;
-		  this.chequeDate = chequeDate;
-		  this.chequeno = chequeno;
-		  this.date = date;
-		  this.ifscCode = ifscCode;
-		  this.nameOfBank = nameOfBank;
-		  this.presentationStatus = presentationStatus;
-		  this.makePresentation = makePresentation;
+	
 	  }
 
 
@@ -95,6 +75,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		  this.nameOfBank = nameOfBank;
 		  this.presentationStatus = presentationStatus;
 		  this.makePresentation = makePresentation;
+	
 	  }
 
 

@@ -197,9 +197,6 @@ public class Loan extends AbstractPersistable<Long> {
     
     @Column(name = "flat_interest_rate_per_period", scale = 6, precision = 19 , nullable = false)
     private BigDecimal flatInterestRatePerPeriod;
-    
-  //  @Column(name = "loan_irr", scale = 6, precision = 12, nullable = false)
-    //sprivate BigDecimal irr;
 
     @Column(name = "term_frequency", nullable = false)
     private Integer termFrequency;
@@ -624,6 +621,7 @@ public class Loan extends AbstractPersistable<Long> {
 
         this.charges.add(loanCharge);
 
+        
         this.summary = updateSummaryWithTotalFeeChargesDueAtDisbursement(deriveSumTotalOfChargesDueAtDisbursement());
 
         // store Id's of existing loan transactions and existing reversed loan

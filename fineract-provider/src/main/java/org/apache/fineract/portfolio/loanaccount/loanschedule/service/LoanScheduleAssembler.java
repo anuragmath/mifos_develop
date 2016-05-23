@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.fineract.accounting.journalentry.data.LoanDTO;
 import org.apache.fineract.infrastructure.configuration.domain.ConfigurationDomainService;
 import org.apache.fineract.infrastructure.core.data.ApiParameterError;
 import org.apache.fineract.infrastructure.core.data.DataValidatorBuilder;
@@ -98,6 +99,7 @@ import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanSchedul
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleGeneratorFactory;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModel;
 import org.apache.fineract.portfolio.loanaccount.serialization.VariableLoanScheduleFromApiJsonValidator;
+import org.apache.fineract.portfolio.loanaccount.service.LoanAssembler;
 import org.apache.fineract.portfolio.loanaccount.service.LoanChargeAssembler;
 import org.apache.fineract.portfolio.loanaccount.service.LoanUtilService;
 import org.apache.fineract.portfolio.loanproduct.LoanProductConstants;
@@ -189,6 +191,7 @@ public class LoanScheduleAssembler {
     private LoanApplicationTerms assembleLoanApplicationTermsFrom(final JsonElement element, final LoanProduct loanProduct) {
 
         final MonetaryCurrency currency = loanProduct.getCurrency();
+
         final ApplicationCurrency applicationCurrency = this.applicationCurrencyRepository.findOneWithNotFoundDetection(currency);       
         
         // loan terms
@@ -210,7 +213,8 @@ public class LoanScheduleAssembler {
         // interest termss
         final Integer interestType = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("interestType", element);
         final InterestMethod interestMethod = InterestMethod.fromInt(interestType);
-
+        
+        
         final Integer interestCalculationPeriodType = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("interestCalculationPeriodType",
                 element);
         final InterestCalculationPeriodMethod interestCalculationPeriodMethod = InterestCalculationPeriodMethod
@@ -233,7 +237,6 @@ public class LoanScheduleAssembler {
         	nominalInterestRate = nominalInterestCalculate(flatInterestRatePerPeriod, numberOfRepayments);
         	nominalInterestRate = RateFunction.rate(numberOfRepayments, nominalInterestRate, 100.0, null, null , null).multiply(twelveHundred);
         	interestRatePerPeriod = nominalInterestRate.setScale(2, BigDecimal.ROUND_HALF_UP);
-        	
         }
         
         BigDecimal annualNominalInterestRate = BigDecimal.ZERO;

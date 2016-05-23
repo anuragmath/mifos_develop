@@ -102,8 +102,8 @@ public class LoanAccountData {
     private final BigDecimal annualInterestRate;
     private final boolean isFloatingInterestRate;
     private final BigDecimal interestRateDifferential;
-    private final Integer advanceEmiN;
     private final BigDecimal flatInterestRatePerPeriod; // flat Interest rate
+    private final Integer advanceEmiN;
 
     // settings
     private final EnumOptionData amortizationType;

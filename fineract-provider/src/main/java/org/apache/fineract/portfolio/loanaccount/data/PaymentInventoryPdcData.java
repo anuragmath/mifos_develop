@@ -1,22 +1,20 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Collection;
 
-import org.apache.fineract.infrastructure.core.data.EnumOptionData;
+import org.joda.time.LocalDate;
 
 public class PaymentInventoryPdcData {
-
+		
 
 
 		private final Integer period;
 		
-		private final org.joda.time.LocalDate date;
+		private final LocalDate date;
 		
 		private final BigDecimal amount;
 		
-		private final org.joda.time.LocalDate chequeDate;
+		private final LocalDate chequeDate;
 		
 		private final Long chequeno;
 		
@@ -28,18 +26,56 @@ public class PaymentInventoryPdcData {
 		
 		private final boolean makePresentation;
 		
-		public PaymentInventoryPdcData(final Integer period,final org.joda.time.LocalDate date, final BigDecimal amount, final org.joda.time.LocalDate chequeDate2
-				,final Long chequeno, final String nameOfBank, final String ifscCode, final int presentationStatus, final boolean makePresentation){
+		
+		
+		public PaymentInventoryPdcData( final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
+				final Long chequeno, final String nameOfBank, final String ifscCode, final int presentationStatus, final boolean makePresentation){
 			this.period = period;
 			this.date = date;
 			this.amount = amount;
-			this.chequeDate = chequeDate2;
+			this.chequeDate = chequeDate;
 			this.chequeno = chequeno;
 			this.nameOfBank = nameOfBank;
 			this.ifscCode = ifscCode;
 			this.presentationStatus = presentationStatus;
 			this.makePresentation = makePresentation;
 		}
+		
+		
+		public Integer getPeriod() {
+			return period;
+		}
+
+
+		public LocalDate getDate() {
+			return date;
+		}
+
+
+		public LocalDate getChequeDate() {
+			return chequeDate;
+		}
+
+
+		public String getNameOfBank() {
+			return nameOfBank;
+		}
+
+
+		public String getIfscCode() {
+			return ifscCode;
+		}
+
+
+		public int getPresentationStatus() {
+			return presentationStatus;
+		}
+
+
+		public boolean isMakePresentation() {
+			return makePresentation;
+		}
+
 
 		public BigDecimal getAmount() {
 			return amount;
@@ -48,7 +84,6 @@ public class PaymentInventoryPdcData {
 		public Long getChequeno() {
 			return chequeno;
 		}
-		
-		
+}
 
-	}
+
