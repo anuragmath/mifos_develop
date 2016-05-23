@@ -63,6 +63,7 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		this.paymentInventoryPdc = paymentInventoryPdc;
 	}
 	
+
 	public Long getPaymentInventoryId(){
 		return this.getId();
 	}

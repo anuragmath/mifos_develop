@@ -59,6 +59,8 @@ public class LoanPaymentInventoryAssembler {
             		
   
             		
+     
+            		
             		final Integer period = this.fromJsonHelper.extractIntegerNamed("period", paymentInventorys, locale);
             		
             		final LocalDate date = this.fromJsonHelper.extractLocalDateNamed("date", paymentInventorys, dateFormat, locale);

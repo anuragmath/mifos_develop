@@ -17,11 +17,12 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Entity
 @Table(name = "m_payment_inventory_pdc")
 public class PaymentInventoryPdc extends AbstractPersistable<Long>{
-	
-
-	
-	  @Column(name = "period", nullable = true)
-	  private Integer period;
+	 
+	 @JoinColumn(name = "payment_inventory_id", referencedColumnName = "id", nullable = false)
+	 private PaymentInventory paymentinventory;
+	 
+	 @Column(name = "period", nullable = true)
+	 private Integer period;
 	 
 	  @Temporal(TemporalType.DATE)
 	  @Column(name = "date")
@@ -48,18 +49,18 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		
 	  @Column(name = "make_presentation", nullable = false)
 	  private final boolean makePresentation;
-
-	  public PaymentInventoryPdc(){
-		  this.period = null;
-		  this.amount = null;
-		  this.chequeDate = null;
-		  this.chequeno = null;
-		  this.date = null;
-		  this.ifscCode = null;
-		  this.nameOfBank = null;
-		  this.presentationStatus = null;
-		  this.makePresentation = false;
-	
+	  
+	  protected PaymentInventoryPdc(){
+	    	this.date = null;
+	    	this.presentationStatus = null;
+	    	this.amount = null;
+	    	this.chequeDate = null;
+	    	this.chequeno = null;
+	    	this.ifscCode = null;
+	    	this.period = null;
+	    	this.nameOfBank = null;
+	    	this.makePresentation = false;
+	    	this.paymentinventory = null;
 	  }
 
 
