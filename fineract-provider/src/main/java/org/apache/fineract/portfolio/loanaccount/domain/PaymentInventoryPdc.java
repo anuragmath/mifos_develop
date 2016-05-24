@@ -18,9 +18,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Table(name = "m_payment_inventory_pdc")
 public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	 
-	 @JoinColumn(name = "payment_inventory_id", referencedColumnName = "id", nullable = false)
-	 private PaymentInventory paymentinventory;
-	 
 	 @Column(name = "period", nullable = true)
 	 private Integer period;
 	 
@@ -60,7 +57,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	    	this.period = null;
 	    	this.nameOfBank = null;
 	    	this.makePresentation = false;
-	    	this.paymentinventory = null;
+	    	
 	  }
 
 
