@@ -267,7 +267,14 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                     newLoanApplication);
 
             this.loanRepository.save(newLoanApplication);
-
+            
+           double [] values  = this.IRRCalculate.IRRCal(newLoanApplication.getId());
+           
+           double guess = 0.01d;
+           double output = IrrCalculator.irr(values, guess)*12;
+           
+           newLoanApplication.setInterRateOfReturn(new BigDecimal(output));
+            
             if (loanProduct.isInterestRecalculationEnabled()) {
                 this.fromApiJsonDeserializer.validateLoanForInterestRecalculation(newLoanApplication);
                 createAndPersistCalendarInstanceForInterestRecalculation(newLoanApplication);
@@ -330,12 +337,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                 this.accountAssociationsRepository.save(accountAssociations);
             }
             
-            final double[] values = IRRCalculate.IRRCal(loanid);
-            double guess = 0.01d;      
-            final double irrcalculator = IrrCalculator.irr(values, guess) * 12;
-            System.out.println("IRR Calculated" + irrcalculator);
             
-            System.out.println(Math.round(irrcalculator));
             return new CommandProcessingResultBuilder() //
                     .withCommandId(command.commandId()) //
                     .withEntityId(newLoanApplication.getId()) //

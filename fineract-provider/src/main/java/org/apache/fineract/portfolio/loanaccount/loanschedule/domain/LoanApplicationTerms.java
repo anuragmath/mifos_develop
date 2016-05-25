@@ -1308,8 +1308,8 @@ public final class LoanApplicationTerms {
     public Money getPrincipal() {
         return this.principal;
     }
-    public static BigDecimal getFlatInterestRatePerPeriod(){
-    	return flatInterestRatePerPeriod;
+    public static  BigDecimal getFlatInterestRatePerPeriod(){
+    			return flatInterestRatePerPeriod;
     }
 
     public Money getApprovedPrincipal() {

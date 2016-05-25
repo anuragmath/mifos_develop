@@ -1570,5 +1570,4 @@ public class LoanAccountData {
     public boolean isMonthlyRepaymentFrequencyType() {
         return (this.repaymentFrequencyType.getId().intValue() == PeriodFrequencyType.MONTHS.getValue());
     }
-
 }

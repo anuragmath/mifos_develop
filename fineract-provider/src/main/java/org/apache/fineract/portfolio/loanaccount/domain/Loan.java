@@ -117,6 +117,7 @@ import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplica
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleGenerator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModel;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModelPeriod;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IRRCalculate;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IrrCalculator;
 import org.apache.fineract.portfolio.loanproduct.domain.AmortizationMethod;
 import org.apache.fineract.portfolio.loanproduct.domain.InterestCalculationPeriodMethod;
@@ -197,6 +198,9 @@ public class Loan extends AbstractPersistable<Long> {
     
     @Column(name = "flat_interest_rate_per_period", scale = 6, precision = 19 , nullable = false)
     private BigDecimal flatInterestRatePerPeriod;
+    
+    @Column(name = "irr", scale = 6, precision = 19, nullable = false)
+    private BigDecimal irr;
 
     @Column(name = "term_frequency", nullable = false)
     private Integer termFrequency;
@@ -1910,6 +1914,8 @@ public class Loan extends AbstractPersistable<Long> {
         
         
         this.flatInterestRatePerPeriod = loanApplicationTerms.getFlatInterestRatePerPeriod();
+
+       
         final LoanStatus statusEnum = lifecycleStateMachine.transition(LoanEvent.LOAN_CREATED, from);
         this.loanStatus = statusEnum.getValue();
 
@@ -5914,6 +5920,10 @@ public class Loan extends AbstractPersistable<Long> {
 
     public void setInterestRateDifferential(BigDecimal interestRateDifferential) {
         this.interestRateDifferential = interestRateDifferential;
+    }
+    
+    public void setInterRateOfReturn(BigDecimal irr){
+    		this.irr = irr;
     }
 
     public List<LoanTermVariations> getLoanTermVariations() {

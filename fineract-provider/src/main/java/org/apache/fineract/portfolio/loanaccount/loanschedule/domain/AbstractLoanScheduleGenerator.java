@@ -87,6 +87,8 @@ public abstract class AbstractLoanScheduleGenerator implements LoanScheduleGener
             loanEndDate = lastDueDateVariation.getDateValue();
         }
         loanApplicationTerms.updateLoanEndDate(loanEndDate);
+        
+       
 
         // determine the total charges due at time of disbursement
         final BigDecimal chargesDueAtTimeOfDisbursement = deriveTotalChargesDueAtTimeOfDisbursement(loanCharges);
