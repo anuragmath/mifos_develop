@@ -14,8 +14,8 @@ public class PaymentInventoryEnumerations {
 		
 		switch(pdcPresentation){
 			
-		case INVENTORY:
-			option = new EnumOptionData(PdcPresentationEnumOption.INVENTORY.getValue().longValue(), PdcPresentationEnumOption.INVENTORY.getCode(), "Inventory");
+		case UNUSED:
+			option = new EnumOptionData(PdcPresentationEnumOption.UNUSED.getValue().longValue(), PdcPresentationEnumOption.UNUSED.getCode(), "Unused");
 			break;
 		case PRESENTED:
 			option = new EnumOptionData(PdcPresentationEnumOption.PRESENTED.getValue().longValue(), PdcPresentationEnumOption.PRESENTED.getCode(), "Presented");
@@ -25,8 +25,8 @@ public class PaymentInventoryEnumerations {
 			option = new EnumOptionData(PdcPresentationEnumOption.PRESENTED_AND_CLEARED.getValue().longValue(), PdcPresentationEnumOption.PRESENTED_AND_CLEARED.getCode(), "Presented and Cleared");
 			
 			break;
-		case DECLINED:
-			option = new EnumOptionData(PdcPresentationEnumOption.DECLINED.getValue().longValue(), PdcPresentationEnumOption.DECLINED.getCode(), "Declined");
+		case PRESENTED_AND_DECLINED:
+			option = new EnumOptionData(PdcPresentationEnumOption.PRESENTED_AND_DECLINED.getValue().longValue(), PdcPresentationEnumOption.PRESENTED_AND_DECLINED.getCode(), "Presented and Declined");
 			break;
 			
 		default:

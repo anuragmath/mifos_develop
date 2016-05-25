@@ -64,7 +64,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 
 	  public PaymentInventoryPdc(final Integer period, final LocalDate date, final BigDecimal amount, 
 			  final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, 
-			  final PdcPresentationStatus status, final boolean makePresentation){
+			  final PdcPresentationEnumOption status, final boolean makePresentation){
 		  this.period = period;
 		  this.amount = amount;
 		  this.chequeDate = chequeDate.toDate();
@@ -84,7 +84,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 			final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode,
 			final Integer presentationStatus, final boolean makePresentation) {
 		
-		final PdcPresentationStatus status = PdcPresentationStatus.fromInt(presentationStatus);
+		final PdcPresentationEnumOption status = PdcPresentationEnumOption.fromInt(presentationStatus);
 		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, status, makePresentation);
 	}
 }
