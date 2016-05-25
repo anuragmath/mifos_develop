@@ -1,0 +1,1 @@
+ALTER TABLE `m_loan` ADD COLUMN `irr`decimal(19,6) DEFAULT NULL;
