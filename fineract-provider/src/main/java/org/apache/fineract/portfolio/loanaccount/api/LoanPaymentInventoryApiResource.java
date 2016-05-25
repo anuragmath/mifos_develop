@@ -88,7 +88,7 @@ public class LoanPaymentInventoryApiResource {
 		return this.toApiJsonSerializer.serialize(settings, paymentInventoryData, this.RESPONSE_DATA_PARAMETERS);
 		
 	}
-	
+
 	
 	 @POST
 	 @Consumes({ MediaType.APPLICATION_JSON })
