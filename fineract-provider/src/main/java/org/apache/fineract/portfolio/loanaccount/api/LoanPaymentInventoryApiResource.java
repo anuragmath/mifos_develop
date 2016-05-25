@@ -99,11 +99,24 @@ public class LoanPaymentInventoryApiResource {
 		
 	}
 	
+	@GET
+	@Path("template")
+	@Consumes({ MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON})
+	public String retrieveTemplate(@PathParam("loanId") final Long loanId, @Context final UriInfo uriInfo){
+		
+		this.context.authenticatedUser().validateHasReadPermission(this.resourceNameForPermissions);
+		
+		final Collection<>
+		return resourceNameForPermissions;
+		
+	}
+	
 	 @POST
-	  @Consumes({ MediaType.APPLICATION_JSON })
-	    @Produces({ MediaType.APPLICATION_JSON })
-	    public String addPaymentInventory(@PathParam("loanId") final Long loanId, @QueryParam("command") final String commandParam,
-	            final String apiRequestBodyAsJson) {
+	 @Consumes({ MediaType.APPLICATION_JSON })
+	 @Produces({ MediaType.APPLICATION_JSON })
+	 public String addPaymentInventory(@PathParam("loanId") final Long loanId, @QueryParam("command") final String commandParam,
+	        final String apiRequestBodyAsJson) {
 
 	        CommandProcessingResult result = null;
 	            final CommandWrapper commandRequest = new CommandWrapperBuilder().createPaymentInventory(loanId).withJson(apiRequestBodyAsJson)

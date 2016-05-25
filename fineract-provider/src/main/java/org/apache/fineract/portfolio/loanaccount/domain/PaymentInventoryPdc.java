@@ -11,6 +11,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.drizzle.jdbc.internal.common.GeneratedIdValueObject;
+import org.joda.time.LocalDate;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 
@@ -61,9 +62,9 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  }
 
 
-	  public PaymentInventoryPdc(final Integer period, final org.joda.time.LocalDate date, 
-			  final BigDecimal amount, final org.joda.time.LocalDate chequeDate, final Long chequeno, 
-			  final String nameOfBank, final String ifscCode, final Integer presentationStatus, final boolean makePresentation){
+	  public PaymentInventoryPdc(final Integer period, final LocalDate date, final BigDecimal amount, 
+			  final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, 
+			  final PdcPresentationStatus status, final boolean makePresentation){
 		  this.period = period;
 		  this.amount = amount;
 		  this.chequeDate = chequeDate.toDate();
@@ -71,7 +72,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		  this.date = date.toDate();
 		  this.ifscCode = ifscCode;
 		  this.nameOfBank = nameOfBank;
-		  this.presentationStatus = presentationStatus;
+		  this.presentationStatus = status.getValue();
 		  this.makePresentation = makePresentation;
 	
 	  }
@@ -79,10 +80,11 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 
 
 
-	public static PaymentInventoryPdc createNew(final Integer period, final org.joda.time.LocalDate date, final BigDecimal amount,
-			final org.joda.time.LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode,
+	public static PaymentInventoryPdc createNew(final Integer period, final LocalDate date, final BigDecimal amount,
+			final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode,
 			final Integer presentationStatus, final boolean makePresentation) {
-		// TODO Auto-generated method stub
-		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus, makePresentation);
+		
+		final PdcPresentationStatus status = PdcPresentationStatus.fromInt(presentationStatus);
+		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, status, makePresentation);
 	}
 }
