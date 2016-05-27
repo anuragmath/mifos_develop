@@ -44,22 +44,24 @@ public class IRRCalculate {
 			if (loan.isSubmittedAndPendingApproval()){
     				principal = loan.getProposedPrincipal();  	
     			}
-    			else {
+    			else if (!loan.isDisbursed()){
     				principal = loan.getApprovedPrincipal();	
     			}
+    			else
+    				principal = loan.getDisbursedAmount();
 			values[0]=(-(principal.doubleValue()));
 		}
 		else{
 			repayment = loan.fetchRepaymentScheduleInstallment(1);
 			emi = repayment.getTotalPrincipalAndInterest(currency).getAmount();
 			principal = loan.getProposedPrincipal().subtract(emi.multiply(new BigDecimal(loan.getAdvanceEmiN()))); 
-			values[0]=(-(principal.doubleValue()));
+			values[0]=Math.round((-(principal.doubleValue())));
 		}
 		term = loan.getTermFrequency() - repaidterm - loan.getAdvanceEmiN()+1;
         for(int i = 1 ; i < term ; i++){
         		repayment = loan.fetchRepaymentScheduleInstallment(i);
         		emi = repayment.getTotalPrincipalAndInterest(currency).getAmount();
-        		values[i]= (emi.doubleValue());
+        		values[i]= Math.round((emi.doubleValue()));
         	}
 		return values;
 	}

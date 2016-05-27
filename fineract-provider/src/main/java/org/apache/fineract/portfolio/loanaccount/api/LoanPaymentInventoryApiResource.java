@@ -30,11 +30,16 @@ import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 import org.apache.fineract.portfolio.loanaccount.data.RepaymentScheduleRelatedLoanData;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
 import org.apache.fineract.portfolio.loanaccount.service.LoanReadPlatformService;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.LoanScheduleHistoryReadPlatformService;
+import org.apache.fineract.portfolio.loanaccount.service.LoanReadPlatformService;
+import org.apache.fineract.portfolio.loanaccount.service.LoanReadPlatformServiceImpl;
 import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+@SuppressWarnings("unused")
 @Path("/loans/{loanId}/paymentInventory")
 @Component
 @Scope("singleton")
@@ -89,7 +94,7 @@ public class LoanPaymentInventoryApiResource {
 		
 	}
 
-	
+		
 	 @POST
 	 @Consumes({ MediaType.APPLICATION_JSON })
 	 @Produces({ MediaType.APPLICATION_JSON })

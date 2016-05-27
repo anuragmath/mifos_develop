@@ -158,6 +158,8 @@ import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.DefaultSche
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModel;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModelPeriod;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ScheduledDateGenerator;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IRRCalculate;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IrrCalculator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.service.LoanScheduleHistoryWritePlatformService;
 import org.apache.fineract.portfolio.loanaccount.rescheduleloan.domain.LoanRescheduleModelRepaymentPeriod;
 import org.apache.fineract.portfolio.loanaccount.rescheduleloan.domain.LoanRescheduleRequest;
@@ -235,6 +237,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 	private final PaymentInventoryRepository paymentInventoryRepository;
 	private final LoanPaymentInventoryAssembler loanPaymentInventory;
     private final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy;
+    private final IRRCalculate IRRCalculate;
 
     @Autowired
     public LoanWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
@@ -264,7 +267,8 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             final LoanUtilService loanUtilService, final LoanSummaryWrapper loanSummaryWrapper,
             final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy,
             final PaymentInventoryRepository paymentInventory, final PaymentInventoryRepository paymentInventoryRepository,
-			final FromJsonHelper fromJsonHelper, final LoanPaymentInventoryAssembler loanPaymentInventory) {
+			final FromJsonHelper fromJsonHelper, final LoanPaymentInventoryAssembler loanPaymentInventory,
+			final IRRCalculate irrCalculate) {
         this.context = context;
         this.loanEventApiJsonValidator = loanEventApiJsonValidator;
         this.loanAssembler = loanAssembler;
@@ -305,6 +309,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		this.fromJsonHelper = fromJsonHelper;
 		this.paymentInventoryRepository = paymentInventoryRepository;
 		this.loanPaymentInventory = loanPaymentInventory;
+		this.IRRCalculate = irrCalculate;
     }
 
     private LoanLifecycleStateMachine defaultLoanLifecycleStateMachine() {
@@ -407,7 +412,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
                     this.accountTransfersWritePlatformService.updateLoanTransaction(mapEntry.getKey(), mapEntry.getValue());
                 }
             }
-
+            
+            double test = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12;
+            loan.setInterRateOfReturn(test);
             // auto create standing instruction
             createStandingInstruction(loan);
 
@@ -455,6 +462,11 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             		advancePayments, paymentDetail, actualDisbursementDate, txnExternalId, DateUtils.getLocalDateTimeOfTenant(), currentUser);
             
             loan.makeRepayment(advanceEmiPayment, defaultLoanLifecycleStateMachine() , existingTransactionIds, existingReversedTransactionIds, false, scheduleGeneratorDTO, currentUser, false);
+            double irr = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d);
+            double newIrr = irr *12;
+            double roundedIr = Math.round(newIrr *100.0*100.0 ) /100.0;
+            loan.setInterRateOfReturn((roundedIr));
+            
             
                           
         }
@@ -809,6 +821,8 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         this.loanAccountDomainService.makeRepayment(loan, commandProcessingResultBuilder, transactionDate, transactionAmount,
                 paymentDetail, noteText, txnExternalId, isRecoveryRepayment, isAccountTransfer, holidayDetailDto, isHolidayValidationDone);
 
+        loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
+        
         return commandProcessingResultBuilder.withCommandId(command.commandId()) //
                 .withLoanId(loanId) //
                 .with(changes) //

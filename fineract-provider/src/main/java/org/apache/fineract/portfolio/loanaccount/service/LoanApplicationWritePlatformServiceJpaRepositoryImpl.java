@@ -266,14 +266,11 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                     productRelatedDetail.getRepayEvery(), productRelatedDetail.getRepaymentPeriodFrequencyType().getValue(),
                     newLoanApplication);
 
-            this.loanRepository.save(newLoanApplication);
-            
-           double [] values  = this.IRRCalculate.IRRCal(newLoanApplication.getId());
-           
-           double guess = 0.01d;
-           double output = IrrCalculator.irr(values, guess)*12;
-           
-           newLoanApplication.setInterRateOfReturn(new BigDecimal(output));
+           this.loanRepository.save(newLoanApplication);
+           double irr = IrrCalculator.irr(this.IRRCalculate.IRRCal(newLoanApplication.getId()), 0.01d);
+           double newIrr = irr *12;
+           double roundedIr = Math.round(newIrr *100.0*100.0 ) /100.0;
+           newLoanApplication.setInterRateOfReturn((roundedIr));
             
             if (loanProduct.isInterestRecalculationEnabled()) {
                 this.fromApiJsonDeserializer.validateLoanForInterestRecalculation(newLoanApplication);
@@ -968,7 +965,10 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             this.businessEventNotifierService.notifyBusinessEventWasExecuted(BUSINESS_EVENTS.LOAN_APPROVED,
                     constructEntityMap(BUSINESS_ENTITY.LOAN, loan));
         }
-
+        
+        double test = (IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
+        loan.setInterRateOfReturn(test);
+        
         return new CommandProcessingResultBuilder() //
                 .withCommandId(command.commandId()) //
                 .withEntityId(loan.getId()) //

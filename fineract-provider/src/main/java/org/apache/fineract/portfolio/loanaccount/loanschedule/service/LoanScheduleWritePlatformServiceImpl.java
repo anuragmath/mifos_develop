@@ -48,16 +48,18 @@ public class LoanScheduleWritePlatformServiceImpl implements LoanScheduleWritePl
     private final LoanScheduleAssembler loanScheduleAssembler;
     private final PlatformSecurityContext context;
     private final LoanUtilService loanUtilService;
+    private final IRRCalculate IRRCalculate;
 
     @Autowired
     public LoanScheduleWritePlatformServiceImpl(final LoanAccountDomainService loanAccountDomainService,
             final LoanScheduleAssembler loanScheduleAssembler, final LoanAssembler loanAssembler, final PlatformSecurityContext context,
-            final LoanUtilService loanUtilService) {
+            final LoanUtilService loanUtilService, final IRRCalculate irrCalculate) {
         this.loanAccountDomainService = loanAccountDomainService;
         this.loanScheduleAssembler = loanScheduleAssembler;
         this.loanAssembler = loanAssembler;
         this.context = context;
         this.loanUtilService = loanUtilService;
+        this.IRRCalculate = irrCalculate;
     }
 
     @Override
@@ -85,6 +87,8 @@ public class LoanScheduleWritePlatformServiceImpl implements LoanScheduleWritePl
             changes.put("removedVariations", loanTermVariations.keySet());
         }
         changes.put("loanTermVariations", newVariationsData);
+        
+        loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
         return new CommandProcessingResultBuilder() //
                 .withCommandId(command.commandId()) //
                 .withLoanId(loanId) //

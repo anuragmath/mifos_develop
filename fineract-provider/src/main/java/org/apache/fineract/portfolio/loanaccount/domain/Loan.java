@@ -402,7 +402,7 @@ public class Loan extends AbstractPersistable<Long> {
     
     @Column(name = "advance_emi_n", nullable = true)
     private Integer advanceEmiN;
-
+    
     public static Loan newIndividualLoanApplication(final String accountNo, final Client client, final Integer loanType,
             final LoanProduct loanProduct, final Fund fund, final Staff officer, final CodeValue loanPurpose,
             final LoanTransactionProcessingStrategy transactionProcessingStrategy,
@@ -523,7 +523,6 @@ public class Loan extends AbstractPersistable<Long> {
          */
 
         this.proposedPrincipal = this.loanRepaymentScheduleDetail.getPrincipal().getAmount();
-
     }
     
     public Integer getAdvanceEmiN(){
@@ -5389,6 +5388,10 @@ public class Loan extends AbstractPersistable<Long> {
         return interestRecalculatedOn;
     }
 
+    public BigDecimal getIrr(){
+    	return this.irr;
+    }
+    
     private void updateLoanOutstandingBalaces() {
         Money outstanding = Money.zero(getCurrency());
         List<LoanTransaction> loanTransactions = retreiveListOfTransactionsExcludeAccruals();
@@ -5922,8 +5925,9 @@ public class Loan extends AbstractPersistable<Long> {
         this.interestRateDifferential = interestRateDifferential;
     }
     
-    public void setInterRateOfReturn(BigDecimal irr){
-    		this.irr = irr;
+    public void setInterRateOfReturn(double irr){
+    		irr = irr*12;
+    		this.irr = new BigDecimal(irr);
     }
 
     public List<LoanTermVariations> getLoanTermVariations() {
