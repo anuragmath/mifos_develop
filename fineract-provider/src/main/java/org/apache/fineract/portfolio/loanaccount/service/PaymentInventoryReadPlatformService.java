@@ -1,15 +1,16 @@
 package org.apache.fineract.portfolio.loanaccount.service;
 
 import java.util.Collection;
-
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 
 public interface PaymentInventoryReadPlatformService {
 	
 
 	Collection<PaymentInventoryPdcData> retrievePdcPaymentDetails(Long pdcId, boolean b);
 
+	Collection<LoanRepaymentScheduleInstallment> retreiveRepayment(Long loanId);
 	
 	PaymentInventoryData retrievePaymentDetails(Long id, Long loanId);
 	

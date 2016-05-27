@@ -1,6 +1,13 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+
+import org.apache.fineract.organisation.monetary.domain.MonetaryCurrency;
+import org.apache.fineract.portfolio.loanaccount.domain.Loan;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
+import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPlatformService;
+import org.joda.time.LocalDate;
 
 public class PaymentInventoryData {
 		
@@ -14,13 +21,24 @@ public class PaymentInventoryData {
 		
 		private final Collection<PaymentInventoryPdcData> paymentInventoryPdc;
 		
+		//associations
+
+		private final Collection<LoanRepaymentScheduleInstallment> repayment;
+		
 		
 		public PaymentInventoryData template(final Integer Periods){
-			return new PaymentInventoryData(null, Periods, false,null,null);
+			return new PaymentInventoryData(null, Periods, false, null, null, null);
 		}
 		
+		public static PaymentInventoryData onTemplate(final PaymentInventoryData payment,final Collection<LoanRepaymentScheduleInstallment> repayment){
+			return new PaymentInventoryData(payment.id, payment.periods, payment.isDirectDebitActive, payment.paymentInventoryPdc,payment.loanId, repayment);
+		}
+		public static PaymentInventoryData onTemplate(final Collection<LoanRepaymentScheduleInstallment> repayment){
+			return onTemplate(repayment);
+		}
+
 		public PaymentInventoryData newInventoryData(final Integer periods, final boolean isDirectDebitActive, final Collection<PaymentInventoryPdcData> paymentInventoryPdcDatas){
-			return new PaymentInventoryData(null, periods, isDirectDebitActive, null,paymentInventoryPdcDatas);
+			return new PaymentInventoryData(null, periods, isDirectDebitActive, null,paymentInventoryPdcDatas, null);
 		}
 		
 		
@@ -28,13 +46,14 @@ public class PaymentInventoryData {
 			return defaults(id, periods, isDirectDebitActive);
 		}
 		
-		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive,
-				final Long loanid, final Collection<PaymentInventoryPdcData> paymentInventoryPdcData){		
+		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive, final Long loanid, 
+				final Collection<PaymentInventoryPdcData> paymentInventoryPdcData){		
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
 			this.loanId = loanid;
 			this.paymentInventoryPdc = paymentInventoryPdcData;
+			this.repayment = null;
 			
 		}
 		
@@ -46,8 +65,25 @@ public class PaymentInventoryData {
 			this.periods = paymentInventoryData.periods;
 			this.isDirectDebitActive = paymentInventoryData.isDirectDebitActive;
 			this.paymentInventoryPdc = pdcInventoryData;
+			this.repayment = null;
 		}
 		
+
+
+
+
+
+
+		public PaymentInventoryData(Object object, Object object2, Object object3, Object object4, Object object5,
+				final Collection<LoanRepaymentScheduleInstallment> repayment) {
+			this.id = null;
+			this.periods = null;
+			this.isDirectDebitActive = false;
+			this.paymentInventoryPdc = null;
+			this.loanId = null;
+			this.repayment = repayment;
+			
+		}
 
 		public Long getId(){
 			return this.id;
@@ -58,6 +94,10 @@ public class PaymentInventoryData {
 		
 		public Collection<PaymentInventoryPdcData> getPaymentInventoryPdcData(){
 			return this.paymentInventoryPdc;
+		}
+		
+		public Collection<LoanRepaymentScheduleInstallment> geLoanRepaymentScheduleInstallments(){
+			return this.repayment;
 		}
 
 }

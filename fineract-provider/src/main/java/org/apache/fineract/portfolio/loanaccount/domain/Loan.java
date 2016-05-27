@@ -467,7 +467,7 @@ public class Loan extends AbstractPersistable<Long> {
 
         this.isFloatingInterestRate = isFloatingInterestRate;
         this.interestRateDifferential = interestRateDifferential;
-        
+ 
 
         
         this.advanceEmiN = advanceEmiN;

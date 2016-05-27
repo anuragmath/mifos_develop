@@ -5,13 +5,20 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 import org.apache.fineract.infrastructure.core.domain.JdbcSupport;
 import org.apache.fineract.infrastructure.core.service.RoutingDataSource;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
+import org.apache.fineract.organisation.monetary.domain.MonetaryCurrency;
+import org.apache.fineract.organisation.monetary.domain.Money;
 import org.apache.fineract.portfolio.common.service.DropdownReadPlatformService;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
+import org.apache.fineract.portfolio.loanaccount.domain.Loan;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallmentRepository;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,13 +31,17 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 	private final JdbcTemplate jdbcTemplate;
     private final PlatformSecurityContext context;
     private final DropdownReadPlatformService dropdownReadPlatformService;
+    private final LoanAssembler loanAssembler;
     
     @Autowired
     public PaymentInventoryReadPlatformServiceImpl(final PlatformSecurityContext context,
-            final RoutingDataSource dataSource, final DropdownReadPlatformService dropdownReadPlatformService) {
+            final RoutingDataSource dataSource, final DropdownReadPlatformService dropdownReadPlatformService,
+            final LoanAssembler loanAssembler) {
     	this.context = context;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.dropdownReadPlatformService = dropdownReadPlatformService;
+        this.loanAssembler = loanAssembler;
+        
 	}
     
     private static final class PaymentInventoryMapper implements RowMapper<PaymentInventoryData> {
@@ -63,7 +74,41 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 
         return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { id, loanId });
 
-	}	
+	}
+    
+    @Override
+    public Collection<LoanRepaymentScheduleInstallment> retreiveRepayment(final Long loanId){
+    		
+    			final Loan loan = this.loanAssembler.assembleFrom(loanId);
+    			Collection<LoanRepaymentScheduleInstallment> newRepayment = new HashSet<>();
+    			
+    			Collection<LoanRepaymentScheduleInstallment> repaymentSchedule = loan.fetchRepaymentScheduleInstallments();
+    			
+    			for (LoanRepaymentScheduleInstallment repaymentScheduleInstallment: repaymentSchedule){
+    				 
+    				final Integer installmentNumber = repaymentScheduleInstallment.getInstallmentNumber();
+    				
+    				final LocalDate dueDate = repaymentScheduleInstallment.getDueDate();
+    				
+    				final LocalDate fromDate = repaymentScheduleInstallment.getFromDate();
+    				
+    				final MonetaryCurrency currency = loan.getCurrency();
+    				
+    				final BigDecimal principal = repaymentScheduleInstallment.getPrincipal(currency).getAmount();
+    				
+    				final BigDecimal interest = repaymentScheduleInstallment.getInterestOutstanding(currency).getAmount();
+    				
+    				final LoanRepaymentScheduleInstallment installmentperiod = new LoanRepaymentScheduleInstallment(loan, 
+    						installmentNumber, fromDate, dueDate, principal, interest, BigDecimal.ZERO, BigDecimal.ZERO, false, null);
+    					
+    					newRepayment.add(installmentperiod);
+    					
+    				
+    			}
+    			
+    			return newRepayment;
+    			
+    }
     
     @Override
     public Collection<PaymentInventoryData> retrievePaymentInventory(final Long loanId){

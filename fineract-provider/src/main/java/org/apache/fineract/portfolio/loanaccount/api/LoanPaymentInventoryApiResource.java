@@ -1,6 +1,5 @@
 package org.apache.fineract.portfolio.loanaccount.api;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +15,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.fineract.commands.domain.CommandWrapper;
 import org.apache.fineract.commands.service.CommandWrapperBuilder;
 import org.apache.fineract.commands.service.PortfolioCommandSourceWritePlatformService;
@@ -25,10 +23,10 @@ import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
 import org.apache.fineract.infrastructure.core.serialization.ApiRequestJsonSerializationSettings;
 import org.apache.fineract.infrastructure.core.serialization.DefaultToApiJsonSerializer;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
-import org.apache.fineract.portfolio.loanaccount.data.LoanChargeData;
-import org.apache.fineract.portfolio.loanaccount.data.LoanInstallmentChargeData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -60,6 +58,7 @@ public class LoanPaymentInventoryApiResource {
 		this.apiRequestParameterHelper = apiRequestParameterHelper;
 		this.commandsSourceWritePlatformService = commandSourceWritePlatformService;
 		this.paymentInventoryReadPlatformService = paymentInventoryReadPlatformService;
+		
 	}
 	
 	
@@ -97,4 +96,19 @@ public class LoanPaymentInventoryApiResource {
 	            
 	        return this.toApiJsonSerializer.serialize(result);
 	    }
+	 
+	 @GET
+	 @Path("template")
+	 @Consumes({ MediaType.APPLICATION_JSON })
+	 @Produces({ MediaType.APPLICATION_JSON })
+	 public String template(@QueryParam("loanId") final Long loanId , @Context final UriInfo uriInfo){
+		 this.context.authenticatedUser().validateHasReadPermission(this.resourceNameForPermissions);
+		 
+		 //Return the Repayment Data in Formated manner with minimum value and the 
+		 final Collection<LoanRepaymentScheduleInstallment> repayment = this.paymentInventoryReadPlatformService.retreiveRepayment(loanId);
+		 PaymentInventoryData paymentInventorytemplates = PaymentInventoryData.onTemplate(repayment);
+		 
+		 final ApiRequestJsonSerializationSettings settings = this.apiRequestParameterHelper.process(uriInfo.getQueryParameters());
+	        return this.toApiJsonSerializer.serialize(settings, paymentInventorytemplates, this.RESPONSE_DATA_PARAMETERS);
+	 }
 }
