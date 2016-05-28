@@ -1,11 +1,16 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
+import java.awt.List;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import org.apache.fineract.infrastructure.codes.data.CodeValueData;
 import org.apache.fineract.organisation.monetary.domain.MonetaryCurrency;
+import org.apache.fineract.portfolio.client.data.ClientAddressData;
+import org.apache.fineract.portfolio.client.data.ClientData;
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
 import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPlatformService;
 import org.joda.time.LocalDate;
 
@@ -21,25 +26,11 @@ public class PaymentInventoryData {
 		
 		private final Collection<PaymentInventoryPdcData> paymentInventoryPdc;
 		
-		//associations
-
-		private final Collection<LoanRepaymentScheduleInstallment> repayment;
+		private final LoanScheduleData repayment;
+		
+		private final PaymentInventoryPdcData options;
 		
 		
-		public PaymentInventoryData template(final Integer Periods){
-			return new PaymentInventoryData(null, Periods, false, null, null, null);
-		}
-		
-		public static PaymentInventoryData onTemplate(final PaymentInventoryData payment,final Collection<LoanRepaymentScheduleInstallment> repayment){
-			return new PaymentInventoryData(payment.id, payment.periods, payment.isDirectDebitActive, payment.paymentInventoryPdc,payment.loanId, repayment);
-		}
-		public static PaymentInventoryData onTemplate(final Collection<LoanRepaymentScheduleInstallment> repayment){
-			return onTemplate(repayment);
-		}
-
-		public PaymentInventoryData newInventoryData(final Integer periods, final boolean isDirectDebitActive, final Collection<PaymentInventoryPdcData> paymentInventoryPdcDatas){
-			return new PaymentInventoryData(null, periods, isDirectDebitActive, null,paymentInventoryPdcDatas, null);
-		}
 		
 		
 		public PaymentInventoryData defaults(final Long id, final Integer periods, boolean isDirectDebitActive){
@@ -47,18 +38,29 @@ public class PaymentInventoryData {
 		}
 		
 		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive, final Long loanid, 
-				final Collection<PaymentInventoryPdcData> paymentInventoryPdcData){		
+				final Collection<PaymentInventoryPdcData> paymentInventoryPdcData,final LoanScheduleData repayment,
+				final PaymentInventoryPdcData options){		
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
 			this.loanId = loanid;
 			this.paymentInventoryPdc = paymentInventoryPdcData;
-			this.repayment = null;
+			this.repayment = repayment;
+			this.options = options;
 			
 		}
 		
+		public static PaymentInventoryData template(final Integer period, final LoanScheduleData repayment, final PaymentInventoryPdcData options){
+			return new PaymentInventoryData(null, null, false, null, null,repayment, options);
+		}
+		
+		public static PaymentInventoryData template(final LoanScheduleData repayment, final PaymentInventoryPdcData options){
+			return template(1,repayment, options);
+		}
 
-		public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
+		
+
+	public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
 				Collection<PaymentInventoryPdcData> pdcInventoryData) {
 			this.id = paymentInventoryData.id;
 			this.loanId = paymentInventoryData.loanId;
@@ -66,25 +68,12 @@ public class PaymentInventoryData {
 			this.isDirectDebitActive = paymentInventoryData.isDirectDebitActive;
 			this.paymentInventoryPdc = pdcInventoryData;
 			this.repayment = null;
+			this.options = null;
+		
 		}
 		
-
-
-
-
-
-
-		public PaymentInventoryData(Object object, Object object2, Object object3, Object object4, Object object5,
-				final Collection<LoanRepaymentScheduleInstallment> repayment) {
-			this.id = null;
-			this.periods = null;
-			this.isDirectDebitActive = false;
-			this.paymentInventoryPdc = null;
-			this.loanId = null;
-			this.repayment = repayment;
-			
-		}
-
+		
+		
 		public Long getId(){
 			return this.id;
 		}
@@ -96,9 +85,6 @@ public class PaymentInventoryData {
 			return this.paymentInventoryPdc;
 		}
 		
-		public Collection<LoanRepaymentScheduleInstallment> geLoanRepaymentScheduleInstallments(){
-			return this.repayment;
-		}
 
 }
 

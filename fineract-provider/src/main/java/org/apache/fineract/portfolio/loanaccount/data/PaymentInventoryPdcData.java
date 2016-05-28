@@ -1,7 +1,9 @@
 package org.apache.fineract.portfolio.loanaccount.data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.joda.time.LocalDate;
 
 public class PaymentInventoryPdcData {
@@ -22,14 +24,30 @@ public class PaymentInventoryPdcData {
 		
 		private final String ifscCode;
 		
-		private final int presentationStatus;
+		private final EnumOptionData presentationStatus;
 		
 		private final boolean makePresentation;
 		
+		private final List<EnumOptionData> presentationType;
 		
+		public static PaymentInventoryPdcData template(final List<EnumOptionData> presentationType){
+			
+			return new PaymentInventoryPdcData(null, null, null, null, null, null, null, null, false, presentationType);
+			
+		}
 		
-		public PaymentInventoryPdcData( final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
-				final Long chequeno, final String nameOfBank, final String ifscCode, final int presentationStatus, final boolean makePresentation){
+		public static PaymentInventoryPdcData instance(final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
+				final Long chequeno, final String nameOfBank, final String ifscCode, final EnumOptionData presentationStatus, 
+				final boolean makePresentation){
+			
+			final List<EnumOptionData> presentationType = null;
+			
+			return new PaymentInventoryPdcData(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus, makePresentation, presentationType);
+			
+		}
+
+		private  PaymentInventoryPdcData( final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
+				final Long chequeno, final String nameOfBank, final String ifscCode, final EnumOptionData presentationStatus, final boolean makePresentation,final List<EnumOptionData> presentationType ){
 			this.period = period;
 			this.date = date;
 			this.amount = amount;
@@ -39,12 +57,15 @@ public class PaymentInventoryPdcData {
 			this.ifscCode = ifscCode;
 			this.presentationStatus = presentationStatus;
 			this.makePresentation = makePresentation;
+			this.presentationType = presentationType;
 		}
 		
 		
 		public Integer getPeriod() {
 			return period;
 		}
+		
+		
 
 
 		public LocalDate getDate() {
@@ -67,7 +88,7 @@ public class PaymentInventoryPdcData {
 		}
 
 
-		public int getPresentationStatus() {
+		public EnumOptionData getPresentationStatus() {
 			return presentationStatus;
 		}
 

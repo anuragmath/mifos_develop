@@ -1,5 +1,6 @@
 package org.apache.fineract.portfolio.loanaccount.api;
 
+import java.awt.List;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,16 +21,24 @@ import org.apache.fineract.commands.service.CommandWrapperBuilder;
 import org.apache.fineract.commands.service.PortfolioCommandSourceWritePlatformService;
 import org.apache.fineract.infrastructure.core.api.ApiRequestParameterHelper;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
+import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.infrastructure.core.serialization.ApiRequestJsonSerializationSettings;
 import org.apache.fineract.infrastructure.core.serialization.DefaultToApiJsonSerializer;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
+import org.apache.fineract.portfolio.loanaccount.data.DisbursementData;
+import org.apache.fineract.portfolio.loanaccount.data.LoanAccountData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
+import org.apache.fineract.portfolio.loanaccount.data.RepaymentScheduleRelatedLoanData;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
+import org.apache.fineract.portfolio.loanaccount.service.LoanReadPlatformService;
 import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPlatformService;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 
 @Path("/loans/{loanId}/paymentInventory")
@@ -45,19 +54,26 @@ public class LoanPaymentInventoryApiResource {
 	private final PlatformSecurityContext context;
 	private final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService;
 	private final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer;
+	private final DefaultToApiJsonSerializer<LoanScheduleData> toLoanSchedule;
 	private final ApiRequestParameterHelper apiRequestParameterHelper;
 	private final PortfolioCommandSourceWritePlatformService commandsSourceWritePlatformService;
+	private final LoanReadPlatformService loanReadPlatformService;
+	private final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc;
 	
 	@Autowired
 	public LoanPaymentInventoryApiResource(final PlatformSecurityContext context, final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService,
-			final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer,
+			final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer,final DefaultToApiJsonSerializer<LoanScheduleData> toLoanSchedule,
 			final ApiRequestParameterHelper apiRequestParameterHelper,
-			final PortfolioCommandSourceWritePlatformService commandSourceWritePlatformService){
+			final PortfolioCommandSourceWritePlatformService commandSourceWritePlatformService,final LoanReadPlatformService loanReadPlatformService,
+			final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc){
 		this.context = context;
 		this.toApiJsonSerializer = toApiJsonSerializer;
 		this.apiRequestParameterHelper = apiRequestParameterHelper;
 		this.commandsSourceWritePlatformService = commandSourceWritePlatformService;
 		this.paymentInventoryReadPlatformService = paymentInventoryReadPlatformService;
+		this.loanReadPlatformService = loanReadPlatformService;
+		this.toLoanSchedule = toLoanSchedule;
+		this.pdc = pdc;
 		
 	}
 	
@@ -104,11 +120,20 @@ public class LoanPaymentInventoryApiResource {
 	 public String template(@QueryParam("loanId") final Long loanId , @Context final UriInfo uriInfo){
 		 this.context.authenticatedUser().validateHasReadPermission(this.resourceNameForPermissions);
 		 
-		 //Return the Repayment Data in Formated manner with minimum value and the 
-		 final Collection<LoanRepaymentScheduleInstallment> repayment = this.paymentInventoryReadPlatformService.retreiveRepayment(loanId);
-		 PaymentInventoryData paymentInventorytemplates = PaymentInventoryData.onTemplate(repayment);
+		 LoanAccountData loanBasicDetails = this.loanReadPlatformService.retrieveOne(loanId);
+		 final RepaymentScheduleRelatedLoanData repaymentScheduleRelatedData = loanBasicDetails.repaymentScheduleRelatedData();
+		 Collection<DisbursementData> disbursementData = null;
 		 
+		 //Return the Repayment Data in Formated manner with minimum value and th
+		 final LoanScheduleData repayment = this.loanReadPlatformService.retrieveRepaymentSchedule(loanId, repaymentScheduleRelatedData, disbursementData, false, loanBasicDetails.getTotalPaidFeeCharges());
+		 
+		 //Return the enumoptionData
+		 
+		 final PaymentInventoryPdcData options = this.paymentInventoryReadPlatformService.retrieveEnumOptions();
+		 
+		 final PaymentInventoryData result = PaymentInventoryData.template(repayment, options);
 		 final ApiRequestJsonSerializationSettings settings = this.apiRequestParameterHelper.process(uriInfo.getQueryParameters());
-	        return this.toApiJsonSerializer.serialize(settings, paymentInventorytemplates, this.RESPONSE_DATA_PARAMETERS);
+			return this.toApiJsonSerializer.serialize(settings, result, this.RESPONSE_DATA_PARAMETERS);
+		
 	 }
 }
