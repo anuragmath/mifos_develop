@@ -11,8 +11,7 @@ import org.joda.time.LocalDate;
 
 public class PaymentInventoryPdcData {
 		
-
-
+		
 		private final Integer period;
 		
 		private final LocalDate date;

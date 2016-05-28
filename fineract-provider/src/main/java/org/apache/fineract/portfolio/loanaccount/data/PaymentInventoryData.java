@@ -25,13 +25,12 @@ public class PaymentInventoryData {
 		private final Long loanId;
 		
 		private final Collection<PaymentInventoryPdcData> paymentInventoryPdc;
-		
+	
 		private final LoanScheduleData repayment;
 		
 		private final PaymentInventoryPdcData options;
 		
-		
-		
+
 		
 		public PaymentInventoryData defaults(final Long id, final Integer periods, boolean isDirectDebitActive){
 			return defaults(id, periods, isDirectDebitActive);
@@ -47,7 +46,6 @@ public class PaymentInventoryData {
 			this.paymentInventoryPdc = paymentInventoryPdcData;
 			this.repayment = repayment;
 			this.options = options;
-			
 		}
 		
 		public static PaymentInventoryData template(final Integer period, final LoanScheduleData repayment, final PaymentInventoryPdcData options){
@@ -73,7 +71,6 @@ public class PaymentInventoryData {
 		}
 		
 		
-		
 		public Long getId(){
 			return this.id;
 		}
@@ -84,8 +81,6 @@ public class PaymentInventoryData {
 		public Collection<PaymentInventoryPdcData> getPaymentInventoryPdcData(){
 			return this.paymentInventoryPdc;
 		}
-		
-
 }
 
 	

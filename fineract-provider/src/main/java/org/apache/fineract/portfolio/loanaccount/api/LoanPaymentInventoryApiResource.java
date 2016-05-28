@@ -1,5 +1,7 @@
 package org.apache.fineract.portfolio.loanaccount.api;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,16 +48,18 @@ import org.springframework.stereotype.Component;
 public class LoanPaymentInventoryApiResource {
 	
 	private final Set<String> RESPONSE_DATA_PARAMETERS = new HashSet<>(java.util.Arrays.asList("isDirectDebitActive","id", "paymentInventoryPdc"));
-
 	
 	private final String resourceNameForPermissions = "LOAN";
 	
 	private final PlatformSecurityContext context;
 	private final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService;
 	private final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer;
+	private final DefaultToApiJsonSerializer<LoanScheduleData> toLoanSchedule;
 	private final ApiRequestParameterHelper apiRequestParameterHelper;
 	private final PortfolioCommandSourceWritePlatformService commandsSourceWritePlatformService;
 	private final LoanReadPlatformService loanReadPlatformService;
+	private final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc;
+	
 	@Autowired
 	public LoanPaymentInventoryApiResource(final PlatformSecurityContext context, final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService,
 			final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer,final DefaultToApiJsonSerializer<LoanScheduleData> toLoanSchedule,
@@ -63,14 +67,16 @@ public class LoanPaymentInventoryApiResource {
 			final PortfolioCommandSourceWritePlatformService commandSourceWritePlatformService,final LoanReadPlatformService loanReadPlatformService,
 			final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc){
 
+
 		this.context = context;
 		this.toApiJsonSerializer = toApiJsonSerializer;
 		this.apiRequestParameterHelper = apiRequestParameterHelper;
 		this.commandsSourceWritePlatformService = commandSourceWritePlatformService;
 		this.paymentInventoryReadPlatformService = paymentInventoryReadPlatformService;
 		this.loanReadPlatformService = loanReadPlatformService;
-		
-	}
+		this.toLoanSchedule = toLoanSchedule;
+		this.pdc = pdc;
+	}	
 	
 	
 	@GET
@@ -122,7 +128,6 @@ public class LoanPaymentInventoryApiResource {
 		 
 		 //Return the Repayment Data in Formated manner with minimum value and th
 		 final LoanScheduleData repayment = this.loanReadPlatformService.retrieveRepaymentSchedule(loanId, repaymentScheduleRelatedData, disbursementData, false, loanBasicDetails.getTotalPaidFeeCharges());
-		 
 		 //Return the enumoptionData
 		 
 		 final PaymentInventoryPdcData options = this.paymentInventoryReadPlatformService.retrieveEnumOptions();
@@ -130,6 +135,5 @@ public class LoanPaymentInventoryApiResource {
 		 final PaymentInventoryData result = PaymentInventoryData.template(repayment, options);
 		 final ApiRequestJsonSerializationSettings settings = this.apiRequestParameterHelper.process(uriInfo.getQueryParameters());
 			return this.toApiJsonSerializer.serialize(settings, result, this.RESPONSE_DATA_PARAMETERS);
-		
 	 }
 }
