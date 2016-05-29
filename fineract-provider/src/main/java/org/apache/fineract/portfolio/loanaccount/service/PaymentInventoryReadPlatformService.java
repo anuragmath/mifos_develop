@@ -7,24 +7,22 @@ import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
 
 public interface PaymentInventoryReadPlatformService {
 	
 
 	Collection<PaymentInventoryPdcData> retrievePdcPaymentDetails(Long pdcId, boolean b);
-
 	
-	PaymentInventoryData retrievePaymentDetails(Long id, Long loanId);
+	PaymentInventoryData retrieveBasedOnLoanId(Long loanId);
 	
-	Collection<PaymentInventoryData> retrievePaymentInventory(Long loanId);
-
-
+	PaymentInventoryData retrieveBasedOnInventoryId(Long inventoryId);
+	
+	Collection<PaymentInventoryPdcData> retrievePdcInventory(Long inventoryId);
+	
+	PaymentInventoryPdcData retrieveByInstallment(Integer installmentNumber, final Long inventoryId);
+	
+	
 	PaymentInventoryPdcData retrieveEnumOptions();
-
-
-	
-	
-	
-
 
 }

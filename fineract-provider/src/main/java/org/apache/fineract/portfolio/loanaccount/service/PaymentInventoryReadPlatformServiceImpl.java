@@ -13,6 +13,7 @@ import org.apache.fineract.infrastructure.security.service.PlatformSecurityConte
 import org.apache.fineract.portfolio.common.service.DropdownReadPlatformService;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -58,14 +59,27 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     }
     
     @Override
-	public PaymentInventoryData retrievePaymentDetails(final Long id, final Long loanId) {
+	public PaymentInventoryData retrieveBasedOnInventoryId(final Long inventoryId) {
 		this.context.authenticatedUser();
 
         final PaymentInventoryMapper rm = new PaymentInventoryMapper();
 
-        final String sql = "select " + rm.schema() + " where pi.id=? and pi.loan_id=?";
+        final String sql = "select " + rm.schema() + " where pi.id=?";
 
-        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { id, loanId });
+        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { inventoryId });
+
+	}
+
+    
+    @Override
+	public PaymentInventoryData retrieveBasedOnLoanId(final Long loanId) {
+		this.context.authenticatedUser();
+
+        final PaymentInventoryMapper rm = new PaymentInventoryMapper();
+
+        final String sql = "select " + rm.schema() + " where pi.loan_id=?";
+
+        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { loanId });
 
 	}
     
@@ -81,17 +95,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
    
 
     
-    @Override
-    public Collection<PaymentInventoryData> retrievePaymentInventory(final Long loanId){
-    	this.context.authenticatedUser();
-    	
-    	final PaymentInventoryMapper rm = new PaymentInventoryMapper();
-    	
-    	final String sql = "select " + rm.schema() + " where pi.loan_id=? "
-    			+ "order by pi.id";
-    	
-    	return this.jdbcTemplate.query(sql, rm, new Object[] { loanId });
-    }
+    
 
     private static final class PaymentInventoryPdcMapper implements RowMapper<PaymentInventoryPdcData> {
     	
@@ -102,6 +106,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     				+ "pdc.make_presentation as makePresentation " + "from m_payment_inventory_pdc pdc "
     				+ "join m_payment_inventory pi on pi.id = pdc.payment_inventory_id ";
     	}
+
     	
     	
 		@Override
@@ -119,7 +124,9 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 			final boolean makePresentation = rs.getBoolean("makePresentation");
 			
 			return PaymentInventoryPdcData.instance(pdcPeriod, date, amount, chequeDate, chequeNo, bankName, ifscCode, presentationType,makePresentation);
-		}	
+		}
+		
+		
     }
     
 
@@ -133,4 +140,43 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     	return this.jdbcTemplate.query(sql, rm, new Object[] { inventoryId });
     }
 
+    @Override
+    public Collection<PaymentInventoryPdcData> retrievePdcInventory(Long inventoryId) {
+    	final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
+    	String sql = "select " + rm.schema() + "where pdc.payment_inventory_id=? ";
+    	/*if (onlyPdcPendingDetails) {
+            sql = sql + "and pdc.waived =0 and lic.is_paid_derived=0";
+        }*/
+    	return this.jdbcTemplate.query(sql, rm, new Object[] { inventoryId });
+    }
+    
+	@Override
+	public PaymentInventoryPdcData retrieveByInstallment(Integer installmentNumber, Long inventoryId) {
+		final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
+		String sql = "select " + rm.schema() + "where pdc.payment_inventory_id=? AND pdc.period=?";
+    		return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { inventoryId , installmentNumber});
+		// TODO Auto-generated method stub
+		/*
+		 * We need to think-over 
+		 * First we need the one Data which should be from the PdcData where it should have to come on the basis of period,which we can get
+		 * How 
+		 * 
+		 * Step 1 
+		 * 
+		 * returning data based on LoanId will be sufficient 
+		 * 
+		 * Then InventoryData Should be Called and PdcData should be iterated over and need to exit when the installment number
+		 * is equal to the pdcData period value, 
+		 * 
+		 *  Then it should store that into PdcData type and return it to the transaction Template Type,
+		 *  
+		 *   2,1
+		 *   
+		 *   
+		 */
+	}
+
+
+
+	
 }

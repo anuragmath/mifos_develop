@@ -17,6 +17,7 @@ import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryReposito
 import org.apache.fineract.portfolio.loanaccount.domain.PdcPresentationEnumOption;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdcRepository;
 import org.apache.fineract.portfolio.loanproduct.domain.LoanProductRepository;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,14 @@ public class LoanPaymentInventoryAssembler {
 	
 	private final FromJsonHelper fromJsonHelper;
     private final PaymentInventoryRepository paymentInventoryRepository;
+    private final PaymentInventoryPdcRepository paymentInventoryPdc;
     
     @Autowired
-    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository){
+    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository,
+    		final PaymentInventoryPdcRepository paymentInventoryPdcRepository){
     	this.fromJsonHelper = fromJsonHelper;
     	this.paymentInventoryRepository = paymentInventoryRepository;
+    	this.paymentInventoryPdc = paymentInventoryPdcRepository;
     }
     
     
@@ -95,4 +99,6 @@ public class LoanPaymentInventoryAssembler {
     	}
 		return paymentInventory;
     }
+    
+    
 }

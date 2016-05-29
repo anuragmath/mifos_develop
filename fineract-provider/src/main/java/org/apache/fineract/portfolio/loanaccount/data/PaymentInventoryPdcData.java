@@ -10,6 +10,22 @@ public class PaymentInventoryPdcData {
 		
 
 
+		public void setPresentationStatus(EnumOptionData presentationStatus) {
+		this.presentationStatus = presentationStatus;
+	}
+
+	public void setMakePresentation(boolean makePresentation) {
+		this.makePresentation = makePresentation;
+	}
+
+	public void setPresentationType(List<EnumOptionData> presentationType) {
+		this.presentationType = presentationType;
+	}
+
+		public List<EnumOptionData> getPresentationType() {
+		return presentationType;
+	}
+
 		private final Integer period;
 		
 		private final LocalDate date;
@@ -24,11 +40,11 @@ public class PaymentInventoryPdcData {
 		
 		private final String ifscCode;
 		
-		private final EnumOptionData presentationStatus;
+		private EnumOptionData presentationStatus;
 		
-		private final boolean makePresentation;
+		private boolean makePresentation;
 		
-		private final List<EnumOptionData> presentationType;
+		private List<EnumOptionData> presentationType;
 		
 		public static PaymentInventoryPdcData template(final List<EnumOptionData> presentationType){
 			

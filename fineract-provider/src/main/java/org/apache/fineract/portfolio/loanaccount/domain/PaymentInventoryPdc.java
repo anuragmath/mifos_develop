@@ -44,7 +44,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  private final String ifscCode;
 		
 	  @Column(name = "present_type_of", nullable = false)
-	  private final Integer presentationStatus;
+	  private Integer presentationStatus;
 		
 	  @Column(name = "make_presentation", nullable = false)
 	  private final boolean makePresentation;
@@ -86,5 +86,14 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 			final Integer presentationStatus, final boolean makePresentation) {
 		// TODO Auto-generated method stub
 		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus, makePresentation);
+	}
+	
+	public void setPresentationStatus(final Integer d){
+		this.presentationStatus = d;
+		
+	}
+	
+	public Integer getPresentation(){
+		return this.presentationStatus;
 	}
 }
