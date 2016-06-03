@@ -98,6 +98,7 @@ import org.apache.fineract.portfolio.loanaccount.command.LoanChargeCommand;
 import org.apache.fineract.portfolio.loanaccount.data.DisbursementData;
 import org.apache.fineract.portfolio.loanaccount.data.HolidayDetailDTO;
 import org.apache.fineract.portfolio.loanaccount.data.LoanTermVariationsData;
+import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.ScheduleGeneratorDTO;
 import org.apache.fineract.portfolio.loanaccount.domain.transactionprocessor.LoanRepaymentScheduleTransactionProcessor;
 import org.apache.fineract.portfolio.loanaccount.exception.ExceedingTrancheCountException;
@@ -307,7 +308,7 @@ public class Loan extends AbstractPersistable<Long> {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "loan", orphanRemoval = true)
     private Set<LoanCharge> charges = new HashSet<>();
-
+    
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "loan", orphanRemoval = true)
     private Set<LoanTrancheCharge> trancheCharges = new HashSet<>();
@@ -336,6 +337,7 @@ public class Loan extends AbstractPersistable<Long> {
 
     @Embedded
     private LoanSummary summary;
+    
     
 
     @Transient
@@ -4164,7 +4166,7 @@ public class Loan extends AbstractPersistable<Long> {
 
     public LoanSummary getSummary() {
         return this.summary;
-    }
+    } 
 
     public Set<LoanCollateral> getCollateral() {
         return this.collateral;

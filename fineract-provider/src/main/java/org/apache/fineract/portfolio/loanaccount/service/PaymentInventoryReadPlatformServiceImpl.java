@@ -1,3 +1,22 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.apache.fineract.portfolio.loanaccount.service;
 
 import java.math.BigDecimal;
@@ -8,13 +27,16 @@ import java.util.List;
 
 import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.infrastructure.core.domain.JdbcSupport;
-import org.apache.fineract.infrastructure.core.service.RoutingDataSource;
+import org.apache.fineract.infrastructure.core.service.RoutingDataSource;import org.apache.fineract.infrastructure.dataqueries.exception.DatatableNotFoundException;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
 import org.apache.fineract.portfolio.common.service.DropdownReadPlatformService;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryNotFound;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryPdcNotFound;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -58,15 +80,35 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     }
     
     @Override
-	public PaymentInventoryData retrievePaymentDetails(final Long id, final Long loanId) {
+	public PaymentInventoryData retrieveBasedOnInventoryId(final Long inventoryId) {
 		this.context.authenticatedUser();
 
         final PaymentInventoryMapper rm = new PaymentInventoryMapper();
 
-        final String sql = "select " + rm.schema() + " where pi.id=? and pi.loan_id=?";
+        final String sql = "select " + rm.schema() + " where pi.id=?";
 
-        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { id, loanId });
+        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { inventoryId });
 
+	}
+
+    
+    @Override
+	public PaymentInventoryData retrieveBasedOnLoanId(final Long loanId) {
+		
+    		try {
+    			this.context.authenticatedUser();
+    			final PaymentInventoryMapper rm = new PaymentInventoryMapper();
+
+    	        final String sql = "select " + rm.schema() + " where pi.loan_id=?";
+
+    	        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { loanId });
+
+    		}catch (final EmptyResultDataAccessException e){
+    			
+    			throw new PaymentInventoryNotFound(loanId);
+    		}
+
+        
 	}
     
     @Override
@@ -81,17 +123,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
    
 
     
-    @Override
-    public Collection<PaymentInventoryData> retrievePaymentInventory(final Long loanId){
-    	this.context.authenticatedUser();
-    	
-    	final PaymentInventoryMapper rm = new PaymentInventoryMapper();
-    	
-    	final String sql = "select " + rm.schema() + " where pi.loan_id=? "
-    			+ "order by pi.id";
-    	
-    	return this.jdbcTemplate.query(sql, rm, new Object[] { loanId });
-    }
+    
 
     private static final class PaymentInventoryPdcMapper implements RowMapper<PaymentInventoryPdcData> {
     	
@@ -102,6 +134,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     				+ "pdc.make_presentation as makePresentation " + "from m_payment_inventory_pdc pdc "
     				+ "join m_payment_inventory pi on pi.id = pdc.payment_inventory_id ";
     	}
+
     	
     	
 		@Override
@@ -119,7 +152,9 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 			final boolean makePresentation = rs.getBoolean("makePresentation");
 			
 			return PaymentInventoryPdcData.instance(pdcPeriod, date, amount, chequeDate, chequeNo, bankName, ifscCode, presentationType,makePresentation);
-		}	
+		}
+		
+		
     }
     
 
@@ -133,4 +168,49 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     	return this.jdbcTemplate.query(sql, rm, new Object[] { inventoryId });
     }
 
+    @Override
+    public Collection<PaymentInventoryPdcData> retrievePdcInventory(Long inventoryId) {
+    	final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
+    	String sql = "select " + rm.schema() + "where pdc.payment_inventory_id=? ";
+    	/*if (onlyPdcPendingDetails) {
+            sql = sql + "and pdc.waived =0 and lic.is_paid_derived=0";
+        }*/
+    	return this.jdbcTemplate.query(sql, rm, new Object[] { inventoryId });
+    }
+    
+	@Override
+	public PaymentInventoryPdcData retrieveByInstallment(Integer installmentNumber, Long inventoryId) {
+		
+		try{
+			final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
+			String sql = "select " + rm.schema() + "where pdc.payment_inventory_id=? AND pdc.period=?";
+	    		return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { inventoryId , installmentNumber});
+			
+		} catch (final EmptyResultDataAccessException e){
+			throw new PaymentInventoryPdcNotFound(inventoryId);
+		}
+		// TODO Auto-generated method stub
+		/*
+		 * We need to think-over 
+		 * First we need the one Data which should be from the PdcData where it should have to come on the basis of period,which we can get
+		 * How 
+		 * 
+		 * Step 1 
+		 * 
+		 * returning data based on LoanId will be sufficient 
+		 * 
+		 * Then InventoryData Should be Called and PdcData should be iterated over and need to exit when the installment number
+		 * is equal to the pdcData period value, 
+		 * 
+		 *  Then it should store that into PdcData type and return it to the transaction Template Type,
+		 *  
+		 *   2,1
+		 *   
+		 *   
+		 */
+	}
+
+
+
+	
 }

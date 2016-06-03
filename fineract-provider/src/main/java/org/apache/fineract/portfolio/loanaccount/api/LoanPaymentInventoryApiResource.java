@@ -116,6 +116,8 @@ public class LoanPaymentInventoryApiResource {
 	        return this.toApiJsonSerializer.serialize(result);
 	    }
 	 
+	 
+	 
 	 @GET
 	 @Path("template")
 	 @Consumes({ MediaType.APPLICATION_JSON })

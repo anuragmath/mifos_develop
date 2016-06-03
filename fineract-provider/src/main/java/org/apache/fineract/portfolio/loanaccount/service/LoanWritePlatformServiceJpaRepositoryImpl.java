@@ -1,5 +1,6 @@
 /**
-f * or more contributor license agreements. See the NOTICE file
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
@@ -15,6 +16,7 @@ f * or more contributor license agreements. See the NOTICE file
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.fineract.portfolio.loanaccount.service;
 
 import java.io.Serializable;
@@ -39,6 +41,7 @@ import org.apache.fineract.infrastructure.core.data.ApiParameterError;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResultBuilder;
 import org.apache.fineract.infrastructure.core.data.DataValidatorBuilder;
+import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException;
 import org.apache.fineract.infrastructure.core.exception.PlatformServiceUnavailableException;
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
@@ -47,8 +50,6 @@ import org.apache.fineract.infrastructure.jobs.annotation.CronTarget;
 import org.apache.fineract.infrastructure.jobs.exception.JobExecutionException;
 import org.apache.fineract.infrastructure.jobs.service.JobName;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
-import org.apache.fineract.integrationtests.ConcurrencyIntegrationTest.LoanRepaymentExecutor;
-import org.apache.fineract.integrationtests.LoanRepaymentRescheduleAtDisbursementTest;
 import org.apache.fineract.organisation.holiday.domain.Holiday;
 import org.apache.fineract.organisation.holiday.domain.HolidayRepositoryWrapper;
 import org.apache.fineract.organisation.monetary.domain.ApplicationCurrency;
@@ -118,6 +119,8 @@ import org.apache.fineract.portfolio.loanaccount.data.HolidayDetailDTO;
 import org.apache.fineract.portfolio.loanaccount.data.LoanChargeData;
 import org.apache.fineract.portfolio.loanaccount.data.LoanChargePaidByData;
 import org.apache.fineract.portfolio.loanaccount.data.LoanInstallmentChargeData;
+import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
+import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 import org.apache.fineract.portfolio.loanaccount.data.RepaymentScheduleRelatedLoanData;
 import org.apache.fineract.portfolio.loanaccount.data.ScheduleGeneratorDTO;
 import org.apache.fineract.portfolio.loanaccount.domain.ChangedTransactionDetail;
@@ -144,8 +147,10 @@ import org.apache.fineract.portfolio.loanaccount.domain.LoanTransactionRepositor
 import org.apache.fineract.portfolio.loanaccount.domain.LoanTransactionType;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdcRepository;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
 import org.apache.fineract.portfolio.loanaccount.domain.PdcPaymentInventoryRepository;
+import org.apache.fineract.portfolio.loanaccount.domain.PdcPresentationEnumOption;
 import org.apache.fineract.portfolio.loanaccount.exception.ExceedingTrancheCountException;
 import org.apache.fineract.portfolio.loanaccount.exception.InvalidPaidInAdvanceAmountException;
 import org.apache.fineract.portfolio.loanaccount.exception.LoanDisbursalException;
@@ -178,6 +183,9 @@ import org.apache.fineract.portfolio.note.domain.Note;
 import org.apache.fineract.portfolio.note.domain.NoteRepository;
 import org.apache.fineract.portfolio.paymentdetail.domain.PaymentDetail;
 import org.apache.fineract.portfolio.paymentdetail.service.PaymentDetailWritePlatformService;
+import org.apache.fineract.portfolio.paymenttype.data.PaymentTypeData;
+import org.apache.fineract.portfolio.paymenttype.domain.PaymentType;
+import org.apache.fineract.portfolio.paymenttype.service.PaymentTypeReadPlatformService;
 import org.apache.fineract.portfolio.savings.domain.SavingsAccount;
 import org.apache.fineract.portfolio.savings.exception.InsufficientAccountBalanceException;
 import org.apache.fineract.useradministration.domain.AppUser;
@@ -244,7 +252,10 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
     private final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy;
     private final IRRCalculate IRRCalculate;
     private final PdcPaymentInventoryRepository pdcPaymentInventoryRepository;
-
+    private final PaymentTypeReadPlatformService paymentType;
+    private final PaymentInventoryReadPlatformService paymentInventoryService;
+    private final PaymentInventoryPdcRepository paymentInventoryPdc;
+    
     @Autowired
     public LoanWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
             final LoanEventApiJsonValidator loanEventApiJsonValidator,
@@ -274,7 +285,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy,
             final PaymentInventoryRepository paymentInventory, final PaymentInventoryRepository paymentInventoryRepository,
 			final FromJsonHelper fromJsonHelper, final LoanPaymentInventoryAssembler loanPaymentInventory,
-			final IRRCalculate irrCalculate, final PdcPaymentInventoryRepository pdcPaymentInventoryRepository) {
+			final IRRCalculate irrCalculate, final PdcPaymentInventoryRepository pdcPaymentInventoryRepository,
+			final PaymentTypeReadPlatformService paymentTypeReadPlatformService, final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService,
+			final PaymentInventoryPdcRepository paymentInventoryPdcRepository) {
         this.context = context;
         this.loanEventApiJsonValidator = loanEventApiJsonValidator;
         this.loanAssembler = loanAssembler;
@@ -317,6 +330,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		this.loanPaymentInventory = loanPaymentInventory;
 		this.IRRCalculate = irrCalculate;
 		this.pdcPaymentInventoryRepository = pdcPaymentInventoryRepository;
+		this.paymentType = paymentTypeReadPlatformService;
+		this.paymentInventoryService = paymentInventoryReadPlatformService;
+		this.paymentInventoryPdc = paymentInventoryPdcRepository;
     }
 
     private LoanLifecycleStateMachine defaultLoanLifecycleStateMachine() {
@@ -839,7 +855,28 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         if (StringUtils.isNotBlank(noteText)) {
             changes.put("note", noteText);
         }
+        
+        final Integer paymentTypeId = command.integerValueOfParameterNamed("paymentTypeId");
+        
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
+        
+        final PaymentTypeData paymentType = this.paymentType.retrieveOne(paymentTypeId.longValue());
+        
+        if (paymentType.getId() == paymentTypeId.longValue()){
+        		
+        		final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
+        		
+        		final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment = loan.possibleNextRepaymentInstallment();
+                
+        	
+        		final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
+        		
+        		final PaymentInventoryPdc paymentInventoryPdc  = this.paymentInventoryPdc.findOne(payment.getPeriod().longValue());
+        
+        		paymentInventoryPdc.setPresentationStatus(2);
+        		
+        	
+        }
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createAndPersistPaymentDetail(command, changes);
         final Boolean isHolidayValidationDone = false;
         final HolidayDetailDTO holidayDetailDto = null;
