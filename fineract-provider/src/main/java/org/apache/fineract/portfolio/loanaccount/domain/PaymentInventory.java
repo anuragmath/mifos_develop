@@ -38,11 +38,18 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	@Column(name = "is_directDebitActive", nullable = false)
     private boolean isDirectDebitactive;
 
-	@OneToMany(cascade = CascadeType.PERSIST)
+	@OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "payment_inventory_id", nullable = false)
     private Set<PaymentInventoryPdc> paymentInventoryPdc;
 
 	
+	
+	public PaymentInventory(){
+		this.loan = null;
+		this.periods = null;
+		this.isDirectDebitactive = false;
+		this.paymentInventoryPdc = null;
+	}
 	
 	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Set<PaymentInventoryPdc> paymentInventoryPdc) {
 	        final Integer periods = loan.getLoanRepaymentScheduleDetail().getNumberOfRepayments();
@@ -68,4 +75,11 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		return this.getId();
 	}
 	
+	public boolean isDirectDebitActive(){
+		return this.isDirectDebitactive;
+	}
+	
+	public Set<PaymentInventoryPdc> getPaymentInventoryPdc(){
+		 return this.paymentInventoryPdc;
+	}
 }

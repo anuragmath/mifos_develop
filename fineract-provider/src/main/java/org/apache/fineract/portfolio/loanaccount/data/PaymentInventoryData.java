@@ -58,7 +58,7 @@ public class PaymentInventoryData {
 
 		
 
-	public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
+		public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
 				Collection<PaymentInventoryPdcData> pdcInventoryData) {
 			this.id = paymentInventoryData.id;
 			this.loanId = paymentInventoryData.loanId;

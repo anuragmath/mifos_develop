@@ -802,6 +802,7 @@ public class Loan extends AbstractPersistable<Long> {
         this.charges.remove(loanCharge);
         updateLoanSummaryDerivedFields();
     }
+        
 
     private void removeOrModifyTransactionAssociatedWithLoanChargeIfDueAtDisbursement(final LoanCharge loanCharge) {
         if (loanCharge.isDueAtDisbursement()) {

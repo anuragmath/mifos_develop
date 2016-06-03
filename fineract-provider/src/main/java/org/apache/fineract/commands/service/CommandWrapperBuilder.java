@@ -639,7 +639,16 @@ public class CommandWrapperBuilder {
     	this.href = "/loans"+ loanId + "/paymentinventory";
     	return this;
     }
-
+    
+    public CommandWrapperBuilder deletePaymentInventory(final Long loanId, final Long inventoryId) {
+        this.actionName = "DELETE";
+        this.entityName = "PAYMENTINVENTORY";
+        this.entityId = inventoryId;
+        this.loanId = loanId;
+        this.href = "/loans/" + loanId + "/paymentinventory/" + inventoryId;
+        return this;
+    }
+    
     public CommandWrapperBuilder updateLoanCharge(final Long loanId, final Long loanChargeId) {
         this.actionName = "UPDATE";
         this.entityName = "LOANCHARGE";

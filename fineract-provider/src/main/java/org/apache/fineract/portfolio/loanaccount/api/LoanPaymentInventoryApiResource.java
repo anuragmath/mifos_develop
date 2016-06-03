@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -136,4 +137,18 @@ public class LoanPaymentInventoryApiResource {
 		 final ApiRequestJsonSerializationSettings settings = this.apiRequestParameterHelper.process(uriInfo.getQueryParameters());
 			return this.toApiJsonSerializer.serialize(settings, result, this.RESPONSE_DATA_PARAMETERS);
 	 }
+	 
+	 @DELETE
+	    @Path("{inventoryId}")
+	    @Consumes({ MediaType.APPLICATION_JSON })
+	    @Produces({ MediaType.APPLICATION_JSON })
+	    public String deletePaymentInventory(@PathParam("loanId") final Long loanId, @PathParam("inventoryId") final Long inventoryId) {
+
+		 
+	        final CommandWrapper commandRequest = new CommandWrapperBuilder().deletePaymentInventory(loanId, inventoryId).build();
+
+	        final CommandProcessingResult result = this.commandsSourceWritePlatformService.logCommandSource(commandRequest);
+
+	        return this.toApiJsonSerializer.serialize(result);
+	    }
 }

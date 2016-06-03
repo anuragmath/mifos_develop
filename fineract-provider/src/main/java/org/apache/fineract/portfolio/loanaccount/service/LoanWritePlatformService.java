@@ -108,4 +108,6 @@ public interface LoanWritePlatformService {
 	
 	CommandProcessingResult addPaymentInventory(Long loanId, JsonCommand command);
 
+	CommandProcessingResult deletePaymentInventory(Long loanId, Long inventoryId, JsonCommand command);
+
 }
