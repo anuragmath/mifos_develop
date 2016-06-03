@@ -1,5 +1,6 @@
 /**
-f * or more contributor license agreements. See the NOTICE file
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
@@ -15,6 +16,7 @@ f * or more contributor license agreements. See the NOTICE file
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.fineract.portfolio.loanaccount.service;
 
 import java.math.BigDecimal;
@@ -47,8 +49,6 @@ import org.apache.fineract.infrastructure.jobs.annotation.CronTarget;
 import org.apache.fineract.infrastructure.jobs.exception.JobExecutionException;
 import org.apache.fineract.infrastructure.jobs.service.JobName;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
-import org.apache.fineract.integrationtests.ConcurrencyIntegrationTest.LoanRepaymentExecutor;
-import org.apache.fineract.integrationtests.LoanRepaymentRescheduleAtDisbursementTest;
 import org.apache.fineract.organisation.holiday.domain.Holiday;
 import org.apache.fineract.organisation.holiday.domain.HolidayRepositoryWrapper;
 import org.apache.fineract.organisation.monetary.domain.ApplicationCurrency;

@@ -88,10 +88,12 @@ import org.apache.fineract.portfolio.loanaccount.data.LoanTermVariationsData;
 import org.apache.fineract.portfolio.loanaccount.data.LoanTransactionData;
 import org.apache.fineract.portfolio.loanaccount.data.PaidInAdvanceData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
+import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 import org.apache.fineract.portfolio.loanaccount.data.RepaymentScheduleRelatedLoanData;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanTermVariationType;
 import org.apache.fineract.portfolio.loanaccount.exception.LoanTemplateTypeRequiredException;
 import org.apache.fineract.portfolio.loanaccount.exception.NotSupportedLoanTemplateTypeException;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryNotFound;
 import org.apache.fineract.portfolio.loanaccount.guarantor.data.GuarantorData;
 import org.apache.fineract.portfolio.loanaccount.guarantor.service.GuarantorReadPlatformService;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
@@ -478,11 +480,16 @@ public class LoansApiResource {
             }
             if(associationParameters.contains("paymentInventory")){
             		mandatoryResponseParameters.add("paymentInventory");
-            		paymentInventoryData = this.paymentInventoryReadPlatformService.retrieveBasedOnLoanId(loanId);
-            		if(paymentInventoryData == null ){
+            		try{
+            			paymentInventoryData = this.paymentInventoryReadPlatformService.retrieveBasedOnLoanId(loanId);
+            			final Collection<PaymentInventoryPdcData> pdcInventoryData = this.paymentInventoryReadPlatformService
+            					.retrievePdcPaymentDetails(paymentInventoryData.getId(), true);
+            			paymentInventoryData = new PaymentInventoryData(paymentInventoryData, pdcInventoryData);
+            		}catch (final PaymentInventoryNotFound e){
             			paymentInventoryData = null;
             		}
             		
+            			 
             	
             }
 

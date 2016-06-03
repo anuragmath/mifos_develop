@@ -99,6 +99,8 @@ import org.apache.fineract.portfolio.loanaccount.domain.LoanTransactionRepositor
 import org.apache.fineract.portfolio.loanaccount.domain.LoanTransactionType;import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.exception.LoanNotFoundException;
 import org.apache.fineract.portfolio.loanaccount.exception.LoanTransactionNotFoundException;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryNotFound;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryPdcNotFound;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanSchedulePeriodData;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.OverdueLoanScheduleData;
@@ -407,19 +409,35 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
         final Collection<PaymentTypeData> paymentOptions = this.paymentTypeReadPlatformService.retrieveAllPaymentTypes();
         final BigDecimal outstandingLoanBalance = null;
         final BigDecimal unrecognizedIncomePortion = null;
-        final PaymentInventoryData InventoryId  = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
-        final Collection<PaymentInventoryPdcData> paymentPdc = this.paymentInventoryService.retrievePdcInventory(InventoryId.getId());
-        final PaymentInventoryData payment = new PaymentInventoryData(InventoryId, paymentPdc);
-        
-       
-        
-        final PaymentInventoryPdcData newpayment = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber(), InventoryId.getId());
-        return new LoanTransactionData(null, null, null, transactionType, null, currencyData, earliestUnpaidInstallmentDate,
+        PaymentInventoryData paymentInventory = null;
+        PaymentInventoryPdcData paymentInventoryPdcData = null;
+        	try{
+        			paymentInventory  = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
+        			   
+        	        
+        			
+        }catch (final PaymentInventoryNotFound e){
+        			 paymentInventory = null;
+        }
+        //final PaymentInventoryData payment = new PaymentInventoryData(paymentInventory, paymentPdc);
+        	if (paymentInventory == null){
+        		
+        		paymentInventoryPdcData = null;
+        	}else{
+        		
+        		try {
+        			paymentInventoryPdcData = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), paymentInventory.getId());
+        		}catch (final PaymentInventoryPdcNotFound e){
+        			paymentInventoryPdcData = null;
+        		}
+        	}
+            
+		return new LoanTransactionData(null, null, null, transactionType, null, currencyData, earliestUnpaidInstallmentDate,
                 loanRepaymentScheduleInstallment.getTotalOutstanding(currency).getAmount(), loanRepaymentScheduleInstallment
                         .getPrincipalOutstanding(currency).getAmount(), loanRepaymentScheduleInstallment.getInterestOutstanding(currency)
                         .getAmount(), loanRepaymentScheduleInstallment.getFeeChargesOutstanding(currency).getAmount(),
                 loanRepaymentScheduleInstallment.getPenaltyChargesOutstanding(currency).getAmount(), null, unrecognizedIncomePortion,
-                paymentOptions, null, null, null, outstandingLoanBalance, false,newpayment);
+                paymentOptions, null, null, null, outstandingLoanBalance, false,paymentInventoryPdcData);
     }
 
     @Override

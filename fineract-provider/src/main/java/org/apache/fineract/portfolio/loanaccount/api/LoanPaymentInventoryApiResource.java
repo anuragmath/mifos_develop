@@ -1,3 +1,21 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.fineract.portfolio.loanaccount.api;
 
 import java.awt.List;
@@ -25,14 +43,17 @@ import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.infrastructure.core.serialization.ApiRequestJsonSerializationSettings;
 import org.apache.fineract.infrastructure.core.serialization.DefaultToApiJsonSerializer;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
+import org.apache.fineract.portfolio.client.data.ClientAddressData;
 import org.apache.fineract.portfolio.loanaccount.data.DisbursementData;
 import org.apache.fineract.portfolio.loanaccount.data.LoanAccountData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryData;
 import org.apache.fineract.portfolio.loanaccount.data.PaymentInventoryPdcData;
 import org.apache.fineract.portfolio.loanaccount.data.RepaymentScheduleRelatedLoanData;
+import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
+import org.apache.fineract.portfolio.loanaccount.service.LoanAssembler;
 import org.apache.fineract.portfolio.loanaccount.service.LoanReadPlatformService;
 import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPlatformService;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -59,13 +80,14 @@ public class LoanPaymentInventoryApiResource {
 	private final PortfolioCommandSourceWritePlatformService commandsSourceWritePlatformService;
 	private final LoanReadPlatformService loanReadPlatformService;
 	private final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc;
+	private final LoanAssembler loanAssembler;
 	
 	@Autowired
 	public LoanPaymentInventoryApiResource(final PlatformSecurityContext context, final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService,
 			final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer,final DefaultToApiJsonSerializer<LoanScheduleData> toLoanSchedule,
 			final ApiRequestParameterHelper apiRequestParameterHelper,
 			final PortfolioCommandSourceWritePlatformService commandSourceWritePlatformService,final LoanReadPlatformService loanReadPlatformService,
-			final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc){
+			final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc, final LoanAssembler loanAssembler){
 		this.context = context;
 		this.toApiJsonSerializer = toApiJsonSerializer;
 		this.apiRequestParameterHelper = apiRequestParameterHelper;
@@ -74,6 +96,7 @@ public class LoanPaymentInventoryApiResource {
 		this.loanReadPlatformService = loanReadPlatformService;
 		this.toLoanSchedule = toLoanSchedule;
 		this.pdc = pdc;
+		this.loanAssembler = loanAssembler;
 		
 	}
 	
@@ -87,7 +110,11 @@ public class LoanPaymentInventoryApiResource {
 			
 		this.context.authenticatedUser().validateHasReadPermission(this.resourceNameForPermissions);
 		
-		final PaymentInventoryData paymentInventory = this.paymentInventoryReadPlatformService.retrieveBasedOnInventoryId(inventoryId);
+		/*
+		 * This should not only return data based on the inventoryId it should 
+		 */
+		
+		final PaymentInventoryData paymentInventory = this.paymentInventoryReadPlatformService.retrieveBasedOnLoanId(loanId);
 		
 		final Collection<PaymentInventoryPdcData> pdcInventoryData = this.paymentInventoryReadPlatformService
 				.retrievePdcPaymentDetails(inventoryId, true);
@@ -98,6 +125,8 @@ public class LoanPaymentInventoryApiResource {
 		return this.toApiJsonSerializer.serialize(settings, paymentInventoryData, this.RESPONSE_DATA_PARAMETERS);
 		
 	}
+	
+
 	
 	 @POST
 	  @Consumes({ MediaType.APPLICATION_JSON })
@@ -117,7 +146,7 @@ public class LoanPaymentInventoryApiResource {
 	 @Path("template")
 	 @Consumes({ MediaType.APPLICATION_JSON })
 	 @Produces({ MediaType.APPLICATION_JSON })
-	 public String template(@QueryParam("loanId") final Long loanId , @Context final UriInfo uriInfo){
+	 public String template(@PathParam("loanId") final Long loanId , @Context final UriInfo uriInfo){
 		 this.context.authenticatedUser().validateHasReadPermission(this.resourceNameForPermissions);
 		 
 		 LoanAccountData loanBasicDetails = this.loanReadPlatformService.retrieveOne(loanId);

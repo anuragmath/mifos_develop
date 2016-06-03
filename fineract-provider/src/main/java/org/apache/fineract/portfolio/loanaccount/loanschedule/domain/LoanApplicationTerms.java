@@ -1112,7 +1112,7 @@ public final class LoanApplicationTerms {
             final Integer periodsRemaining = calculateNumberOfRemainingPrincipalPaymentPeriods(this.actualNumberOfRepayments,
                     this.getRecurringMoratoriumOnPrincipalPeriods(), this.getPrincipalGrace(), periodsElapsed);
 
-            double installmentAmount = FinanicalFunctions.pmt(periodicInterestRate.doubleValue(), periodsRemaining.doubleValue(),
+            double installmentAmount = FinancialFunctions.pmt(periodicInterestRate.doubleValue(), periodsRemaining.doubleValue(),
                     principalDouble, futureValue, false);
 
             if (this.installmentAmountInMultiplesOf != null) {
