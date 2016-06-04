@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 import org.apache.fineract.infrastructure.codes.data.CodeValueData;
+import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.organisation.monetary.domain.MonetaryCurrency;
 import org.apache.fineract.portfolio.client.data.ClientAddressData;
 import org.apache.fineract.portfolio.client.data.ClientData;
@@ -49,6 +50,11 @@ public class PaymentInventoryData {
 		
 		private final PaymentInventoryPdcData options;
 		
+		private EnumOptionData pdcType;
+		
+		private final boolean isSeriesCheques;
+		
+		private final boolean isChequesDisbursed;
 
 		
 		public PaymentInventoryData defaults(final Long id, final Integer periods, boolean isDirectDebitActive){
@@ -57,7 +63,7 @@ public class PaymentInventoryData {
 		
 		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive, final Long loanid, 
 				final Collection<PaymentInventoryPdcData> paymentInventoryPdcData,final LoanScheduleData repayment,
-				final PaymentInventoryPdcData options){		
+				final PaymentInventoryPdcData options, final EnumOptionData pdcType, final boolean isSeriesCheques, final boolean isChequesDisbursed){		
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
@@ -65,10 +71,13 @@ public class PaymentInventoryData {
 			this.paymentInventoryPdc = paymentInventoryPdcData;
 			this.repayment = repayment;
 			this.options = options;
+			this.pdcType = pdcType;
+			this.isSeriesCheques = isSeriesCheques;
+			this.isChequesDisbursed = isChequesDisbursed;
 		}
 		
 		public static PaymentInventoryData template(final Integer period, final LoanScheduleData repayment, final PaymentInventoryPdcData options){
-			return new PaymentInventoryData(null, null, false, null, null,repayment, options);
+			return new PaymentInventoryData(null, null, false, null, null,repayment, options, null, false, false);
 		}
 		
 		public static PaymentInventoryData template(final LoanScheduleData repayment, final PaymentInventoryPdcData options){
@@ -86,6 +95,9 @@ public class PaymentInventoryData {
 			this.paymentInventoryPdc = pdcInventoryData;
 			this.repayment = null;
 			this.options = null;
+			this.pdcType = paymentInventoryData.pdcType;
+			this.isSeriesCheques = paymentInventoryData.isSeriesCheques;
+			this.isChequesDisbursed = paymentInventoryData.isChequesDisbursed;
 		
 		}
 		
@@ -95,6 +107,17 @@ public class PaymentInventoryData {
 		}
 		public boolean getIsDirectDebitActive(){
 			return this.isDirectDebitActive;
+		}
+		
+		public boolean getIsSeriesCheques(){
+			return this.isSeriesCheques;
+		}
+		
+		public boolean getIsChequesDisbursed(){
+			return this.isChequesDisbursed;
+		}
+		public EnumOptionData getPdcType(){
+			return this.pdcType;
 		}
 		
 		public Collection<PaymentInventoryPdcData> getPaymentInventoryPdcData(){
