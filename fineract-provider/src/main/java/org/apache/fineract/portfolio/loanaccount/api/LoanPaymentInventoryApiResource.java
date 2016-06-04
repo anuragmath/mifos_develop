@@ -89,7 +89,7 @@ public class LoanPaymentInventoryApiResource {
 			
 		this.context.authenticatedUser().validateHasReadPermission(this.resourceNameForPermissions);
 		
-		final PaymentInventoryData paymentInventory = this.paymentInventoryReadPlatformService.retrievePaymentDetails(inventoryId, loanId);
+		final PaymentInventoryData paymentInventory = this.paymentInventoryReadPlatformService.retrieveBasedOnInventoryId(inventoryId);
 		
 		final Collection<PaymentInventoryPdcData> pdcInventoryData = this.paymentInventoryReadPlatformService
 				.retrievePdcPaymentDetails(inventoryId, true);

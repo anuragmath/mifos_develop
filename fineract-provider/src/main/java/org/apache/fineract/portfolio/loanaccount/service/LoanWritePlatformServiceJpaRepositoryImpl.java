@@ -862,6 +862,13 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         
         final PaymentTypeData paymentType = this.paymentType.retrieveOne(paymentTypeId.longValue());
         
+        
+        /*
+         * 
+         * payment id required error while making a loan repayment
+         * 
+         * 
+         */ 
         if (paymentType.getId() == paymentTypeId.longValue()){
         		
         		final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
@@ -880,6 +887,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createAndPersistPaymentDetail(command, changes);
         final Boolean isHolidayValidationDone = false;
         final HolidayDetailDTO holidayDetailDto = null;
+        int a =7;
         boolean isAccountTransfer = false;
         final CommandProcessingResultBuilder commandProcessingResultBuilder = new CommandProcessingResultBuilder();
         this.loanAccountDomainService.makeRepayment(loan, commandProcessingResultBuilder, transactionDate, transactionAmount,
