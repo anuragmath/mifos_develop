@@ -23,27 +23,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.fineract.infrastructure.core.data.EnumOptionData;
+import java.util.Collection;
+
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 import org.joda.time.LocalDate;
 
 public class PaymentInventoryPdcData {
-		
-
-
-		public void setPresentationStatus(EnumOptionData presentationStatus) {
-		this.presentationStatus = presentationStatus;
-	}
-
-	public void setMakePresentation(boolean makePresentation) {
-		this.makePresentation = makePresentation;
-	}
-
-	public void setPresentationType(List<EnumOptionData> presentationType) {
-		this.presentationType = presentationType;
-	}
-
-		public List<EnumOptionData> getPresentationType() {
-		return presentationType;
-	}
 
 		private final Integer period;
 		
@@ -140,6 +125,23 @@ public class PaymentInventoryPdcData {
 		public Long getChequeno() {
 			return chequeno;
 		}
+		
+		public void setPresentationStatus(EnumOptionData presentationStatus) {
+			this.presentationStatus = presentationStatus;
+		}
+
+		public void setMakePresentation(boolean makePresentation) {
+			this.makePresentation = makePresentation;
+		}
+
+		public void setPresentationType(List<EnumOptionData> presentationType) {
+			this.presentationType = presentationType;
+		}
+
+		public List<EnumOptionData> getPresentationType() {
+			return presentationType;
+		}
+
 }
 
 

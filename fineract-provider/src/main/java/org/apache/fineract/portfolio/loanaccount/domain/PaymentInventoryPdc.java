@@ -30,17 +30,16 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.drizzle.jdbc.internal.common.GeneratedIdValueObject;
+import org.joda.time.LocalDate;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 
 @Entity
 @Table(name = "m_payment_inventory_pdc")
 public class PaymentInventoryPdc extends AbstractPersistable<Long>{
-	
-
-	
-	  @Column(name = "period", nullable = true)
-	  private Integer period;
+	 
+	 @Column(name = "period", nullable = true)
+	 private Integer period;
 	 
 	  @Temporal(TemporalType.DATE)
 	  @Column(name = "date")
@@ -67,24 +66,24 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		
 	  @Column(name = "make_presentation", nullable = false)
 	  private final boolean makePresentation;
-
-	  public PaymentInventoryPdc(){
-		  this.period = null;
-		  this.amount = null;
-		  this.chequeDate = null;
-		  this.chequeno = null;
-		  this.date = null;
-		  this.ifscCode = null;
-		  this.nameOfBank = null;
-		  this.presentationStatus = null;
-		  this.makePresentation = false;
-	
+	  
+	  protected PaymentInventoryPdc(){
+	    	this.date = null;
+	    	this.presentationStatus = null;
+	    	this.amount = null;
+	    	this.chequeDate = null;
+	    	this.chequeno = null;
+	    	this.ifscCode = null;
+	    	this.period = null;
+	    	this.nameOfBank = null;
+	    	this.makePresentation = false;
+	    	
 	  }
 
 
-	  public PaymentInventoryPdc(final Integer period, final org.joda.time.LocalDate date, 
-			  final BigDecimal amount, final org.joda.time.LocalDate chequeDate, final Long chequeno, 
-			  final String nameOfBank, final String ifscCode, final Integer presentationStatus, final boolean makePresentation){
+	  public PaymentInventoryPdc(final Integer period, final LocalDate date, final BigDecimal amount, 
+			  final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, 
+			  final PdcPresentationEnumOption status, final boolean makePresentation){
 		  this.period = period;
 		  this.amount = amount;
 		  this.chequeDate = chequeDate.toDate();
@@ -92,7 +91,7 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		  this.date = date.toDate();
 		  this.ifscCode = ifscCode;
 		  this.nameOfBank = nameOfBank;
-		  this.presentationStatus = presentationStatus;
+		  this.presentationStatus = status.getValue();
 		  this.makePresentation = makePresentation;
 	
 	  }
@@ -100,11 +99,12 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 
 
 
-	public static PaymentInventoryPdc createNew(final Integer period, final org.joda.time.LocalDate date, final BigDecimal amount,
-			final org.joda.time.LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode,
+	public static PaymentInventoryPdc createNew(final Integer period, final LocalDate date, final BigDecimal amount,
+			final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode,
 			final Integer presentationStatus, final boolean makePresentation) {
-		// TODO Auto-generated method stub
-		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus, makePresentation);
+		
+		final PdcPresentationEnumOption status = PdcPresentationEnumOption.fromInt(presentationStatus);
+		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, status, makePresentation);
 	}
 	
 	public void setPresentationStatus(final Integer d){

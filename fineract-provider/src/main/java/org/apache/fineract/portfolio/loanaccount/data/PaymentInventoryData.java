@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 import org.apache.fineract.infrastructure.codes.data.CodeValueData;
+import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.organisation.monetary.domain.MonetaryCurrency;
 import org.apache.fineract.portfolio.client.data.ClientAddressData;
 import org.apache.fineract.portfolio.client.data.ClientData;
@@ -44,13 +45,17 @@ public class PaymentInventoryData {
 		private final Long loanId;
 		
 		private final Collection<PaymentInventoryPdcData> paymentInventoryPdc;
-		
+	
 		private final LoanScheduleData repayment;
 		
 		private final PaymentInventoryPdcData options;
 		
+		private EnumOptionData pdcType;
 		
+		private final boolean isSeriesCheques;
 		
+		private final boolean isChequesDisbursed;
+
 		
 		public PaymentInventoryData defaults(final Long id, final Integer periods, boolean isDirectDebitActive){
 			return defaults(id, periods, isDirectDebitActive);
@@ -58,7 +63,7 @@ public class PaymentInventoryData {
 		
 		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive, final Long loanid, 
 				final Collection<PaymentInventoryPdcData> paymentInventoryPdcData,final LoanScheduleData repayment,
-				final PaymentInventoryPdcData options){		
+				final PaymentInventoryPdcData options, final EnumOptionData pdcType, final boolean isSeriesCheques, final boolean isChequesDisbursed){		
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
@@ -66,11 +71,13 @@ public class PaymentInventoryData {
 			this.paymentInventoryPdc = paymentInventoryPdcData;
 			this.repayment = repayment;
 			this.options = options;
-			
+			this.pdcType = pdcType;
+			this.isSeriesCheques = isSeriesCheques;
+			this.isChequesDisbursed = isChequesDisbursed;
 		}
 		
 		public static PaymentInventoryData template(final Integer period, final LoanScheduleData repayment, final PaymentInventoryPdcData options){
-			return new PaymentInventoryData(null, null, false, null, null,repayment, options);
+			return new PaymentInventoryData(null, null, false, null, null,repayment, options, null, false, false);
 		}
 		
 		public static PaymentInventoryData template(final LoanScheduleData repayment, final PaymentInventoryPdcData options){
@@ -79,7 +86,7 @@ public class PaymentInventoryData {
 
 		
 
-	public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
+		public PaymentInventoryData(PaymentInventoryData paymentInventoryData,
 				Collection<PaymentInventoryPdcData> pdcInventoryData) {
 			this.id = paymentInventoryData.id;
 			this.loanId = paymentInventoryData.loanId;
@@ -88,9 +95,11 @@ public class PaymentInventoryData {
 			this.paymentInventoryPdc = pdcInventoryData;
 			this.repayment = null;
 			this.options = null;
+			this.pdcType = paymentInventoryData.pdcType;
+			this.isSeriesCheques = paymentInventoryData.isSeriesCheques;
+			this.isChequesDisbursed = paymentInventoryData.isChequesDisbursed;
 		
 		}
-		
 		
 		
 		public Long getId(){
@@ -100,11 +109,20 @@ public class PaymentInventoryData {
 			return this.isDirectDebitActive;
 		}
 		
+		public boolean getIsSeriesCheques(){
+			return this.isSeriesCheques;
+		}
+		
+		public boolean getIsChequesDisbursed(){
+			return this.isChequesDisbursed;
+		}
+		public EnumOptionData getPdcType(){
+			return this.pdcType;
+		}
+		
 		public Collection<PaymentInventoryPdcData> getPaymentInventoryPdcData(){
 			return this.paymentInventoryPdc;
 		}
-		
-
 }
 
 	

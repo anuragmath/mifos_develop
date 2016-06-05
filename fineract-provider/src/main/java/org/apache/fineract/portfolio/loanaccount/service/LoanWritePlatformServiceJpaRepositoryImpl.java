@@ -19,6 +19,7 @@
 
 package org.apache.fineract.portfolio.loanaccount.service;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -148,6 +149,7 @@ import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdcRepository;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
+import org.apache.fineract.portfolio.loanaccount.domain.PdcPaymentInventoryRepository;
 import org.apache.fineract.portfolio.loanaccount.domain.PdcPresentationEnumOption;
 import org.apache.fineract.portfolio.loanaccount.exception.ExceedingTrancheCountException;
 import org.apache.fineract.portfolio.loanaccount.exception.InvalidPaidInAdvanceAmountException;
@@ -157,12 +159,15 @@ import org.apache.fineract.portfolio.loanaccount.exception.LoanOfficerAssignment
 import org.apache.fineract.portfolio.loanaccount.exception.LoanOfficerUnassignmentException;
 import org.apache.fineract.portfolio.loanaccount.exception.LoanTransactionNotFoundException;
 import org.apache.fineract.portfolio.loanaccount.exception.MultiDisbursementDataRequiredException;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryNotFoundException;
 import org.apache.fineract.portfolio.loanaccount.guarantor.service.GuarantorDomainService;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.OverdueLoanScheduleData;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.DefaultScheduledDateGenerator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModel;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModelPeriod;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ScheduledDateGenerator;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IRRCalculate;
+import org.apache.fineract.portfolio.loanaccount.loanschedule.service.IrrCalculator;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.service.LoanScheduleHistoryWritePlatformService;
 import org.apache.fineract.portfolio.loanaccount.rescheduleloan.domain.LoanRescheduleModelRepaymentPeriod;
 import org.apache.fineract.portfolio.loanaccount.rescheduleloan.domain.LoanRescheduleRequest;
@@ -184,6 +189,7 @@ import org.apache.fineract.portfolio.paymenttype.service.PaymentTypeReadPlatform
 import org.apache.fineract.portfolio.savings.domain.SavingsAccount;
 import org.apache.fineract.portfolio.savings.exception.InsufficientAccountBalanceException;
 import org.apache.fineract.useradministration.domain.AppUser;
+import org.hibernate.Session;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -191,6 +197,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -241,8 +248,10 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
     private final PaymentInventoryRepository paymentInventory;
 	private final FromJsonHelper fromJsonHelper;
 	private final PaymentInventoryRepository paymentInventoryRepository;
-	private final LoanPaymentInventoryAssembler loanPaymentInventory;
+	private LoanPaymentInventoryAssembler loanPaymentInventory;
     private final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy;
+    private final IRRCalculate IRRCalculate;
+    private final PdcPaymentInventoryRepository pdcPaymentInventoryRepository;
     private final PaymentTypeReadPlatformService paymentType;
     private final PaymentInventoryReadPlatformService paymentInventoryService;
     private final PaymentInventoryPdcRepository paymentInventoryPdc;
@@ -276,6 +285,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             final LoanRepaymentScheduleTransactionProcessorFactory transactionProcessingStrategy,
             final PaymentInventoryRepository paymentInventory, final PaymentInventoryRepository paymentInventoryRepository,
 			final FromJsonHelper fromJsonHelper, final LoanPaymentInventoryAssembler loanPaymentInventory,
+			final IRRCalculate irrCalculate, final PdcPaymentInventoryRepository pdcPaymentInventoryRepository,
 			final PaymentTypeReadPlatformService paymentTypeReadPlatformService, final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService,
 			final PaymentInventoryPdcRepository paymentInventoryPdcRepository) {
         this.context = context;
@@ -318,6 +328,8 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		this.fromJsonHelper = fromJsonHelper;
 		this.paymentInventoryRepository = paymentInventoryRepository;
 		this.loanPaymentInventory = loanPaymentInventory;
+		this.IRRCalculate = irrCalculate;
+		this.pdcPaymentInventoryRepository = pdcPaymentInventoryRepository;
 		this.paymentType = paymentTypeReadPlatformService;
 		this.paymentInventoryService = paymentInventoryReadPlatformService;
 		this.paymentInventoryPdc = paymentInventoryPdcRepository;
@@ -423,7 +435,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
                     this.accountTransfersWritePlatformService.updateLoanTransaction(mapEntry.getKey(), mapEntry.getValue());
                 }
             }
-
+            
+            double test = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12;
+            loan.setInterRateOfReturn(test);
             // auto create standing instruction
             createStandingInstruction(loan);
 
@@ -471,6 +485,11 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             		advancePayments, paymentDetail, actualDisbursementDate, txnExternalId, DateUtils.getLocalDateTimeOfTenant(), currentUser);
             
             loan.makeRepayment(advanceEmiPayment, defaultLoanLifecycleStateMachine() , existingTransactionIds, existingReversedTransactionIds, false, scheduleGeneratorDTO, currentUser, false);
+            double irr = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d);
+            double newIrr = irr *12;
+            double roundedIr = Math.round(newIrr *100.0*100.0 ) /100.0;
+            loan.setInterRateOfReturn((roundedIr));
+            
             
                           
         }
@@ -523,6 +542,26 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 	                .withLoanId(loanId) //
 	                .build();
 	}
+	
+	@Transactional
+    @Override
+    public CommandProcessingResult deletePaymentInventory(final Long loanId, final Long inventoryId, final JsonCommand command) {
+
+        final Loan loan = this.loanAssembler.assembleFrom(loanId);
+        checkClientOrGroupActive(loan);
+        //final JsonElement element = command.parsedJson();
+        //Serializable id = new Long(inventoryId);
+       
+        this.paymentInventoryRepository.delete(inventoryId);
+        saveLoanWithDataIntegrityViolationChecks(loan);
+        return new CommandProcessingResultBuilder() //
+                .withCommandId(command.commandId()) //
+                .withEntityId(inventoryId) //
+                .withLoanId(loanId) //
+                .build();
+      
+    }
+
 	
 	
     private void createStandingInstruction(Loan loan) {
@@ -823,6 +862,13 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         
         final PaymentTypeData paymentType = this.paymentType.retrieveOne(paymentTypeId.longValue());
         
+        
+        /*
+         * 
+         * payment id required error while making a loan repayment
+         * 
+         * 
+         */ 
         if (paymentType.getId() == paymentTypeId.longValue()){
         		
         		final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
@@ -841,11 +887,14 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createAndPersistPaymentDetail(command, changes);
         final Boolean isHolidayValidationDone = false;
         final HolidayDetailDTO holidayDetailDto = null;
+        int a =7;
         boolean isAccountTransfer = false;
         final CommandProcessingResultBuilder commandProcessingResultBuilder = new CommandProcessingResultBuilder();
         this.loanAccountDomainService.makeRepayment(loan, commandProcessingResultBuilder, transactionDate, transactionAmount,
                 paymentDetail, noteText, txnExternalId, isRecoveryRepayment, isAccountTransfer, holidayDetailDto, isHolidayValidationDone);
 
+        loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
+        
         return commandProcessingResultBuilder.withCommandId(command.commandId()) //
                 .withLoanId(loanId) //
                 .with(changes) //
@@ -1839,6 +1888,13 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         if (loanCharge.hasNotLoanIdentifiedBy(loanId)) { throw new LoanChargeNotFoundException(loanChargeId, loanId); }
         return loanCharge;
     }
+    
+    private PaymentInventory retrievePaymentInventoryBy(final Long loanId, final Long inventoryId) {
+        final PaymentInventory paymentInventory = this.paymentInventoryRepository.findOne(inventoryId);  
+        return paymentInventory;
+        
+    }
+
 
     @Transactional
     @Override

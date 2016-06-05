@@ -25,10 +25,9 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdcRepository;
-import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
-import org.apache.fineract.portfolio.loanaccount.domain.PdcPresentationEnumOption;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +52,6 @@ public class LoanPaymentInventoryAssembler {
     }
     
     
-    
     public Set<PaymentInventoryPdc> fromParsedJson(final JsonElement element){
     	
     	final Set<PaymentInventoryPdc> paymentInventory = new HashSet<>();
@@ -69,9 +67,6 @@ public class LoanPaymentInventoryAssembler {
             	for (int i = 0; i < array.size(); i++) {
             		final JsonObject paymentInventorys = array.get(i).getAsJsonObject();
             		final Long id = this.fromJsonHelper.extractLongNamed("id", paymentInventorys);
-            
-            		
-  
             		
             		final Integer period = this.fromJsonHelper.extractIntegerNamed("period", paymentInventorys, locale);
             		
@@ -91,17 +86,15 @@ public class LoanPaymentInventoryAssembler {
             		
             		final boolean makePresentation = this.fromJsonHelper.extractBooleanNamed("makePresentation", paymentInventorys);
             				
-            		PdcPresentationEnumOption options = null;
+            		/*PdcPresentationStatus options = null;
                     if (options != null) {
-                       options = PdcPresentationEnumOption.fromInt(presentationStatus);
-                    }
-            		
-                    
+                       options = PdcPresentationStatus.fromInt(presentationStatus);
+                    }*/
+        
                     final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(period, date, amount,
                             chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus,makePresentation);
                     
                     paymentInventory.add(paymentInv);
-        
             	}
             }
                 
