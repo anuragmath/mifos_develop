@@ -78,6 +78,12 @@ public class SmsMessage extends AbstractPersistable<Long> {
         this.mobileNo = mobileNo;
         this.message = message;
     }
+    public String getMobileNumber(){
+    		return this.mobileNo;
+    }
+    public void setStatus(final Integer statusType){
+    		this.statusType = statusType;
+    }
 
     public Map<String, Object> update(final JsonCommand command) {
 

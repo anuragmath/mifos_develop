@@ -34,6 +34,11 @@ public class ExternalServicesConstants {
     public static final String SMTP_HOST = "host";
     public static final String SMTP_PORT = "port";
     public static final String SMTP_USE_TLS = "useTLS";
+    
+    public static final String NEXMO_SERVICE_NAME = "NEXMOSMS";
+    public static final String NEXMO_API_KEY = "nexmo_api_key";
+    public static final String NEXMO_API_SECRET = "nexmo_api_secret";
+    public static final String NEXMO_SMS_FROM = "nexmo_sms_from";
 
     public static enum EXTERNALSERVICEPROPERTIES_JSON_INPUT_PARAMS {
         EXTERNAL_SERVICE_ID("external_service_id"), NAME("name"), VALUE("value");
@@ -95,6 +100,39 @@ public class ExternalServicesConstants {
         public String getValue() {
             return this.value;
         }
+    }
+    
+    public static enum NEXMO_PARAMS {
+    		NEXMO_API_KEY("nexmo_api_key"), NEXMO_API_SECRET("nexmo_api_secret"), NEXMO_SMS_FROM("nexmo_sms_from");
+    		
+    		private final String value;
+    		
+    		private NEXMO_PARAMS(final String value){
+    			this.value = value;
+    		}
+    		
+    		private static final Set<String> values = new HashSet<>();
+    		
+    		static {
+    			for (final NEXMO_PARAMS type : NEXMO_PARAMS.values()){
+    				values.add(type.value);
+    			}
+    		}
+    		
+    		public static Set<String> getAllValues(){
+    			return values;
+    		}
+    		
+    		@Override
+    		public String toString(){
+    			return name().toString().replaceAll("_", " ");
+    		}
+    		
+    		public String getValue(){
+    			return this.value;
+    		}
+    		
+    		
     }
 
     public static enum S3_JSON_INPUT_PARAMS {

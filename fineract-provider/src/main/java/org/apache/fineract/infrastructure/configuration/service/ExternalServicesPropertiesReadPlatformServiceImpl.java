@@ -23,9 +23,10 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import org.apache.fineract.infrastructure.configuration.data.ExternalServicesPropertiesData;
+import org.apache.fineract.infrastructure.configuration.data.NexmoCredentialsData;
 import org.apache.fineract.infrastructure.configuration.data.S3CredentialsData;
 import org.apache.fineract.infrastructure.configuration.data.SMTPCredentialsData;
-import org.apache.fineract.infrastructure.configuration.exception.ExternalServiceConfigurationNotFoundException;
+import org.apache.fineract.infrastructure.configuration.exception.ExternalServiceConfigurationNotFoundException;import org.apache.fineract.infrastructure.configuration.service.ExternalServicesConstants.EXTERNALSERVICEPROPERTIES_JSON_INPUT_PARAMS;
 import org.apache.fineract.infrastructure.core.service.RoutingDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -90,6 +91,30 @@ public class ExternalServicesPropertiesReadPlatformServiceImpl implements Extern
             return new SMTPCredentialsData(username, password, host, port, useTLS);
         }
     }
+    
+    private static final class NexmoCredentialsDataExtractor implements ResultSetExtractor<NexmoCredentialsData>{
+    			
+    		@Override
+    		public NexmoCredentialsData extractData(final ResultSet rs) throws SQLException, DataAccessException {
+    			String apiKey = null;
+        		String apiSecret = null;
+        		String smsFrom = null;
+        		
+        		while(rs.next()){
+        			if (rs.getString("name").equalsIgnoreCase(ExternalServicesConstants.NEXMO_API_KEY)){
+        				apiKey = rs.getString("value");
+        			}else if (rs.getString("name").equalsIgnoreCase(ExternalServicesConstants.NEXMO_API_SECRET)){
+        				apiSecret = rs.getString("value");
+        			}else if (rs.getString("name").equalsIgnoreCase(ExternalServicesConstants.NEXMO_SMS_FROM)){
+        				smsFrom = rs.getString("value");
+        			}
+        		}
+        		return new NexmoCredentialsData(apiKey, apiSecret, smsFrom);
+        		
+    		}
+    		
+   
+    }
 
     private static final class ExternalServiceMapper implements RowMapper<ExternalServicesPropertiesData> {
 
@@ -125,6 +150,18 @@ public class ExternalServicesPropertiesReadPlatformServiceImpl implements Extern
         final SMTPCredentialsData smtpCredentialsData = this.jdbcTemplate.query(sql, resultSetExtractor, new Object[] {});
         return smtpCredentialsData;
     }
+    
+    @Override
+    public NexmoCredentialsData getNexmoCredentials(){
+    		/*
+    		 * Author : Saransh Sharma saransh@theupscale.in
+    		 */
+    		final ResultSetExtractor<NexmoCredentialsData> resultSetExtractor = new NexmoCredentialsDataExtractor();
+    		final String sql = "SELECT esp.name, esp.value FROM c_external_service_properties esp inner join c_external_service  es on esp.external_service_id = es.id where es.name = '"
+    				+ ExternalServicesConstants.NEXMO_SERVICE_NAME + "'";
+    		final NexmoCredentialsData nexmoCredentialsData = this.jdbcTemplate.query(sql, resultSetExtractor, new Object[] {});
+    		return nexmoCredentialsData;
+    }
 
     @Override
     public Collection<ExternalServicesPropertiesData> retrieveOne(String serviceName) {
@@ -137,6 +174,10 @@ public class ExternalServicesPropertiesReadPlatformServiceImpl implements Extern
             case "SMTP":
                 serviceNameToUse = ExternalServicesConstants.SMTP_SERVICE_NAME;
             break;
+            
+            case "NEXMOSMS":
+            		serviceNameToUse = ExternalServicesConstants.NEXMO_SERVICE_NAME;
+            	break;
 
             default:
                 throw new ExternalServiceConfigurationNotFoundException(serviceName);

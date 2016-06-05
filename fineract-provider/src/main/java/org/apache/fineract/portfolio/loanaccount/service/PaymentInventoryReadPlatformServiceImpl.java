@@ -90,7 +90,6 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
         return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { inventoryId });
 
 	}
-
     
     @Override
 	public PaymentInventoryData retrieveBasedOnLoanId(final Long loanId) {
@@ -102,6 +101,23 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     	        final String sql = "select " + rm.schema() + " where pi.loan_id=?";
 
     	        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { loanId });
+
+    		}catch (final EmptyResultDataAccessException e){
+    			
+    			throw new PaymentInventoryNotFound(loanId);
+    		}
+    }
+    
+    @Override
+	public PaymentInventoryData retrievePaymentInventory(final Long loanId, final Long inventoryId) {
+		
+    		try {
+    			this.context.authenticatedUser();
+    			final PaymentInventoryMapper rm = new PaymentInventoryMapper();
+
+    	        final String sql = "select " + rm.schema() + " where pi.loan_id=? and pi.id=?";
+
+    	        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { loanId , inventoryId});
 
     		}catch (final EmptyResultDataAccessException e){
     			

@@ -35,7 +35,7 @@ dependencies {
                 [group: 'com.squareup.retrofit', name: 'retrofit', version: '1.6.1'],
                 [group: 'com.squareup.okhttp', name: 'okhttp', version: '2.0.0'],
                 [group: 'com.squareup.okhttp', name: 'okhttp-urlconnection', version: '2.0.0'],
-                
+            
                 [group: 'commons-lang', name:'commons-lang' ,version:'2.6'],
                 [group: 'org.drools', name:'knowledge-api', version:'5.5.0.Final'],
                 [group: 'org.drools', name:'drools-core', version:'5.5.0.Final'],

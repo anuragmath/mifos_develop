@@ -21,6 +21,7 @@ package org.apache.fineract.infrastructure.configuration.service;
 import java.util.Collection;
 
 import org.apache.fineract.infrastructure.configuration.data.ExternalServicesPropertiesData;
+import org.apache.fineract.infrastructure.configuration.data.NexmoCredentialsData;
 import org.apache.fineract.infrastructure.configuration.data.S3CredentialsData;
 import org.apache.fineract.infrastructure.configuration.data.SMTPCredentialsData;
 
@@ -31,5 +32,7 @@ public interface ExternalServicesPropertiesReadPlatformService {
     SMTPCredentialsData getSMTPCredentials();
 
     Collection<ExternalServicesPropertiesData> retrieveOne(String serviceName);
+    
+    NexmoCredentialsData getNexmoCredentials();
 
 }

@@ -51,4 +51,5 @@ public class SelfAuthenticationApiResource {
 		return this.authenticationApiResource.authenticate(username, password);
 	}
 
+	
 }

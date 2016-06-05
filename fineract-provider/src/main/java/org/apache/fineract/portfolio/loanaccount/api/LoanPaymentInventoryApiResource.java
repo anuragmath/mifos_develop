@@ -52,6 +52,8 @@ import org.apache.fineract.portfolio.loanaccount.data.RepaymentScheduleRelatedLo
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryNotFound;
+import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryPdcNotFound;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
 import org.apache.fineract.portfolio.loanaccount.service.LoanAssembler;
 import org.apache.fineract.portfolio.loanaccount.service.LoanReadPlatformService;
@@ -59,6 +61,7 @@ import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPla
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 
@@ -75,13 +78,9 @@ public class LoanPaymentInventoryApiResource {
 	private final PlatformSecurityContext context;
 	private final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService;
 	private final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer;
-	private final DefaultToApiJsonSerializer<LoanScheduleData> toLoanSchedule;
 	private final ApiRequestParameterHelper apiRequestParameterHelper;
 	private final PortfolioCommandSourceWritePlatformService commandsSourceWritePlatformService;
 	private final LoanReadPlatformService loanReadPlatformService;
-	private final DefaultToApiJsonSerializer<PaymentInventoryPdcData> pdc;
-	private final LoanAssembler loanAssembler;
-	
 	@Autowired
 	public LoanPaymentInventoryApiResource(final PlatformSecurityContext context, final PaymentInventoryReadPlatformService paymentInventoryReadPlatformService,
 			final DefaultToApiJsonSerializer<PaymentInventoryData> toApiJsonSerializer,final DefaultToApiJsonSerializer<LoanScheduleData> toLoanSchedule,
@@ -94,9 +93,6 @@ public class LoanPaymentInventoryApiResource {
 		this.commandsSourceWritePlatformService = commandSourceWritePlatformService;
 		this.paymentInventoryReadPlatformService = paymentInventoryReadPlatformService;
 		this.loanReadPlatformService = loanReadPlatformService;
-		this.toLoanSchedule = toLoanSchedule;
-		this.pdc = pdc;
-		this.loanAssembler = loanAssembler;
 		
 	}
 	
@@ -113,12 +109,14 @@ public class LoanPaymentInventoryApiResource {
 		/*
 		 * This should not only return data based on the inventoryId it should 
 		 */
-		
-		final PaymentInventoryData paymentInventory = this.paymentInventoryReadPlatformService.retrieveBasedOnLoanId(loanId);
-		
-		final Collection<PaymentInventoryPdcData> pdcInventoryData = this.paymentInventoryReadPlatformService
-				.retrievePdcPaymentDetails(inventoryId, true);
-		
+		final PaymentInventoryData paymentInventory;
+		try{
+			paymentInventory = this.paymentInventoryReadPlatformService.retrievePaymentInventory(loanId, inventoryId);
+				
+		} catch (final EmptyResultDataAccessException e){
+			throw new PaymentInventoryNotFound(inventoryId);
+		}
+		final Collection<PaymentInventoryPdcData> pdcInventoryData = this.paymentInventoryReadPlatformService.retrievePdcPaymentDetails(inventoryId, true);
 		final PaymentInventoryData paymentInventoryData = new PaymentInventoryData(paymentInventory, pdcInventoryData);
 		
 		final ApiRequestJsonSerializationSettings settings = this.apiRequestParameterHelper.process(uriInfo.getQueryParameters());

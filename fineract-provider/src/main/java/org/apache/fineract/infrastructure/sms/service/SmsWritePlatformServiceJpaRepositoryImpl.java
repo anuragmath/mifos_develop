@@ -24,10 +24,12 @@ import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResultBuilder;
 import org.apache.fineract.infrastructure.core.exception.PlatformDataIntegrityException;
+import org.apache.fineract.infrastructure.core.service.PlatformSMSService;
 import org.apache.fineract.infrastructure.sms.data.SmsDataValidator;
 import org.apache.fineract.infrastructure.sms.domain.SmsMessage;
 import org.apache.fineract.infrastructure.sms.domain.SmsMessageAssembler;
 import org.apache.fineract.infrastructure.sms.domain.SmsMessageRepository;
+import org.apache.fineract.infrastructure.sms.exception.SmsNotSentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +45,15 @@ public class SmsWritePlatformServiceJpaRepositoryImpl implements SmsWritePlatfor
     private final SmsMessageAssembler assembler;
     private final SmsMessageRepository repository;
     private final SmsDataValidator validator;
+    private final PlatformSMSService platformSMSService;
 
     @Autowired
     public SmsWritePlatformServiceJpaRepositoryImpl(final SmsMessageAssembler assembler, final SmsMessageRepository repository,
-            final SmsDataValidator validator) {
+            final SmsDataValidator validator, final PlatformSMSService platformSMSService) {
         this.assembler = assembler;
         this.repository = repository;
         this.validator = validator;
+        this.platformSMSService = platformSMSService;
     }
 
     @Transactional
@@ -63,9 +67,17 @@ public class SmsWritePlatformServiceJpaRepositoryImpl implements SmsWritePlatfor
 
             // TODO: at this point we also want to fire off request using third
             // party service to send SMS.
+            try {
+            		this.platformSMSService.sendMessage(message);
+            		message.setStatus(200);                
+            }catch (final SmsNotSentException e){
+            		throw new SmsNotSentException();
+            }
+            
             // TODO: decision to be made on wheter we 'wait' for response or use
             // 'future/promise' to capture response and update the SmsMessage
             // table
+            
             this.repository.save(message);
 
             return new CommandProcessingResultBuilder() //

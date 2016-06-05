@@ -52,5 +52,6 @@ public class ServerApplication {
 		ConfigurableApplicationContext ctx = SpringApplication.run(Configuration.class, args);
 		ApplicationExitUtil.waitForKeyPressToCleanlyExit(ctx);
 	}
+	
 
 }

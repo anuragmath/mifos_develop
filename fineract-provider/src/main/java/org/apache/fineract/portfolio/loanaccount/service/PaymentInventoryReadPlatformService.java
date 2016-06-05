@@ -31,6 +31,8 @@ public interface PaymentInventoryReadPlatformService {
 	
 	PaymentInventoryData retrieveBasedOnLoanId(Long loanId);
 	
+	PaymentInventoryData retrievePaymentInventory(Long loanId, Long inventoryId);
+	
 	PaymentInventoryData retrieveBasedOnInventoryId(Long inventoryId);
 	
 	Collection<PaymentInventoryPdcData> retrievePdcInventory(Long inventoryId);
