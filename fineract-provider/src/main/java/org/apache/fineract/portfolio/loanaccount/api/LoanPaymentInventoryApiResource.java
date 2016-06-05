@@ -92,7 +92,6 @@ public class LoanPaymentInventoryApiResource {
 		this.commandsSourceWritePlatformService = commandSourceWritePlatformService;
 		this.paymentInventoryReadPlatformService = paymentInventoryReadPlatformService;
 		this.loanReadPlatformService = loanReadPlatformService;
-		this.toLoanSchedule = toLoanSchedule;
 		this.pdc = pdc;
 	}	
 	
