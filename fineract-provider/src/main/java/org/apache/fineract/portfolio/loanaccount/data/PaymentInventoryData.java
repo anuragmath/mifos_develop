@@ -54,7 +54,7 @@ public class PaymentInventoryData {
 		
 		private final boolean isSeriesCheques;
 		
-		private final boolean isChequesDisbursed;
+		private final boolean isChequesDispatched;
 
 		
 		public PaymentInventoryData defaults(final Long id, final Integer periods, boolean isDirectDebitActive){
@@ -63,7 +63,7 @@ public class PaymentInventoryData {
 		
 		public PaymentInventoryData(final Long id, final Integer periods,final boolean isDirectDebitActive, final Long loanid, 
 				final Collection<PaymentInventoryPdcData> paymentInventoryPdcData,final LoanScheduleData repayment,
-				final PaymentInventoryPdcData options, final EnumOptionData pdcType, final boolean isSeriesCheques, final boolean isChequesDisbursed){		
+				final PaymentInventoryPdcData options, final EnumOptionData pdcType, final boolean isSeriesCheques, final boolean isChequesDispatched){		
 			this.id = id;
 			this.periods = periods;
 			this.isDirectDebitActive = isDirectDebitActive;
@@ -73,7 +73,7 @@ public class PaymentInventoryData {
 			this.options = options;
 			this.pdcType = pdcType;
 			this.isSeriesCheques = isSeriesCheques;
-			this.isChequesDisbursed = isChequesDisbursed;
+			this.isChequesDispatched = isChequesDispatched;
 		}
 		
 		public static PaymentInventoryData template(final Integer period, final LoanScheduleData repayment, final PaymentInventoryPdcData options){
@@ -97,7 +97,7 @@ public class PaymentInventoryData {
 			this.options = null;
 			this.pdcType = paymentInventoryData.pdcType;
 			this.isSeriesCheques = paymentInventoryData.isSeriesCheques;
-			this.isChequesDisbursed = paymentInventoryData.isChequesDisbursed;
+			this.isChequesDispatched = paymentInventoryData.isChequesDispatched;
 		
 		}
 		
@@ -113,8 +113,8 @@ public class PaymentInventoryData {
 			return this.isSeriesCheques;
 		}
 		
-		public boolean getIsChequesDisbursed(){
-			return this.isChequesDisbursed;
+		public boolean getisChequesDispatched(){
+			return this.isChequesDispatched;
 		}
 		public EnumOptionData getPdcType(){
 			return this.pdcType;

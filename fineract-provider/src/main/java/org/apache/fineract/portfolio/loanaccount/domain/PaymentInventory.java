@@ -56,11 +56,11 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	@Column(name = "pdc_type", nullable = false)
 	private Integer pdcType;
 	
-	@Column(name = "is_seriesCheques", nullable = false)
+	@Column(name = "is_SeriesCheques", nullable = false)
 	private boolean isSeriesCheques;
 	
-	@Column(name = "is_chequesDisbursed", nullable = false)
-	private boolean isChequesDisbursed;
+	@Column(name = "is_chequesDispatched", nullable = false)
+	private boolean isChequesDispatched;
 	
 	
 	public PaymentInventory(){
@@ -68,7 +68,7 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		this.periods = null;
 		this.isDirectDebitactive = false;
 		this.paymentInventoryPdc = null;
-		this.isChequesDisbursed = false;
+		this.isChequesDispatched = false;
 		this.isSeriesCheques = false;
 		this.pdcType = null;
 	}
@@ -78,25 +78,25 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	        final boolean isDirectDebitActive = command.booleanPrimitiveValueOfParameterNamed("isDirectDebitActive");
 	        final Integer pdcType = command.integerValueOfParameterNamed("pdcType");
 	        final boolean isSeriesCheques = command.booleanPrimitiveValueOfParameterNamed("isSeriesCheques");
-	        final boolean isChequesDisbursed = command.booleanPrimitiveValueOfParameterNamed("isChequesDisbursed");
-	        return createNewFromJson(loan,command, periods, isDirectDebitActive, paymentInventoryPdc, pdcType, isSeriesCheques, isChequesDisbursed);
+	        final boolean isChequesDispatched = command.booleanPrimitiveValueOfParameterNamed("isChequesDispatched");
+	        return createNewFromJson(loan,command, periods, isDirectDebitActive, paymentInventoryPdc, pdcType, isSeriesCheques, isChequesDispatched);
 	    }
 	 
 	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Integer periods, final boolean isDirectDebitActive, final Set<PaymentInventoryPdc> paymentInventoryPdc,
-			 final Integer pdcTypeValue, final boolean isSeriesCheques, final boolean isChequesDisbursed){
+			 final Integer pdcTypeValue, final boolean isSeriesCheques, final boolean isChequesDispatched){
 		 
 		 final PdcTypeEnumOption pdcType = PdcTypeEnumOption.fromInt(pdcTypeValue);
-		 return new PaymentInventory(loan, periods, isDirectDebitActive, paymentInventoryPdc, pdcType, isSeriesCheques, isChequesDisbursed);
+		 return new PaymentInventory(loan, periods, isDirectDebitActive, paymentInventoryPdc, pdcType, isSeriesCheques, isChequesDispatched);
 	 }
 	 
 	
 	public PaymentInventory(final Loan loan, final Integer periods, final boolean isDirectDebitActive, final Set<PaymentInventoryPdc> paymentInventoryPdc, final PdcTypeEnumOption pdcType,
-			final boolean isSeriesCheques, final boolean isChequesDisbursed){
+			final boolean isSeriesCheques, final boolean isChequesDispatched){
 		this.loan = loan;
 		this.periods = periods;
 		this.isDirectDebitactive = isDirectDebitActive;
 		this.paymentInventoryPdc = paymentInventoryPdc;
-		this.isChequesDisbursed = isChequesDisbursed;
+		this.isChequesDispatched = isChequesDispatched;
 		this.isSeriesCheques = isSeriesCheques;
 		this.pdcType = pdcType.getValue();
 	}
@@ -122,8 +122,8 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		return this.isSeriesCheques;
 	}
 	
-	public boolean isChequesDisbursed(){
-		return this.isChequesDisbursed;
+	public boolean isChequesDispatched(){
+		return this.isChequesDispatched;
 	}
 	
 	public Set<PaymentInventoryPdc> getPaymentInventoryPdc(){

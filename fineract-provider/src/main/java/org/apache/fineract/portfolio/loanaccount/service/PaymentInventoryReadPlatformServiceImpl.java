@@ -63,8 +63,8 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     	
     	public String schema(){
     		return "pi.id as id, pi.loan_id as loanId, pi.is_directDebitActive as directDebit, " 
-    				+ "pi.periods as periods , pi.pdc_Type as pdcType, pi.is_seriesCheques as SeriesCheques, "
-    				+ "pi.is_chequesDisbursed as ChequesDisbursed from m_payment_inventory pi "
+    				+ "pi.periods as periods , pi.pdc_Type as pdcType, pi.is_SeriesCheques as SeriesCheques, "
+    				+ "pi.is_ChequesDispatched as ChequesDispatched from m_payment_inventory pi "
     				+ "join m_loan l on l.id = pi.loan_id ";
     	}
     	
@@ -75,7 +75,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     		final Long loanId = rs.getLong("loanId");
     		final boolean isdirectDebitActive = rs.getBoolean("directDebit");
     		final int periods = rs.getInt("periods");
-    		final boolean isChequesDisbursed = rs.getBoolean("ChequesDisbursed");
+    		final boolean isChequesDisbursed = rs.getBoolean("ChequesDispatched");
     		final boolean isSeriesCheques = rs.getBoolean("SeriesCheques");
     		final int pdcTypeValue = rs.getInt("pdcType");
     		final EnumOptionData pdcType = PdcTypeEnumerations.pdcType(pdcTypeValue);
