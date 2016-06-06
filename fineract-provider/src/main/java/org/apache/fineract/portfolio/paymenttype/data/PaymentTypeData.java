@@ -20,7 +20,43 @@ package org.apache.fineract.portfolio.paymenttype.data;
 
 public class PaymentTypeData {
 
-    @SuppressWarnings("unused")
+    public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Boolean getIsCashPayment() {
+		return isCashPayment;
+	}
+
+	public void setIsCashPayment(Boolean isCashPayment) {
+		this.isCashPayment = isCashPayment;
+	}
+
+	public Long getPosition() {
+		return position;
+	}
+
+	public void setPosition(Long position) {
+		this.position = position;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@SuppressWarnings("unused")
     private Long id;
     @SuppressWarnings("unused")
     private String name;

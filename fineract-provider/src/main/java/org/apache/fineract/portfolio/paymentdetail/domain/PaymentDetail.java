@@ -18,6 +18,8 @@
  */
 package org.apache.fineract.portfolio.paymentdetail.domain;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -25,13 +27,17 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.portfolio.paymentdetail.PaymentDetailConstants;
 import org.apache.fineract.portfolio.paymentdetail.data.PaymentDetailData;
 import org.apache.fineract.portfolio.paymenttype.data.PaymentTypeData;
 import org.apache.fineract.portfolio.paymenttype.domain.PaymentType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
@@ -56,7 +62,14 @@ public final class PaymentDetail extends AbstractPersistable<Long> {
 
     @Column(name = "bank_number", length = 50)
     private String bankNumber;
-
+    
+    @Temporal(TemporalType.DATE)
+	@Column(name = "cheque_date")
+    private Date chequeDate;
+    
+    @Column(name = "bank_name")
+    private String bankName;
+    
     protected PaymentDetail() {
 
     }
@@ -68,6 +81,8 @@ public final class PaymentDetail extends AbstractPersistable<Long> {
         final String routingCode = command.stringValueOfParameterNamed(PaymentDetailConstants.routingCodeParamName);
         final String receiptNumber = command.stringValueOfParameterNamed(PaymentDetailConstants.receiptNumberParamName);
         final String bankNumber = command.stringValueOfParameterNamed(PaymentDetailConstants.bankNumberParamName);
+        final Date chequeDate = command.DateValueOfParameterNamed(PaymentDetailConstants.chequeDateParamName);
+        final String bankName = command.stringValueOfParameterNamed(PaymentDetailConstants.bankNameParamName);
 
         if (StringUtils.isNotBlank(accountNumber)) {
             changes.put(PaymentDetailConstants.accountNumberParamName, accountNumber);
@@ -84,30 +99,39 @@ public final class PaymentDetail extends AbstractPersistable<Long> {
         if (StringUtils.isNotBlank(bankNumber)) {
             changes.put(PaymentDetailConstants.bankNumberParamName, bankNumber);
         }
+        if (chequeDate != null){
+        		changes.put(PaymentDetailConstants.chequeDateParamName, chequeDate);
+        }
+        if(StringUtils.isNotBlank(bankName)){
+        		changes.put(PaymentDetailConstants.bankNameParamName, bankName);
+        }
         final PaymentDetail paymentDetail = new PaymentDetail(paymentType, accountNumber, checkNumber, routingCode, receiptNumber,
-                bankNumber);
+                bankNumber,chequeDate,bankName);
         return paymentDetail;
     }
 
     public static PaymentDetail instance(final PaymentType paymentType, final String accountNumber, final String checkNumber,
-            final String routingCode, final String receiptNumber, final String bankNumber) {
-        return new PaymentDetail(paymentType, accountNumber, checkNumber, routingCode, receiptNumber, bankNumber);
+            final String routingCode, final String receiptNumber, final String bankNumber, final Date chequeDate,
+            final String bankName) {
+        return new PaymentDetail(paymentType, accountNumber, checkNumber, routingCode, receiptNumber, bankNumber, chequeDate , bankName);
     }
 
     private PaymentDetail(final PaymentType paymentType, final String accountNumber, final String checkNumber, final String routingCode,
-            final String receiptNumber, final String bankNumber) {
+            final String receiptNumber, final String bankNumber, final Date chequeDate, final String bankName) {
         this.paymentType = paymentType;
         this.accountNumber = accountNumber;
         this.checkNumber = checkNumber;
         this.routingCode = routingCode;
         this.receiptNumber = receiptNumber;
         this.bankNumber = bankNumber;
+        this.chequeDate = chequeDate;
+        this.bankName = bankName;
     }
 
     public PaymentDetailData toData() {
         final PaymentTypeData paymentTypeData = this.paymentType.toData();
         final PaymentDetailData paymentDetailData = new PaymentDetailData(getId(), paymentTypeData, this.accountNumber, this.checkNumber,
-                this.routingCode, this.receiptNumber, this.bankNumber);
+                this.routingCode, this.receiptNumber, this.bankNumber, this.chequeDate, this.bankName);
         return paymentDetailData;
     }
 

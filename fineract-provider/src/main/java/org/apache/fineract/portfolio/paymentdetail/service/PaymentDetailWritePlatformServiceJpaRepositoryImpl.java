@@ -54,6 +54,7 @@ public class PaymentDetailWritePlatformServiceJpaRepositoryImpl implements Payme
         return paymentDetail;
 
     }
+    
 
     @Override
     @Transactional
