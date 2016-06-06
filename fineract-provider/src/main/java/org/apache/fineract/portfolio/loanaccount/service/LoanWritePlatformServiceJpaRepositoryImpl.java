@@ -531,11 +531,23 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		
 		final JsonElement element = command.parsedJson();
 	
-		final Set<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element);
 		
-		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command, paymentInventoryPdc);
+		
+		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
+		
+		
 		
 		this.paymentInventoryRepository.save(paymentInventory); 
+		
+		
+		final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId());
+		
+		this.paymentInventoryPdc.save(paymentInventoryPdc);
+		
+		//First Save the PaymentInventory and then send the pdcData to save with the paymentInventoryId;
+		
+		
+		
 		
 		return new CommandProcessingResultBuilder() //
 	                .withCommandId(command.commandId()) //
@@ -879,10 +891,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         	
         		final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
         		
-        		final PaymentInventoryPdc paymentInventoryPdc  = this.paymentInventoryPdc.findOne(payment.getPeriod().longValue());
         		
         		
-        		paymentInventoryPdc.setPresentationStatus(2);
+        		//paymentInventoryPdc.setPresentationStatus(2);
    
         	
         }

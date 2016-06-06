@@ -125,9 +125,13 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	public Integer getPresentationStatus() {
 		return presentationStatus;
 	}
-
-	@Column(name = "period", nullable = true)
-	 private Integer period;
+	
+	  @ManyToOne(optional = false)
+	  @JoinColumn(name = "payment_id")
+	  private PaymentInventory paymentInventory;
+	
+	  @Column(name = "period", nullable = true)
+	  private Integer period;
 	 
 	  @Temporal(TemporalType.DATE)
 	  @Column(name = "date")
@@ -183,16 +187,31 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		  this.makePresentation = makePresentation;
 	
 	  }
+	  
+	  public PaymentInventoryPdc(final PaymentInventory payment,final Integer period, final LocalDate date, final BigDecimal amount, 
+			  final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, 
+			  final PdcPresentationEnumOption status, final boolean makePresentation){
+		  this.paymentInventory = payment;
+		  this.period = period;
+		  this.date = date.toDate();
+		  this.amount = amount;
+		  this.chequeDate = chequeDate.toDate();
+		  this.chequeno = chequeno;
+		  this.nameOfBank = nameOfBank;
+		  this.ifscCode = ifscCode;
+		  this.presentationStatus = status.getValue();
+		  this.makePresentation = makePresentation;
+	  }
 
 
 
 
-	public static PaymentInventoryPdc createNew(final Integer period, final LocalDate date, final BigDecimal amount,
+	public static PaymentInventoryPdc createNew(final PaymentInventory payment,final Integer period, final LocalDate date, final BigDecimal amount,
 			final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode,
 			final Integer presentationStatus, final boolean makePresentation) {
 		
 		final PdcPresentationEnumOption status = PdcPresentationEnumOption.fromInt(presentationStatus);
-		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, status, makePresentation);
+		return new PaymentInventoryPdc(payment,period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, status, makePresentation);
 	}
 	
 	

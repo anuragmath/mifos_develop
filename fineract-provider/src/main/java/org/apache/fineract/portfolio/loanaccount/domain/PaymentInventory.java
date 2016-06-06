@@ -19,6 +19,8 @@
 
 package org.apache.fineract.portfolio.loanaccount.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,11 +29,18 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.EnumOptionData;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 
@@ -48,10 +57,11 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	
 	@Column(name = "is_directDebitActive", nullable = false)
     private boolean isDirectDebitactive;
-
-	@OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name = "payment_inventory_id", nullable = false)
-    private Set<PaymentInventoryPdc> paymentInventoryPdc;
+	
+	@LazyCollection(LazyCollectionOption.FALSE)
+    @OrderBy(value = "period")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "paymentInventory", orphanRemoval = true)
+    private List<PaymentInventoryPdc> paymentInventoryPdc = new ArrayList<>();
 	
 	@Column(name = "pdc_type", nullable = false)
 	private Integer pdcType;
@@ -61,6 +71,7 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	
 	@Column(name = "is_chequesDispatched", nullable = false)
 	private boolean isChequesDispatched;
+
 	
 	
 	public PaymentInventory(){
@@ -73,29 +84,28 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		this.pdcType = null;
 	}
 	
-	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Set<PaymentInventoryPdc> paymentInventoryPdc) {
+	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command) {
 	        final Integer periods = loan.getLoanRepaymentScheduleDetail().getNumberOfRepayments();
 	        final boolean isDirectDebitActive = command.booleanPrimitiveValueOfParameterNamed("isDirectDebitActive");
 	        final Integer pdcType = command.integerValueOfParameterNamed("pdcType");
 	        final boolean isSeriesCheques = command.booleanPrimitiveValueOfParameterNamed("isSeriesCheques");
 	        final boolean isChequesDispatched = command.booleanPrimitiveValueOfParameterNamed("isChequesDispatched");
-	        return createNewFromJson(loan,command, periods, isDirectDebitActive, paymentInventoryPdc, pdcType, isSeriesCheques, isChequesDispatched);
+	        return createNewFromJson(loan,command, periods, isDirectDebitActive, pdcType, isSeriesCheques, isChequesDispatched);
 	    }
 	 
-	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Integer periods, final boolean isDirectDebitActive, final Set<PaymentInventoryPdc> paymentInventoryPdc,
+	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command, final Integer periods, final boolean isDirectDebitActive,
 			 final Integer pdcTypeValue, final boolean isSeriesCheques, final boolean isChequesDispatched){
 		 
 		 final PdcTypeEnumOption pdcType = PdcTypeEnumOption.fromInt(pdcTypeValue);
-		 return new PaymentInventory(loan, periods, isDirectDebitActive, paymentInventoryPdc, pdcType, isSeriesCheques, isChequesDispatched);
+		 return new PaymentInventory(loan, periods, isDirectDebitActive, pdcType, isSeriesCheques, isChequesDispatched);
 	 }
 	 
 	
-	public PaymentInventory(final Loan loan, final Integer periods, final boolean isDirectDebitActive, final Set<PaymentInventoryPdc> paymentInventoryPdc, final PdcTypeEnumOption pdcType,
+	public PaymentInventory(final Loan loan, final Integer periods, final boolean isDirectDebitActive, final PdcTypeEnumOption pdcType,
 			final boolean isSeriesCheques, final boolean isChequesDispatched){
 		this.loan = loan;
 		this.periods = periods;
 		this.isDirectDebitactive = isDirectDebitActive;
-		this.paymentInventoryPdc = paymentInventoryPdc;
 		this.isChequesDispatched = isChequesDispatched;
 		this.isSeriesCheques = isSeriesCheques;
 		this.pdcType = pdcType.getValue();
@@ -126,7 +136,7 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		return this.isChequesDispatched;
 	}
 	
-	public Set<PaymentInventoryPdc> getPaymentInventoryPdc(){
+	public List<PaymentInventoryPdc> getPaymentInventoryPdc(){
 		 return this.paymentInventoryPdc;
 	}
 }
