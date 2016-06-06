@@ -413,8 +413,6 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
         PaymentInventoryPdcData paymentInventoryPdcData = null;
         	try{
         			paymentInventory  = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
-        			   
-        	        
         			
         }catch (final PaymentInventoryNotFound e){
         			 paymentInventory = null;
