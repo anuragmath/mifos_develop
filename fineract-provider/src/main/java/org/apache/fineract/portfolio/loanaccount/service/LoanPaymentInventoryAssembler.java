@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
 import org.joda.time.LocalDate;
@@ -41,15 +40,12 @@ public class LoanPaymentInventoryAssembler {
 	
 	private final FromJsonHelper fromJsonHelper;
 	private final PaymentInventoryRepository paymentInventoryRepository;
-	private final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment;
-
+	
     @Autowired
-    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository,
-    		final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment){
+    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository){
     	this.fromJsonHelper = fromJsonHelper;
     	this.paymentInventoryRepository = paymentInventoryRepository;
-    	this.loanRepaymentScheduleInstallment = loanRepaymentScheduleInstallment;
-    }
+    	}
     
     
     public List<PaymentInventoryPdc> fromParsedJson(final JsonElement element, final Long paymentId){

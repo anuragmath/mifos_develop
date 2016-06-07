@@ -253,8 +253,6 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final Loan newLoanApplication = this.loanAssembler.assembleFrom(command, currentUser);
 
             validateSubmittedOnDate(newLoanApplication);
-            final Long loanid = newLoanApplication.getId();
-            
             final LoanProductRelatedDetail productRelatedDetail = newLoanApplication.repaymentScheduleDetail();
 
             if (loanProduct.getLoanProductConfigurableAttributes() != null) {

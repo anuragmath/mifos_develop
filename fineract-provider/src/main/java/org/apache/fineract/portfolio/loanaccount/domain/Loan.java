@@ -327,6 +327,7 @@ public class Loan extends AbstractPersistable<Long> {
     @OrderBy(value = "installmentNumber")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "loan", orphanRemoval = true)
     private final List<LoanRepaymentScheduleInstallment> repaymentScheduleInstallments = new ArrayList<>();
+    
 
     // see
     // http://stackoverflow.com/questions/4334970/hibernate-cannot-simultaneously-fetch-multiple-bags
