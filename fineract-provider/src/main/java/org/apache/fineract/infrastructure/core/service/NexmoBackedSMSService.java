@@ -19,7 +19,7 @@ public class NexmoBackedSMSService implements PlatformSMSService {
 	public  NexmoBackedSMSService(final ExternalServicesPropertiesReadPlatformService externalService) {
 		// TODO Auto-generated constructor stub
 		this.externalService = externalService;
-	}
+}
 
 	@Override
 	public void sendMessage(final SmsMessage smsMessage) {

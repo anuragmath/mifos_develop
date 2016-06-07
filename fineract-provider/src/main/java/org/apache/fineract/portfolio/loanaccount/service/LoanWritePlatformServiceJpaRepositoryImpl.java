@@ -181,6 +181,7 @@ import org.apache.fineract.portfolio.loanproduct.exception.LinkedAccountRequired
 import org.apache.fineract.portfolio.loanproduct.service.LoanProductReadPlatformService;
 import org.apache.fineract.portfolio.note.domain.Note;
 import org.apache.fineract.portfolio.note.domain.NoteRepository;
+import org.apache.fineract.portfolio.paymentdetail.data.PaymentDetailData;
 import org.apache.fineract.portfolio.paymentdetail.domain.PaymentDetail;
 import org.apache.fineract.portfolio.paymentdetail.service.PaymentDetailWritePlatformService;
 import org.apache.fineract.portfolio.paymenttype.data.PaymentTypeData;
@@ -437,7 +438,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             }
             
             double test = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12;
-            loan.setInterRateOfReturn(test);
+            //loan.setInterRateOfReturn(test);
             // auto create standing instruction
             createStandingInstruction(loan);
 
@@ -530,11 +531,23 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		
 		final JsonElement element = command.parsedJson();
 	
-		final Set<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element);
 		
-		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command, paymentInventoryPdc);
+		
+		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
+		
+		
 		
 		this.paymentInventoryRepository.save(paymentInventory); 
+		
+		
+		final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId());
+		
+		this.paymentInventoryPdc.save(paymentInventoryPdc);
+		
+		//First Save the PaymentInventory and then send the pdcData to save with the paymentInventoryId;
+		
+		
+		
 		
 		return new CommandProcessingResultBuilder() //
 	                .withCommandId(command.commandId()) //
@@ -881,7 +894,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         		final PaymentInventoryPdc paymentInventoryPdc  = this.paymentInventoryPdc.findOne(payment.getId());
         
         		paymentInventoryPdc.setPresentationStatus(2);
-        		       	
+
         }
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createAndPersistPaymentDetail(command, changes);
         final Boolean isHolidayValidationDone = false;
@@ -892,7 +905,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         this.loanAccountDomainService.makeRepayment(loan, commandProcessingResultBuilder, transactionDate, transactionAmount,
                 paymentDetail, noteText, txnExternalId, isRecoveryRepayment, isAccountTransfer, holidayDetailDto, isHolidayValidationDone);
 
-       // loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
+        //loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
         
         return commandProcessingResultBuilder.withCommandId(command.commandId()) //
                 .withLoanId(loanId) //

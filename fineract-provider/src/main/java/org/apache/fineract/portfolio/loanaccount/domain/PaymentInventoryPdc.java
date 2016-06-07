@@ -38,8 +38,100 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Table(name = "m_payment_inventory_pdc")
 public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	 
-	 @Column(name = "period", nullable = true)
-	 private Integer period;
+	 public Integer getPeriod() {
+		return period;
+	}
+
+
+	public void setPeriod(Integer period) {
+		this.period = period;
+	}
+
+
+	public Date getDate() {
+		return date;
+	}
+
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+
+	public Date getChequeDate() {
+		return chequeDate;
+	}
+
+
+	public void setChequeDate(Date chequeDate) {
+		this.chequeDate = chequeDate;
+	}
+
+
+	public String getChequeno() {
+		return chequeno.toString();
+	}
+
+
+	public void setChequeno(Long chequeno) {
+		this.chequeno = chequeno;
+	}
+
+
+	public String getNameOfBank() {
+		return nameOfBank;
+	}
+
+
+	public void setNameOfBank(String nameOfBank) {
+		this.nameOfBank = nameOfBank;
+	}
+	
+	public void setPresentationStatus(Integer presentationStatus){
+		this.presentationStatus = presentationStatus;
+		
+	}
+
+	public String getIfscCode() {
+		return ifscCode;
+	}
+
+
+	public void setIfscCode(String ifscCode) {
+		this.ifscCode = ifscCode;
+	}
+
+
+	public boolean isMakePresentation() {
+		return makePresentation;
+	}
+
+
+	public void setMakePresentation(boolean makePresentation) {
+		this.makePresentation = makePresentation;
+	}
+
+
+	public Integer getPresentationStatus() {
+		return presentationStatus;
+	}
+	
+	  @ManyToOne(optional = false)
+	  @JoinColumn(name = "payment_id")
+	  private PaymentInventory paymentInventory;
+	
+	  @Column(name = "period", nullable = true)
+	  private Integer period;
 	 
 	  @Temporal(TemporalType.DATE)
 	  @Column(name = "date")
@@ -53,19 +145,19 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	  private Date chequeDate;
 	  
 	  @Column(name = "cheque_no", nullable = false)
-	  private final Long chequeno;
+	  private Long chequeno;
 	
 	  @Column(name = "name_of_bank", nullable = false)
-	  private final String nameOfBank;
+	  private String nameOfBank;
 		
 	  @Column(name = "ifsc_code", nullable = false)
-	  private final String ifscCode;
+	  private String ifscCode;
 		
 	  @Column(name = "present_type_of", nullable = false)
 	  private Integer presentationStatus;
 		
 	  @Column(name = "make_presentation", nullable = false)
-	  private final boolean makePresentation;
+	  private boolean makePresentation;
 	  
 	  protected PaymentInventoryPdc(){
 	    	this.date = null;
@@ -95,22 +187,34 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 		  this.makePresentation = makePresentation;
 	
 	  }
+	  
+	  public PaymentInventoryPdc(final PaymentInventory payment,final Integer period, final LocalDate date, final BigDecimal amount, 
+			  final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode, 
+			  final PdcPresentationEnumOption status, final boolean makePresentation){
+		  this.paymentInventory = payment;
+		  this.period = period;
+		  this.date = date.toDate();
+		  this.amount = amount;
+		  this.chequeDate = chequeDate.toDate();
+		  this.chequeno = chequeno;
+		  this.nameOfBank = nameOfBank;
+		  this.ifscCode = ifscCode;
+		  this.presentationStatus = status.getValue();
+		  this.makePresentation = makePresentation;
+	  }
 
 
 
 
-	public static PaymentInventoryPdc createNew(final Integer period, final LocalDate date, final BigDecimal amount,
+	public static PaymentInventoryPdc createNew(final PaymentInventory payment,final Integer period, final LocalDate date, final BigDecimal amount,
 			final LocalDate chequeDate, final Long chequeno, final String nameOfBank, final String ifscCode,
 			final Integer presentationStatus, final boolean makePresentation) {
 		
 		final PdcPresentationEnumOption status = PdcPresentationEnumOption.fromInt(presentationStatus);
-		return new PaymentInventoryPdc(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, status, makePresentation);
+		return new PaymentInventoryPdc(payment,period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, status, makePresentation);
 	}
 	
-	public void setPresentationStatus(final Integer d){
-		this.presentationStatus = d;
-		
-	}
+	
 	
 	public Integer getPresentation(){
 		return this.presentationStatus;

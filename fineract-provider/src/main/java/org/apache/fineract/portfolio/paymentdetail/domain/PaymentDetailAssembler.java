@@ -18,6 +18,8 @@
  */
 package org.apache.fineract.portfolio.paymentdetail.domain;
 
+import java.time.LocalDate;
+
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
 import org.apache.fineract.portfolio.paymentdetail.PaymentDetailConstants;
 import org.apache.fineract.portfolio.paymenttype.domain.PaymentType;
@@ -50,6 +52,8 @@ public class PaymentDetailAssembler {
         final String routingCode = this.fromApiJsonHelper.extractStringNamed(PaymentDetailConstants.routingCodeParamName, json);
         final String receiptNumber = this.fromApiJsonHelper.extractStringNamed(PaymentDetailConstants.receiptNumberParamName, json);
         final String bankNumber = this.fromApiJsonHelper.extractStringNamed(PaymentDetailConstants.bankNumberParamName, json);
-        return PaymentDetail.instance(paymentType, accountNumber, checkNumber, routingCode, receiptNumber, bankNumber);
+        final org.joda.time.LocalDate chequeDate = this.fromApiJsonHelper.extractLocalDateNamed(PaymentDetailConstants.chequeDateParamName, json);
+        final String bankName = this.fromApiJsonHelper.extractStringNamed(PaymentDetailConstants.bankNameParamName, json);
+        return PaymentDetail.instance(paymentType, accountNumber, checkNumber, routingCode, receiptNumber, bankNumber, chequeDate.toDate(), bankName);
     }
 }

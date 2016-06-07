@@ -146,6 +146,10 @@ public class PaymentInventoryPdcData {
 		public List<EnumOptionData> getPresentationType() {
 			return presentationType;
 		}
+		
+		
+
+		
 
 }
 

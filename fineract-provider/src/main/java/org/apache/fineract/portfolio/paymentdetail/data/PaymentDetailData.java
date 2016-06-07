@@ -18,6 +18,9 @@
  */
 package org.apache.fineract.portfolio.paymentdetail.data;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 import org.apache.fineract.portfolio.paymenttype.data.PaymentTypeData;
 
 /**
@@ -39,9 +42,14 @@ public class PaymentDetailData {
     private final String receiptNumber;
     @SuppressWarnings("unused")
     private final String bankNumber;
+    @SuppressWarnings("unused")
+    private final Date chequeDate;
+    @SuppressWarnings("unused")
+    private final String bankName;
+    
 
     public PaymentDetailData(final Long id, final PaymentTypeData paymentType, final String accountNumber, final String checkNumber,
-            final String routingCode, final String receiptNumber, final String bankNumber) {
+            final String routingCode, final String receiptNumber, final String bankNumber, final Date chequeDate, final String bankName) {
         this.id = id;
         this.paymentType = paymentType;
         this.accountNumber = accountNumber;
@@ -49,6 +57,8 @@ public class PaymentDetailData {
         this.routingCode = routingCode;
         this.receiptNumber = receiptNumber;
         this.bankNumber = bankNumber;
+        this.chequeDate = chequeDate;
+        this.bankName = bankName;
     }
     
     

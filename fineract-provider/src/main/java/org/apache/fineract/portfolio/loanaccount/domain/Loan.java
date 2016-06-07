@@ -528,7 +528,13 @@ public class Loan extends AbstractPersistable<Long> {
     }
     
     public Integer getAdvanceEmiN(){
-    		return this.advanceEmiN;
+    		if(this.advanceEmiN == null){
+    			this.advanceEmiN = 0;
+    		}else {
+    			return this.advanceEmiN;
+    		}
+			return advanceEmiN;
+    		
     }
 
     private LoanSummary updateSummaryWithTotalFeeChargesDueAtDisbursement(final BigDecimal feeChargesDueAtDisbursement) {

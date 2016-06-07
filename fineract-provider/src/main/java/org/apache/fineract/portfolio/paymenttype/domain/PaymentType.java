@@ -35,7 +35,39 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Table(name = "m_payment_type")
 public class PaymentType extends AbstractPersistable<Long> {
 
-    @Column(name = "value")
+    public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Boolean getIsCashPayment() {
+		return isCashPayment;
+	}
+
+	public void setIsCashPayment(Boolean isCashPayment) {
+		this.isCashPayment = isCashPayment;
+	}
+
+	public Long getPosition() {
+		return position;
+	}
+
+	public void setPosition(Long position) {
+		this.position = position;
+	}
+
+	@Column(name = "value")
     private String name;
 
     @Column(name = "description")

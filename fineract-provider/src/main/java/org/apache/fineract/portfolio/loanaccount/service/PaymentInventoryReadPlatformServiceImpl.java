@@ -153,7 +153,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     				+ "pdc.date as Date, " + "pdc.amount as Amount, " + "pdc.cheque_date as chequeDate, " + "pdc.cheque_no as chequeNo, "
     				+ "pdc.name_of_bank as bankName, " + "pdc.ifsc_code as ifscCode, " + "pdc.present_type_of as presentationStatus, "
     				+ "pdc.make_presentation as makePresentation " + "from m_payment_inventory_pdc pdc "
-    				+ "join m_payment_inventory pi on pi.id = pdc.payment_inventory_id ";
+    				+ "join m_payment_inventory pi on pi.id = pdc.payment_id ";
     	}
 
     	
@@ -183,7 +183,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     @Override
     public Collection<PaymentInventoryPdcData> retrievePdcPaymentDetails(Long inventoryId, boolean onlyPdcPendingDetails) {
     	final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
-    	String sql = "select " + rm.schema() + "where pdc.payment_inventory_id=? ";
+    	String sql = "select " + rm.schema() + "where pdc.payment_id=? ";
     	/*if (onlyPdcPendingDetails) {
             sql = sql + "and pdc.waived =0 and lic.is_paid_derived=0";
         }*/
@@ -193,7 +193,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     @Override
     public Collection<PaymentInventoryPdcData> retrievePdcInventory(Long inventoryId) {
     	final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
-    	String sql = "select " + rm.schema() + "where pdc.payment_inventory_id=? ";
+    	String sql = "select " + rm.schema() + "where pdc.payment_id=? ";
     	/*if (onlyPdcPendingDetails) {
             sql = sql + "and pdc.waived =0 and lic.is_paid_derived=0";
         }*/
@@ -206,7 +206,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 		
 		try{
 			final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
-			String sql = "select " + rm.schema() + "where pdc.payment_inventory_id=? AND pdc.period=?";
+			String sql = "select " + rm.schema() + "where pdc.payment_id=? AND pdc.period=?";
 	    		return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { inventoryId , installmentNumber});
 			
 		} catch (final EmptyResultDataAccessException e){

@@ -1,0 +1,1 @@
+ALTER TABLE  `m_payment_inventory_pdc` CHANGE `payment_inventory_id` `payment_id` INT;
