@@ -878,11 +878,10 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         	
         		final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
         		
-        		final PaymentInventoryPdc paymentInventoryPdc  = this.paymentInventoryPdc.findOne(payment.getPeriod().longValue());
+        		final PaymentInventoryPdc paymentInventoryPdc  = this.paymentInventoryPdc.findOne(payment.getId());
         
         		paymentInventoryPdc.setPresentationStatus(2);
-        		
-        	
+        		       	
         }
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createAndPersistPaymentDetail(command, changes);
         final Boolean isHolidayValidationDone = false;
@@ -893,7 +892,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         this.loanAccountDomainService.makeRepayment(loan, commandProcessingResultBuilder, transactionDate, transactionAmount,
                 paymentDetail, noteText, txnExternalId, isRecoveryRepayment, isAccountTransfer, holidayDetailDto, isHolidayValidationDone);
 
-        loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
+       // loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
         
         return commandProcessingResultBuilder.withCommandId(command.commandId()) //
                 .withLoanId(loanId) //

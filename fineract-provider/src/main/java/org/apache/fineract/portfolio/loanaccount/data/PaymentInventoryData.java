@@ -19,20 +19,10 @@
 
 package org.apache.fineract.portfolio.loanaccount.data;
 
-import java.awt.List;
-import java.math.BigDecimal;
 import java.util.Collection;
 
-import org.apache.fineract.infrastructure.codes.data.CodeValueData;
 import org.apache.fineract.infrastructure.core.data.EnumOptionData;
-import org.apache.fineract.organisation.monetary.domain.MonetaryCurrency;
-import org.apache.fineract.portfolio.client.data.ClientAddressData;
-import org.apache.fineract.portfolio.client.data.ClientData;
-import org.apache.fineract.portfolio.loanaccount.domain.Loan;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleData;
-import org.apache.fineract.portfolio.loanaccount.service.PaymentInventoryReadPlatformService;
-import org.joda.time.LocalDate;
 
 public class PaymentInventoryData {
 		

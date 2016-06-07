@@ -30,6 +30,8 @@ import org.joda.time.LocalDate;
 
 public class PaymentInventoryPdcData {
 
+		private final Long id;
+		
 		private final Integer period;
 		
 		private final LocalDate date;
@@ -52,23 +54,24 @@ public class PaymentInventoryPdcData {
 		
 		public static PaymentInventoryPdcData template(final List<EnumOptionData> presentationType){
 			
-			return new PaymentInventoryPdcData(null, null, null, null, null, null, null, null, false, presentationType);
+			return new PaymentInventoryPdcData(null, null, null, null, null, null, null, null, null, false, presentationType);
 			
 		}
 		
-		public static PaymentInventoryPdcData instance(final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
+		public static PaymentInventoryPdcData instance(final Long id, final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
 				final Long chequeno, final String nameOfBank, final String ifscCode, final EnumOptionData presentationStatus, 
 				final boolean makePresentation){
 			
 			final List<EnumOptionData> presentationType = null;
 			
-			return new PaymentInventoryPdcData(period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus, makePresentation, presentationType);
+			return new PaymentInventoryPdcData(id, period, date, amount, chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus, makePresentation, presentationType);
 			
 		}
 
-		private  PaymentInventoryPdcData( final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
+		private  PaymentInventoryPdcData(final Long id, final Integer period,final LocalDate date, final BigDecimal amount, final LocalDate chequeDate,
 				final Long chequeno, final String nameOfBank, final String ifscCode, final EnumOptionData presentationStatus, final boolean makePresentation,final List<EnumOptionData> presentationType ){
 			this.period = period;
+			this.id = id;
 			this.date = date;
 			this.amount = amount;
 			this.chequeDate = chequeDate;
@@ -86,7 +89,9 @@ public class PaymentInventoryPdcData {
 		}
 		
 		
-
+		public Long getId(){
+			return this.id;
+		}
 
 		public LocalDate getDate() {
 			return date;

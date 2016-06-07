@@ -40,15 +40,10 @@ import com.google.gson.JsonObject;
 public class LoanPaymentInventoryAssembler {
 	
 	private final FromJsonHelper fromJsonHelper;
-    private final PaymentInventoryRepository paymentInventoryRepository;
-    private final PaymentInventoryPdcRepository paymentInventoryPdc;
-    
     @Autowired
     public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository,
     		final PaymentInventoryPdcRepository paymentInventoryPdcRepository){
     	this.fromJsonHelper = fromJsonHelper;
-    	this.paymentInventoryRepository = paymentInventoryRepository;
-    	this.paymentInventoryPdc = paymentInventoryPdcRepository;
     }
     
     
@@ -66,7 +61,7 @@ public class LoanPaymentInventoryAssembler {
             	final JsonArray array = topLevelJsonElement.get("pdcData").getAsJsonArray();
             	for (int i = 0; i < array.size(); i++) {
             		final JsonObject paymentInventorys = array.get(i).getAsJsonObject();
-            		final Long id = this.fromJsonHelper.extractLongNamed("id", paymentInventorys);
+            		this.fromJsonHelper.extractLongNamed("id", paymentInventorys);
             		
             		final Integer period = this.fromJsonHelper.extractIntegerNamed("period", paymentInventorys, locale);
             		
