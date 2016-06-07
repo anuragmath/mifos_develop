@@ -21,7 +21,11 @@ package org.apache.fineract.portfolio.loanaccount.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface PaymentInventoryPdcRepository extends JpaRepository<PaymentInventoryPdc, Long>, JpaSpecificationExecutor<PaymentInventoryPdc>{
-
+	
+	/*@Query(value = "select * from PaymentInventoryPdc payment where payment.period = :period and payment.payment_inventory_id = :inventoryId ", nativeQuery = true)
+    PaymentInventoryPdc findByPeriod(@Param("period") long period, @Param("inventoryId") Long inventoryId);*/
 }

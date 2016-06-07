@@ -155,7 +155,6 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     				+ "pdc.make_presentation as makePresentation " + "from m_payment_inventory_pdc pdc "
     				+ "join m_payment_inventory pi on pi.id = pdc.payment_inventory_id ";
     	}
-
     	
     	
 		@Override
@@ -210,6 +209,8 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 		} catch (final EmptyResultDataAccessException e){
 			throw new PaymentInventoryPdcNotFound(inventoryId);
 		}
+		
+		
 		// TODO Auto-generated method stub
 		/*
 		 * We need to think-over 

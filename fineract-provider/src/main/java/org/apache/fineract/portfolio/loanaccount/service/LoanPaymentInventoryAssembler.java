@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
+import org.apache.fineract.portfolio.loanaccount.domain.PdcPaymentInventoryRepository;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdcRepository;
 import org.joda.time.LocalDate;
@@ -49,6 +50,7 @@ public class LoanPaymentInventoryAssembler {
     	this.fromJsonHelper = fromJsonHelper;
     	this.paymentInventoryRepository = paymentInventoryRepository;
     	this.paymentInventoryPdc = paymentInventoryPdcRepository;
+    	
     }
     
     
@@ -117,7 +119,6 @@ public class LoanPaymentInventoryAssembler {
         
                     final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(period, date, amount,
                             chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus,makePresentation);
-                    
                     paymentInventory.add(paymentInv);
             	}
             	}

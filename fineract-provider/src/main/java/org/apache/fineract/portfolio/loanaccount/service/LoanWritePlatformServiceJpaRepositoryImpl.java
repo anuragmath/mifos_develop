@@ -527,14 +527,14 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		
 
 		final Loan loan = this.loanAssembler.assembleFrom(loanId);	
-		
+		final ArrayList<PaymentInventoryPdc> pdcArray = new ArrayList<>();
 		final JsonElement element = command.parsedJson();
 	
 		final Set<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element);
 		
 		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command, paymentInventoryPdc);
 		
-		this.paymentInventoryRepository.save(paymentInventory); 
+		this.paymentInventoryRepository.save(paymentInventory); 		
 		
 		return new CommandProcessingResultBuilder() //
 	                .withCommandId(command.commandId()) //
