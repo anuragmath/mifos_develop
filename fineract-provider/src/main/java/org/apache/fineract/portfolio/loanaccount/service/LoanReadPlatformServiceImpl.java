@@ -411,6 +411,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
         final BigDecimal unrecognizedIncomePortion = null;
         PaymentInventoryData paymentInventory = null;
         PaymentInventoryPdcData paymentInventoryPdcData = null;
+        
         	try{
         			paymentInventory  = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
         			
@@ -1250,7 +1251,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     + " tr.submitted_on_date as submittedOnDate, "
                     + " tr.manually_adjusted_or_reversed as manuallyReversed, "
                     + " pd.payment_type_id as paymentType,pd.account_number as accountNumber,pd.check_number as checkNumber, "
-                    + " pd.receipt_number as receiptNumber, pd.bank_number as bankNumber,pd.routing_code as routingCode, "
+                    + " pd.receipt_number as receiptNumber, pd.bank_number as bankNumber,pd.routing_code as routingCode, pd.cheque_date as chequeDate, pd.bank_name as bankName, "
                     + " l.currency_code as currencyCode, l.currency_digits as currencyDigits, l.currency_multiplesof as inMultiplesOf, rc.`name` as currencyName, "
                     + " rc.display_symbol as currencyDisplaySymbol, rc.internationalized_name_code as currencyNameCode, "
                     + " pt.value as paymentTypeName, tr.external_id as externalId, tr.office_id as officeId, office.name as officeName, "
@@ -1298,8 +1299,10 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     final String routingCode = rs.getString("routingCode");
                     final String receiptNumber = rs.getString("receiptNumber");
                     final String bankNumber = rs.getString("bankNumber");
+                    final java.sql.Date chequeDate = rs.getDate("chequeDate");
+                    final String bankName = rs.getString("bankName");
                     paymentDetailData = new PaymentDetailData(id, paymentType, accountNumber, checkNumber, routingCode, receiptNumber,
-                            bankNumber);
+                            bankNumber,chequeDate,bankName);
                 }
             }
             final LocalDate date = JdbcSupport.getLocalDate(rs, "date");

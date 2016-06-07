@@ -138,7 +138,7 @@ public class LoanPaymentInventoryApiResource {
 	 @Path("template")
 	 @Consumes({ MediaType.APPLICATION_JSON })
 	 @Produces({ MediaType.APPLICATION_JSON })
-	 public String template(@QueryParam("loanId") final Long loanId , @Context final UriInfo uriInfo){
+	 public String template(@PathParam("loanId") final Long loanId , @Context final UriInfo uriInfo){
 		 this.context.authenticatedUser().validateHasReadPermission(this.resourceNameForPermissions);
 		 
 		 LoanAccountData loanBasicDetails = this.loanReadPlatformService.retrieveOne(loanId);

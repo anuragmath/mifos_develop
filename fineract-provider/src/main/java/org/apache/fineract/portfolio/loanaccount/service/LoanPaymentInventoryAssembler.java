@@ -20,15 +20,13 @@
 package org.apache.fineract.portfolio.loanaccount.service;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
-import org.apache.fineract.portfolio.loanaccount.domain.PdcPaymentInventoryRepository;
+import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
-import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdcRepository;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,27 +39,24 @@ import com.google.gson.JsonObject;
 public class LoanPaymentInventoryAssembler {
 	
 	private final FromJsonHelper fromJsonHelper;
-    private final PaymentInventoryRepository paymentInventoryRepository;
-    private final PaymentInventoryPdcRepository paymentInventoryPdc;
-    
+	private final PaymentInventoryRepository paymentInventoryRepository;
+
     @Autowired
-    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository,
-    		final PaymentInventoryPdcRepository paymentInventoryPdcRepository){
+    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository){
     	this.fromJsonHelper = fromJsonHelper;
     	this.paymentInventoryRepository = paymentInventoryRepository;
-    	this.paymentInventoryPdc = paymentInventoryPdcRepository;
-    	
     }
     
     
-    public Set<PaymentInventoryPdc> fromParsedJson(final JsonElement element){
+    public List<PaymentInventoryPdc> fromParsedJson(final JsonElement element, final Long paymentId){
     	
-    	final Set<PaymentInventoryPdc> paymentInventory = new HashSet<>();
+    	final List<PaymentInventoryPdc> paymentInventory = new ArrayList<>();
  
     	if(element.isJsonObject()){
     		final JsonObject topLevelJsonElement = element.getAsJsonObject();
     		final String dateFormat = this.fromJsonHelper.extractDateFormatParameter(topLevelJsonElement);
             final Locale locale = this.fromJsonHelper.extractLocaleParameter(topLevelJsonElement);
+            
             final boolean isSeriesCheques = this.fromJsonHelper.extractBooleanNamed("isSeriesCheques", topLevelJsonElement);
             
             if (topLevelJsonElement.has("pdcData") && topLevelJsonElement.get("pdcData").isJsonArray()) {
@@ -70,6 +65,7 @@ public class LoanPaymentInventoryAssembler {
             	if(isSeriesCheques){
             		Long startChequeno = this.fromJsonHelper.extractLongNamed("chequeNo", array.get(0).getAsJsonObject());
             		final Long endChequeno = this.fromJsonHelper.extractLongNamed("chequeNo", array.get(1).getAsJsonObject());
+            		final PaymentInventory paymentInventoryId = this.paymentInventoryRepository.findOne(paymentId);
             		final Long NumberOfCheques = endChequeno-startChequeno;
             		final BigDecimal amount = this.fromJsonHelper.extractBigDecimalNamed("amount", array.get(0).getAsJsonObject(), locale);
             		final String nameOfBank = this.fromJsonHelper.extractStringNamed("nameOfBank",  array.get(0).getAsJsonObject());
@@ -82,7 +78,7 @@ public class LoanPaymentInventoryAssembler {
             			final Integer period = i+1;
             			final Long chequeno = startChequeno;
             			startChequeno = startChequeno+1;
-            			final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(period, date, amount,
+            			final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(paymentInventoryId,period, date, amount,
                                 chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus,makePresentation);
                         
                         paymentInventory.add(paymentInv);
@@ -92,8 +88,8 @@ public class LoanPaymentInventoryAssembler {
             	else{
             	for (int i = 0; i < array.size(); i++) {
             		final JsonObject paymentInventorys = array.get(i).getAsJsonObject();
-            		//final Long id = this.fromJsonHelper.extractLongNamed("id", paymentInventorys);
-            		
+            		this.fromJsonHelper.extractLongNamed("id", paymentInventorys);
+
             		final Integer period = this.fromJsonHelper.extractIntegerNamed("period", paymentInventorys, locale);
             		
             		final LocalDate date = this.fromJsonHelper.extractLocalDateNamed("date", paymentInventorys, dateFormat, locale);
@@ -106,6 +102,8 @@ public class LoanPaymentInventoryAssembler {
             		
             		final String nameOfBank = this.fromJsonHelper.extractStringNamed("nameOfBank", paymentInventorys);
             		
+            		final PaymentInventory paymentInventoryId = this.paymentInventoryRepository.findOne(paymentId);
+            		
             		final String ifscCode = this.fromJsonHelper.extractStringNamed("ifscCode", paymentInventorys);
             		
             		final Integer presentationStatus = this.fromJsonHelper.extractIntegerNamed("presentationStatus", paymentInventorys, locale);
@@ -117,7 +115,7 @@ public class LoanPaymentInventoryAssembler {
                        options = PdcPresentationStatus.fromInt(presentationStatus);
                     }*/
         
-                    final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(period, date, amount,
+                    final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(paymentInventoryId,period, date, amount,
                             chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus,makePresentation);
                     paymentInventory.add(paymentInv);
             	}
