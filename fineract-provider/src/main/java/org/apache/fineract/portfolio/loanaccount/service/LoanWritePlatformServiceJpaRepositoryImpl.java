@@ -857,6 +857,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         final BigDecimal transactionAmount = command.bigDecimalValueOfParameterNamed("transactionAmount");
         final String txnExternalId = command.stringValueOfParameterNamedAllowingNull("externalId");
 
+    
         final Map<String, Object> changes = new LinkedHashMap<>();
         changes.put("transactionDate", command.stringValueOfParameterNamed("transactionDate"));
         changes.put("transactionAmount", command.stringValueOfParameterNamed("transactionAmount"));
@@ -978,6 +979,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
         checkClientOrGroupActive(loan);
         final LoanTransaction transactionToAdjust = this.loanTransactionRepository.findOne(transactionId);
+        
         if (transactionToAdjust == null) { throw new LoanTransactionNotFoundException(transactionId); }
         this.businessEventNotifierService.notifyBusinessEventToBeExecuted(BUSINESS_EVENTS.LOAN_ADJUST_TRANSACTION,
                 constructEntityMap(BUSINESS_ENTITY.LOAN_ADJUSTED_TRANSACTION, transactionToAdjust));
@@ -1093,6 +1095,24 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             entityMap.put(BUSINESS_ENTITY.LOAN_TRANSACTION, newTransactionDetail);
         }
         this.businessEventNotifierService.notifyBusinessEventWasExecuted(BUSINESS_EVENTS.LOAN_ADJUST_TRANSACTION, entityMap);
+        
+        final Long paymentTypeId = transactionToAdjust.getPaymentDetail().getPaymentType().getId();
+            
+        final PaymentTypeData paymentType = this.paymentType.retrieveOne(paymentTypeId);
+        
+        if (paymentType.getId() == paymentTypeId.longValue()){
+        		
+        		final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
+        		
+        		final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment = loan.possibleNextRepaymentInstallment();
+                
+        	
+        		final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
+        		
+        		final PaymentInventoryPdc paymentInventoryPdc  = this.paymentInventoryPdc.findOne(payment.getId());
+        
+        		paymentInventoryPdc.setPresentationStatus(4);
+        }
 
         return new CommandProcessingResultBuilder() //
                 .withCommandId(command.commandId()) //
