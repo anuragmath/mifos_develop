@@ -328,6 +328,8 @@ public class Loan extends AbstractPersistable<Long> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "loan", orphanRemoval = true)
     private final List<LoanRepaymentScheduleInstallment> repaymentScheduleInstallments = new ArrayList<>();
 
+    @OneToOne(mappedBy = "loan", orphanRemoval = true)
+    private final PaymentInventory paymentInventory;
     // see
     // http://stackoverflow.com/questions/4334970/hibernate-cannot-simultaneously-fetch-multiple-bags
     @OrderBy(value = "dateOf, id")
@@ -415,10 +417,11 @@ public class Loan extends AbstractPersistable<Long> {
         final LoanStatus status = null;
         final Group group = null;
         final Boolean syncDisbursementWithMeeting = null;
+        final PaymentInventory paymentInventory = null;
         return new Loan(accountNo, client, group, loanType, fund, officer, loanPurpose, transactionProcessingStrategy, loanProduct,
                 loanRepaymentScheduleDetail, status, loanCharges, collateral, syncDisbursementWithMeeting, fixedEmiAmount,
                 disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
-                interestRateDifferential,advanceEmiN);
+                interestRateDifferential,advanceEmiN, paymentInventory);
     }
 
     public static Loan newGroupLoanApplication(final String accountNo, final Group group, final Integer loanType,
@@ -431,10 +434,12 @@ public class Loan extends AbstractPersistable<Long> {
             final BigDecimal interestRateDifferential, final Integer advanceEmiN) {
         final LoanStatus status = null;
         final Client client = null;
+        final PaymentInventory paymentInventory = null;
+        
         return new Loan(accountNo, client, group, loanType, fund, officer, loanPurpose, transactionProcessingStrategy, loanProduct,
                 loanRepaymentScheduleDetail, status, loanCharges, collateral, syncDisbursementWithMeeting, fixedEmiAmount,
                 disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
-                interestRateDifferential,advanceEmiN);
+                interestRateDifferential,advanceEmiN, paymentInventory);
     }
 
     public static Loan newIndividualLoanApplicationFromGroup(final String accountNo, final Client client, final Group group,
@@ -446,14 +451,16 @@ public class Loan extends AbstractPersistable<Long> {
             final Boolean createStandingInstructionAtDisbursement, final Boolean isFloatingInterestRate,
             final BigDecimal interestRateDifferential,final Integer advanceEmiN) {
         final LoanStatus status = null;
+        final PaymentInventory paymentInventory = null;
         return new Loan(accountNo, client, group, loanType, fund, officer, loanPurpose, transactionProcessingStrategy, loanProduct,
                 loanRepaymentScheduleDetail, status, loanCharges, collateral, syncDisbursementWithMeeting, fixedEmiAmount,
                 disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
-                interestRateDifferential,advanceEmiN);
+                interestRateDifferential,advanceEmiN, paymentInventory);
     }
 
     protected Loan() {
         this.client = null;
+        this.paymentInventory = null;
     }
 
     private Loan(final String accountNo, final Client client, final Group group, final Integer loanType, final Fund fund,
@@ -462,11 +469,12 @@ public class Loan extends AbstractPersistable<Long> {
             final Set<LoanCharge> loanCharges, final Set<LoanCollateral> collateral, final Boolean syncDisbursementWithMeeting,
             final BigDecimal fixedEmiAmount, final Set<LoanDisbursementDetails> disbursementDetails,
             final BigDecimal maxOutstandingLoanBalance, final Boolean createStandingInstructionAtDisbursement,
-            final Boolean isFloatingInterestRate, final BigDecimal interestRateDifferential,final Integer advanceEmiN) {
+            final Boolean isFloatingInterestRate, final BigDecimal interestRateDifferential,final Integer advanceEmiN, final PaymentInventory paymentInventory) {
 
         this.loanRepaymentScheduleDetail = loanRepaymentScheduleDetail;
         this.loanRepaymentScheduleDetail.validateRepaymentPeriodWithGraceSettings();
 
+        this.paymentInventory = paymentInventory;
         this.isFloatingInterestRate = isFloatingInterestRate;
         this.interestRateDifferential = interestRateDifferential;
  
@@ -1051,6 +1059,10 @@ public class Loan extends AbstractPersistable<Long> {
 
     public LoanProduct loanProduct() {
         return this.loanProduct;
+    }
+    
+    public List<LoanRepaymentScheduleInstallment> getLoanRepaymentScheduleInstallmet(){
+    	return this.repaymentScheduleInstallments;
     }
 
     public LoanProductRelatedDetail repaymentScheduleDetail() {

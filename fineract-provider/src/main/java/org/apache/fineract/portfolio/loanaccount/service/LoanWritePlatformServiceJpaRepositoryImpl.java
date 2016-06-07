@@ -528,27 +528,19 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		
 
 		final Loan loan = this.loanAssembler.assembleFrom(loanId);	
-		final ArrayList<PaymentInventoryPdc> pdcArray = new ArrayList<>();
+		
 		final JsonElement element = command.parsedJson();
-	
-		
-		
-		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
-		
-		
+
+		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);		
 		
 		this.paymentInventoryRepository.save(paymentInventory); 		
 		
-		
-		final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId());
+		final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId(), loanId);
 		
 		this.paymentInventoryPdc.save(paymentInventoryPdc);
 		
 		//First Save the PaymentInventory and then send the pdcData to save with the paymentInventoryId;
-		
-		
-		
-		
+			
 		return new CommandProcessingResultBuilder() //
 	                .withCommandId(command.commandId()) //
 	                .withEntityId(paymentInventory.getId()) //
@@ -562,9 +554,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
         checkClientOrGroupActive(loan);
-        //final JsonElement element = command.parsedJson();
-        //Serializable id = new Long(inventoryId);
-       
+  
         this.paymentInventoryRepository.delete(inventoryId);
         saveLoanWithDataIntegrityViolationChecks(loan);
         return new CommandProcessingResultBuilder() //
