@@ -39,7 +39,6 @@ public interface PaymentInventoryReadPlatformService {
 	
 	PaymentInventoryPdcData retrieveByInstallment(Integer installmentNumber, final Long inventoryId);
 	
-	
 	PaymentInventoryPdcData retrieveEnumOptions();
 
 }

@@ -149,18 +149,18 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     private static final class PaymentInventoryPdcMapper implements RowMapper<PaymentInventoryPdcData> {
     	
     	public String schema(){
-    		return "pdc.period as pdcPeriod, "
+    		return "pdc.id as id, pdc.period as pdcPeriod, "
     				+ "pdc.date as Date, " + "pdc.amount as Amount, " + "pdc.cheque_date as chequeDate, " + "pdc.cheque_no as chequeNo, "
     				+ "pdc.name_of_bank as bankName, " + "pdc.ifsc_code as ifscCode, " + "pdc.present_type_of as presentationStatus, "
     				+ "pdc.make_presentation as makePresentation " + "from m_payment_inventory_pdc pdc "
     				+ "join m_payment_inventory pi on pi.id = pdc.payment_id ";
     	}
-
     	
     	
 		@Override
 		public PaymentInventoryPdcData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum) throws SQLException {	
 			
+			final Long id = rs.getLong("id");
 			final int pdcPeriod = rs.getInt("pdcPeriod");
 			final BigDecimal amount = rs.getBigDecimal("Amount");
 			LocalDate date = JdbcSupport.getLocalDate(rs, "Date");
@@ -172,7 +172,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 			final EnumOptionData presentationType = PaymentInventoryEnumerations.presentationTime(presentationStatus); 
 			final boolean makePresentation = rs.getBoolean("makePresentation");
 			
-			return PaymentInventoryPdcData.instance(pdcPeriod, date, amount, chequeDate, chequeNo, bankName, ifscCode, presentationType,makePresentation);
+			return PaymentInventoryPdcData.instance(id, pdcPeriod, date, amount, chequeDate, chequeNo, bankName, ifscCode, presentationType,makePresentation);
 		}
 		
 		
@@ -199,6 +199,7 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
     	return this.jdbcTemplate.query(sql, rm, new Object[] { inventoryId });
     }
     
+   
 	@Override
 	public PaymentInventoryPdcData retrieveByInstallment(Integer installmentNumber, Long inventoryId) {
 		
@@ -210,6 +211,8 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 		} catch (final EmptyResultDataAccessException e){
 			throw new PaymentInventoryPdcNotFound(inventoryId);
 		}
+		
+		
 		// TODO Auto-generated method stub
 		/*
 		 * We need to think-over 

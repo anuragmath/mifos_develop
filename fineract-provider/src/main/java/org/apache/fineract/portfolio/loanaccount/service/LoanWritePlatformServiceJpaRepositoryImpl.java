@@ -528,7 +528,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		
 
 		final Loan loan = this.loanAssembler.assembleFrom(loanId);	
-		
+		final ArrayList<PaymentInventoryPdc> pdcArray = new ArrayList<>();
 		final JsonElement element = command.parsedJson();
 	
 		
@@ -537,7 +537,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		
 		
 		
-		this.paymentInventoryRepository.save(paymentInventory); 
+		this.paymentInventoryRepository.save(paymentInventory); 		
 		
 		
 		final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId());
@@ -891,7 +891,11 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         	
         		final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
         		
-        	
+        		final PaymentInventoryPdc paymentInventoryPdc  = this.paymentInventoryPdc.findOne(payment.getId());
+        
+        		paymentInventoryPdc.setPresentationStatus(2);
+        		paymentInventoryPdc.setMakePresentation(true);
+
         }
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createAndPersistPaymentDetail(command, changes);
         final Boolean isHolidayValidationDone = false;
