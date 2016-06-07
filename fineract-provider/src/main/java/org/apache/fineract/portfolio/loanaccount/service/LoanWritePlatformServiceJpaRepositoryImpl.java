@@ -161,6 +161,7 @@ import org.apache.fineract.portfolio.loanaccount.exception.LoanOfficerUnassignme
 import org.apache.fineract.portfolio.loanaccount.exception.LoanTransactionNotFoundException;
 import org.apache.fineract.portfolio.loanaccount.exception.MultiDisbursementDataRequiredException;
 import org.apache.fineract.portfolio.loanaccount.exception.PaymentInventoryNotFoundException;
+import org.apache.fineract.portfolio.loanaccount.exception.PdcChequeAlreadyPresentedAndDeclined;
 import org.apache.fineract.portfolio.loanaccount.guarantor.service.GuarantorDomainService;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.OverdueLoanScheduleData;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.domain.DefaultScheduledDateGenerator;
@@ -895,7 +896,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 	@Transactional
 	@Override
 	public CommandProcessingResult makeLoanRepayment(final Long loanId, final JsonCommand command,
-			final boolean isRecoveryRepayment) {
+			final boolean isRecoveryRepayment) throws PdcChequeAlreadyPresentedAndDeclined {
 
 		this.loanEventApiJsonValidator.validateNewRepaymentTransaction(command.json());
 
@@ -921,13 +922,8 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
 		final PaymentTypeData paymentType = this.paymentType.retrieveOne(paymentTypeId.longValue());
 
-		/*
-		 * 
-		 * payment id required error while making a loan repayment
-		 * 
-		 * 
-		 */
-		if (paymentType.getId() == paymentTypeId.longValue()) {
+		final String paymentName = paymentType.getName();
+		if (paymentName.equals("PDC")) {
 
 			final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
 
@@ -938,10 +934,13 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 					loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
 
 			final PaymentInventoryPdc paymentInventoryPdc = this.paymentInventoryPdc.findOne(payment.getId());
-
+			if(paymentInventoryPdc.getPresentationStatus().equals(4)){
+				throw new PdcChequeAlreadyPresentedAndDeclined(paymentInventoryPdc.getChequeno());
+			}
+			else{
 			paymentInventoryPdc.setPresentationStatus(2);
 			paymentInventoryPdc.setMakePresentation(true);
-
+			}
 		}
 		final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService
 				.createAndPersistPaymentDetail(command, changes);
@@ -1167,7 +1166,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
 		final PaymentTypeData paymentType = this.paymentType.retrieveOne(paymentTypeId);
 
-		if (paymentType.getId() == paymentTypeId.longValue()) {
+		if (paymentType.getName().equals("PDC")) {
 
 			final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
 

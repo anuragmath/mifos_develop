@@ -79,8 +79,8 @@ public class LoanPaymentInventoryAssembler {
             		final String ifscCode = this.fromJsonHelper.extractStringNamed("ifscCode", array.get(0).getAsJsonObject());
             		final Integer presentationStatus = this.fromJsonHelper.extractIntegerNamed("presentationStatus", array.get(0).getAsJsonObject(), locale);
             		final boolean makePresentation = this.fromJsonHelper.extractBooleanNamed("makePresentation", array.get(0).getAsJsonObject());
-            		
             		final Loan loan = this.loanRepository.findOne(loanId);
+            		
             		for(int i = 0; i< NumberOfCheques+1; i++){
             			final Integer period = i+1;
             			final Long chequeno = startChequeno;
