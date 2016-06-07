@@ -529,19 +529,15 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		
 		try {
 			final Loan loan = this.loanAssembler.assembleFrom(loanId);	
-			final ArrayList<PaymentInventoryPdc> pdcArray = new ArrayList<>();
 			final JsonElement element = command.parsedJson();
-		
-			
 			
 			final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
-			
-			
+		
 			
 			this.paymentInventoryRepository.save(paymentInventory); 		
+		
 			
-			
-			final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId());
+			final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId(), loanId);
 			
 			this.paymentInventoryPdc.save(paymentInventoryPdc);
 			
@@ -562,6 +558,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		}
 			}
 	
+	
 	@SuppressWarnings("unused")
 	private void handlePaymentInventoryDataIntegrityViolation(final Long loanId, final DataIntegrityViolationException dve){
 		if(dve.getMostSpecificCause().getMessage().contains("loan_id_unique")){
@@ -569,8 +566,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 					+ "`already exists","loanId", loanId);
 		}
 		logAsErrorUnexpectedDataIntegrityException(dve);
-		
-	}
+	}	
 	
 	private void logAsErrorUnexpectedDataIntegrityException(final DataIntegrityViolationException dve){
 		logger.error(dve.getMessage(),dve);
@@ -581,9 +577,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
         checkClientOrGroupActive(loan);
-        //final JsonElement element = command.parsedJson();
-        //Serializable id = new Long(inventoryId);
-       
+  
         this.paymentInventoryRepository.delete(inventoryId);
         saveLoanWithDataIntegrityViolationChecks(loan);
         return new CommandProcessingResultBuilder() //
