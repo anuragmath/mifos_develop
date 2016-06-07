@@ -72,6 +72,7 @@ public class LoanPaymentInventoryAssembler {
             	if(isSeriesCheques){
             		Long startChequeno = this.fromJsonHelper.extractLongNamed("chequeNo", array.get(0).getAsJsonObject());
             		final Long endChequeno = this.fromJsonHelper.extractLongNamed("chequeNo", array.get(1).getAsJsonObject());
+            		final PaymentInventory paymentInventoryId = this.paymentInventoryRepository.findOne(paymentId);
             		final Long NumberOfCheques = endChequeno-startChequeno;
             		final BigDecimal amount = this.fromJsonHelper.extractBigDecimalNamed("amount", array.get(0).getAsJsonObject(), locale);
             		final String nameOfBank = this.fromJsonHelper.extractStringNamed("nameOfBank",  array.get(0).getAsJsonObject());
@@ -84,7 +85,7 @@ public class LoanPaymentInventoryAssembler {
             			final Integer period = i+1;
             			final Long chequeno = startChequeno;
             			startChequeno = startChequeno+1;
-            			final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(null,period, date, amount,
+            			final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(paymentInventoryId,period, date, amount,
                                 chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus,makePresentation);
                         
                         paymentInventory.add(paymentInv);
