@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
@@ -45,7 +46,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 
 @Entity
-@Table(name = "m_payment_inventory")
+@Table(name = "m_payment_inventory", uniqueConstraints = { @UniqueConstraint(columnNames = { "loan_id" }, name = "loan_id_unique")})
 public class PaymentInventory extends AbstractPersistable<Long>{
 
 	@ManyToOne(optional = false)

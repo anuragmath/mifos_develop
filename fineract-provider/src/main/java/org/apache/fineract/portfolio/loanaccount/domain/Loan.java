@@ -327,6 +327,7 @@ public class Loan extends AbstractPersistable<Long> {
     @OrderBy(value = "installmentNumber")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "loan", orphanRemoval = true)
     private final List<LoanRepaymentScheduleInstallment> repaymentScheduleInstallments = new ArrayList<>();
+    
 
     @OneToOne(mappedBy = "loan", orphanRemoval = true)
     private final PaymentInventory paymentInventory;
