@@ -38,94 +38,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Table(name = "m_payment_inventory_pdc")
 public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	 
-	 public Integer getPeriod() {
-		return period;
-	}
-
-
-	public void setPeriod(Integer period) {
-		this.period = period;
-	}
-
-
-	public Date getDate() {
-		return date;
-	}
-
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-
-
-	public Date getChequeDate() {
-		return chequeDate;
-	}
-
-
-	public void setChequeDate(Date chequeDate) {
-		this.chequeDate = chequeDate;
-	}
-
-
-	public String getChequeno() {
-		return chequeno.toString();
-	}
-
-
-	public void setChequeno(Long chequeno) {
-		this.chequeno = chequeno;
-	}
-
-
-	public String getNameOfBank() {
-		return nameOfBank;
-	}
-
-
-	public void setNameOfBank(String nameOfBank) {
-		this.nameOfBank = nameOfBank;
-	}
-	
-	public void setPresentationStatus(Integer presentationStatus){
-		this.presentationStatus = presentationStatus;
-		
-	}
-
-	public String getIfscCode() {
-		return ifscCode;
-	}
-
-
-	public void setIfscCode(String ifscCode) {
-		this.ifscCode = ifscCode;
-	}
-
-
-	public boolean isMakePresentation() {
-		return makePresentation;
-	}
-
-
-	public void setMakePresentation(boolean makePresentation) {
-		this.makePresentation = makePresentation;
-	}
-
-
-	public Integer getPresentationStatus() {
-		return presentationStatus;
-	}
-	
+	 	
 	  @ManyToOne(optional = false)
 	  @JoinColumn(name = "payment_id")
 	  private PaymentInventory paymentInventory;
@@ -215,7 +128,94 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 	}
 	
 	
+	public Integer getPeriod() {
+		return period;
+	}
+
+
+	public void setPeriod(Integer period) {
+		this.period = period;
+	}
+
+
+	public Date getDate() {
+		return date;
+	}
+
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+
+	public Date getChequeDate() {
+		return chequeDate;
+	}
+
+
+	public void setChequeDate(Date chequeDate) {
+		this.chequeDate = chequeDate;
+	}
+
+
+	public String getChequeno() {
+		return chequeno.toString();
+	}
+
+
+	public void setChequeno(Long chequeno) {
+		this.chequeno = chequeno;
+	}
+
+
+	public String getNameOfBank() {
+		return nameOfBank;
+	}
+
+
+	public void setNameOfBank(String nameOfBank) {
+		this.nameOfBank = nameOfBank;
+	}
 	
+	public void setPresentationStatus(Integer presentationStatus){
+		this.presentationStatus = presentationStatus;
+		
+	}
+
+	public String getIfscCode() {
+		return ifscCode;
+	}
+
+
+	public void setIfscCode(String ifscCode) {
+		this.ifscCode = ifscCode;
+	}
+
+
+	public boolean isMakePresentation() {
+		return makePresentation;
+	}
+
+
+	public void setMakePresentation(boolean makePresentation) {
+		this.makePresentation = makePresentation;
+	}
+
+
+	public Integer getPresentationStatus() {
+		return presentationStatus;
+	}
+
 	public Integer getPresentation(){
 		return this.presentationStatus;
 	}
