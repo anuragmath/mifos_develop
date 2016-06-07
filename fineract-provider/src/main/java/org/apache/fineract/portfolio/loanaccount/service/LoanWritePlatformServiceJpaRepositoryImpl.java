@@ -43,6 +43,7 @@ import org.apache.fineract.infrastructure.core.data.CommandProcessingResultBuild
 import org.apache.fineract.infrastructure.core.data.DataValidatorBuilder;
 import org.apache.fineract.infrastructure.core.data.EnumOptionData;
 import org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException;
+import org.apache.fineract.infrastructure.core.exception.PlatformDataIntegrityException;
 import org.apache.fineract.infrastructure.core.exception.PlatformServiceUnavailableException;
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
 import org.apache.fineract.infrastructure.core.service.DateUtils;
@@ -526,36 +527,54 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 	@Override
 	public CommandProcessingResult addPaymentInventory(final Long loanId, final JsonCommand command){
 		
+		try {
+			final Loan loan = this.loanAssembler.assembleFrom(loanId);	
+			final ArrayList<PaymentInventoryPdc> pdcArray = new ArrayList<>();
+			final JsonElement element = command.parsedJson();
+		
+			
+			
+			final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
+			
+			
+			
+			this.paymentInventoryRepository.save(paymentInventory); 		
+			
+			
+			final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId());
+			
+			this.paymentInventoryPdc.save(paymentInventoryPdc);
+			
+			//First Save the PaymentInventory and then send the pdcData to save with the paymentInventoryId;
+			
+			
+			
+			
+			return new CommandProcessingResultBuilder() //
+		                .withCommandId(command.commandId()) //
+		                .withEntityId(paymentInventory.getId()) //
+		                .withLoanId(loanId) //
+		                .build();
 
-		final Loan loan = this.loanAssembler.assembleFrom(loanId);	
-		final ArrayList<PaymentInventoryPdc> pdcArray = new ArrayList<>();
-		final JsonElement element = command.parsedJson();
+		} catch (final DataIntegrityViolationException dve){
+			handlePaymentInventoryDataIntegrityViolation(loanId, dve);
+			return CommandProcessingResult.empty();
+		}
+			}
 	
+	@SuppressWarnings("unused")
+	private void handlePaymentInventoryDataIntegrityViolation(final Long loanId, final DataIntegrityViolationException dve){
+		if(dve.getMostSpecificCause().getMessage().contains("loan_id_unique")){
+			throw new PlatformDataIntegrityException("error.msg.payment.inventory.duplicate", "Payment Inventory with`", + loanId
+					+ "`already exists","loanId", loanId);
+		}
+		logAsErrorUnexpectedDataIntegrityException(dve);
 		
-		
-		final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
-		
-		
-		
-		this.paymentInventoryRepository.save(paymentInventory); 		
-		
-		
-		final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId());
-		
-		this.paymentInventoryPdc.save(paymentInventoryPdc);
-		
-		//First Save the PaymentInventory and then send the pdcData to save with the paymentInventoryId;
-		
-		
-		
-		
-		return new CommandProcessingResultBuilder() //
-	                .withCommandId(command.commandId()) //
-	                .withEntityId(paymentInventory.getId()) //
-	                .withLoanId(loanId) //
-	                .build();
 	}
 	
+	private void logAsErrorUnexpectedDataIntegrityException(final DataIntegrityViolationException dve){
+		logger.error(dve.getMessage(),dve);
+	}
 	@Transactional
     @Override
     public CommandProcessingResult deletePaymentInventory(final Long loanId, final Long inventoryId, final JsonCommand command) {
