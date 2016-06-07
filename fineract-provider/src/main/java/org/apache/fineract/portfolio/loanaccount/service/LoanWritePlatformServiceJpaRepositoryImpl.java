@@ -891,7 +891,6 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         	
         		final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
         		
-        		 
         	
         }
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createAndPersistPaymentDetail(command, changes);
