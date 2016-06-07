@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryRepository;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleInstallment;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventory;
 import org.apache.fineract.portfolio.loanaccount.domain.PaymentInventoryPdc;
 import org.joda.time.LocalDate;
@@ -40,11 +41,14 @@ public class LoanPaymentInventoryAssembler {
 	
 	private final FromJsonHelper fromJsonHelper;
 	private final PaymentInventoryRepository paymentInventoryRepository;
+	private final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment;
 
     @Autowired
-    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository){
+    public LoanPaymentInventoryAssembler(final FromJsonHelper fromJsonHelper, final PaymentInventoryRepository paymentInventoryRepository,
+    		final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment){
     	this.fromJsonHelper = fromJsonHelper;
     	this.paymentInventoryRepository = paymentInventoryRepository;
+    	this.loanRepaymentScheduleInstallment = loanRepaymentScheduleInstallment;
     }
     
     
@@ -73,11 +77,12 @@ public class LoanPaymentInventoryAssembler {
             		final Integer presentationStatus = this.fromJsonHelper.extractIntegerNamed("presentationStatus", array.get(0).getAsJsonObject(), locale);
             		final boolean makePresentation = this.fromJsonHelper.extractBooleanNamed("makePresentation", array.get(0).getAsJsonObject());
             		final LocalDate date = this.fromJsonHelper.extractLocalDateNamed("date", array.get(0).getAsJsonObject(), dateFormat, locale);
-            		final LocalDate chequeDate = this.fromJsonHelper.extractLocalDateNamed("chequeDate", array.get(0).getAsJsonObject(), dateFormat, locale);		
+            				
             		for(int i = 0; i< NumberOfCheques+1; i++){
             			final Integer period = i+1;
             			final Long chequeno = startChequeno;
             			startChequeno = startChequeno+1;
+            			final LocalDate chequeDate = this.fromJsonHelper.extractLocalDateNamed("chequeDate", array.get(0).getAsJsonObject(), dateFormat, locale);
             			final PaymentInventoryPdc paymentInv = PaymentInventoryPdc.createNew(paymentInventoryId,period, date, amount,
                                 chequeDate, chequeno, nameOfBank, ifscCode, presentationStatus,makePresentation);
                         

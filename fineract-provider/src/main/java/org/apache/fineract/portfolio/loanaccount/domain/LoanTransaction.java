@@ -704,6 +704,9 @@ public final class LoanTransaction extends AbstractPersistable<Long> {
         return new LocalDate(this.createdDate);
     }
 
+    public PaymentDetail getPaymentDetail(){
+    	return this.paymentDetail;
+    }
     public LocalDateTime getCreatedDateTime() {
         return new LocalDateTime(this.createdDate);
     }
