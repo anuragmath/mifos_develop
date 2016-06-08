@@ -946,15 +946,12 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 				.createAndPersistPaymentDetail(command, changes);
 		final Boolean isHolidayValidationDone = false;
 		final HolidayDetailDTO holidayDetailDto = null;
-		int a = 7;
 		boolean isAccountTransfer = false;
 		final CommandProcessingResultBuilder commandProcessingResultBuilder = new CommandProcessingResultBuilder();
 		this.loanAccountDomainService.makeRepayment(loan, commandProcessingResultBuilder, transactionDate,
 				transactionAmount, paymentDetail, noteText, txnExternalId, isRecoveryRepayment, isAccountTransfer,
 				holidayDetailDto, isHolidayValidationDone);
 
-		// loan.setInterRateOfReturn(IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()),
-		// 0.01d)*12);
 
 		return commandProcessingResultBuilder.withCommandId(command.commandId()) //
 				.withLoanId(loanId) //
