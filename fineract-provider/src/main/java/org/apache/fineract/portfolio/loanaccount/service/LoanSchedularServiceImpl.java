@@ -34,6 +34,7 @@ import org.apache.fineract.infrastructure.jobs.annotation.CronTarget;
 import org.apache.fineract.infrastructure.jobs.exception.JobExecutionException;
 import org.apache.fineract.infrastructure.jobs.service.JobName;
 import org.apache.fineract.portfolio.loanaccount.loanschedule.data.OverdueLoanScheduleData;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,17 @@ public class LoanSchedularServiceImpl implements LoanSchedularService {
         this.loanWritePlatformService = loanWritePlatformService;
     }
 
+    @Override
+    @CronTarget(jobName = JobName.MAKE_PDC_REPAYMENT)
+	public void makePdcRepaymentForDueLoans() throws JobExecutionException {
+	
+    	/*
+    	 * Auto repayment for the PDC cheques falling on a particular date
+    	 */
+    	
+		
+	}
+    
     @Override
     @CronTarget(jobName = JobName.APPLY_CHARGE_TO_OVERDUE_LOAN_INSTALLMENT)
     public void applyChargeForOverdueLoans() throws JobExecutionException {

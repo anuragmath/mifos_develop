@@ -4945,6 +4945,17 @@ public class Loan extends AbstractPersistable<Long> {
         return installment;
     }
 
+    public LoanRepaymentScheduleInstallment fetchRepaymentScheduleInstallment(final LocalDate dueDate) {
+        LoanRepaymentScheduleInstallment installment = null;
+        if (dueDate == null) { return installment; }
+        for (final LoanRepaymentScheduleInstallment scheduleInstallment : this.repaymentScheduleInstallments) {
+            if (scheduleInstallment.getDueDate().equals(dueDate)) {
+                installment = scheduleInstallment;
+                break;
+            }
+        }
+        return installment;
+    }
     public BigDecimal getApprovedPrincipal() {
         return this.approvedPrincipal;
     }

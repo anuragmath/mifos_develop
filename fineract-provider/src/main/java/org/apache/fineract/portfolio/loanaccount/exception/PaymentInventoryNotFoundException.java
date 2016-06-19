@@ -1,3 +1,4 @@
+
 package org.apache.fineract.portfolio.loanaccount.exception;
 
 import org.apache.fineract.infrastructure.core.exception.AbstractPlatformDomainRuleException;
