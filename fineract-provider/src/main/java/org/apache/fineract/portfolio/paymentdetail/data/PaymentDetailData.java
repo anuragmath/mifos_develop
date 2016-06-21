@@ -43,7 +43,7 @@ public class PaymentDetailData {
     @SuppressWarnings("unused")
     private final String bankNumber;
     @SuppressWarnings("unused")
-    private final Date chequeDate;
+    private Date chequeDate;
     @SuppressWarnings("unused")
     private final String bankName;
     
@@ -61,6 +61,4 @@ public class PaymentDetailData {
         this.bankName = bankName;
     }
     
-    
-
 }

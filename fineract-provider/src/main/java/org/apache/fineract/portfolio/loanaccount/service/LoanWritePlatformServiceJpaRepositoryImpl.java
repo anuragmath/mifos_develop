@@ -450,7 +450,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 				}
 			}
 
-			double test = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d) * 12;
+			//double test = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d) * 12;
 			// loan.setInterRateOfReturn(test);
 			// auto create standing instruction
 			createStandingInstruction(loan);
