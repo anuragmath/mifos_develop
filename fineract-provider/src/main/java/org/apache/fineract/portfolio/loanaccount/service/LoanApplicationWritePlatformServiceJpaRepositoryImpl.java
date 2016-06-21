@@ -265,10 +265,10 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                     newLoanApplication);
 
            this.loanRepository.save(newLoanApplication);
-           double irr = IrrCalculator.irr(this.IRRCalculate.IRRCal(newLoanApplication.getId()), 0.01d);
+           /*double irr = IrrCalculator.irr(this.IRRCalculate.IRRCal(newLoanApplication.getId()), 0.01d);
            double newIrr = irr *12;
            double roundedIr = Math.round(newIrr *100.0*100.0 ) /100.0;
-           newLoanApplication.setInterRateOfReturn((roundedIr));
+           newLoanApplication.setInterRateOfReturn((roundedIr));*/
             
             if (loanProduct.isInterestRecalculationEnabled()) {
                 this.fromApiJsonDeserializer.validateLoanForInterestRecalculation(newLoanApplication);
@@ -964,8 +964,8 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                     constructEntityMap(BUSINESS_ENTITY.LOAN, loan));
         }
         
-        double test = (IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
-        loan.setInterRateOfReturn(test);
+        //double test = (IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)*12);
+        //loan.setInterRateOfReturn(test);
         
         return new CommandProcessingResultBuilder() //
                 .withCommandId(command.commandId()) //

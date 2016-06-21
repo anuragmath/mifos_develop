@@ -1167,14 +1167,19 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
 			final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
 
-			final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment = loan.fetchRepaymentScheduleInstallment(transactionDate);
-
+			final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment;
+			if(transactionAmount.equals(new BigDecimal(0)))
+				loanRepaymentScheduleInstallment = loan.possibleNextRepaymentInstallment();
+			else
+				loanRepaymentScheduleInstallment= loan.fetchRepaymentScheduleInstallment(transactionDate);
+				
+			
 			final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(
 					loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
 
 			final PaymentInventoryPdc paymentInventoryPdc = this.paymentInventoryPdc.findOne(payment.getId());
 			
-			if(transactionAmount.equals(0))
+			if(transactionAmount.equals(new BigDecimal(0)))
 				paymentInventoryPdc.setPresentationStatus(4);
 			else
 				paymentInventoryPdc.setPresentationStatus(3);
