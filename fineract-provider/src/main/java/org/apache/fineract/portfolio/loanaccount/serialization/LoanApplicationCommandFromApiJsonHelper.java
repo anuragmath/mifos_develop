@@ -212,8 +212,8 @@ public final class LoanApplicationCommandFromApiJsonHelper {
 
         //Flat Interest Rate Per Period
         final String flatInterestRatePerPeriodParameterName = "flatInterestRatePerPeriod";
-        final Integer flatInterestRatePerPeriod = this.fromApiJsonHelper.extractIntegerWithLocaleNamed(flatInterestRatePerPeriodParameterName, element);
-        baseDataValidator.reset().parameter(flatInterestRatePerPeriodParameterName).value(flatInterestRatePerPeriod).notNull().integerGreaterThanZero();
+        final BigDecimal flatInterestRatePerPeriod = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(flatInterestRatePerPeriodParameterName, element);
+        baseDataValidator.reset().parameter(flatInterestRatePerPeriodParameterName).value(flatInterestRatePerPeriod).notNull().positiveAmount();
         if(loanProduct.isAdvanceEmi()){
         		
         	final String advanceEmiNParameterName = "advanceEmiN";

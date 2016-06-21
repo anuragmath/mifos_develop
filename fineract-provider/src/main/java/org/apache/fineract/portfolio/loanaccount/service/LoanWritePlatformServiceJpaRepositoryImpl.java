@@ -450,7 +450,9 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 				}
 			}
 
-			//double test = IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d) * 12;
+			// double test =
+			// IrrCalculator.irr(this.IRRCalculate.IRRCal(loan.getId()), 0.01d)
+			// * 12;
 			// loan.setInterRateOfReturn(test);
 			// auto create standing instruction
 			createStandingInstruction(loan);
@@ -537,52 +539,48 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 	 * @return void
 	 **/
 
+	public CommandProcessingResult addPaymentInventory(final Long loanId, final JsonCommand command) {
 
-	public CommandProcessingResult addPaymentInventory(final Long loanId, final JsonCommand command){
-		
 		try {
-			final Loan loan = this.loanAssembler.assembleFrom(loanId);	
+			final Loan loan = this.loanAssembler.assembleFrom(loanId);
 			final JsonElement element = command.parsedJson();
-			
-			final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
-		
-			
-			this.paymentInventoryRepository.save(paymentInventory); 		
-		
-			
-			final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element, paymentInventory.getId(), loanId);
-			
-			this.paymentInventoryPdc.save(paymentInventoryPdc);
-			
-			//First Save the PaymentInventory and then send the pdcData to save with the paymentInventoryId;
-			
-			
-			
-			
-			return new CommandProcessingResultBuilder() //
-		                .withCommandId(command.commandId()) //
-		                .withEntityId(paymentInventory.getId()) //
-		                .withLoanId(loanId) //
-		                .build();
 
-		} catch (final DataIntegrityViolationException dve){
+			final PaymentInventory paymentInventory = PaymentInventory.createNewFromJson(loan, command);
+
+			this.paymentInventoryRepository.save(paymentInventory);
+
+			final List<PaymentInventoryPdc> paymentInventoryPdc = this.loanPaymentInventory.fromParsedJson(element,
+					paymentInventory.getId(), loanId);
+
+			this.paymentInventoryPdc.save(paymentInventoryPdc);
+
+			// First Save the PaymentInventory and then send the pdcData to save
+			// with the paymentInventoryId;
+
+			return new CommandProcessingResultBuilder() //
+					.withCommandId(command.commandId()) //
+					.withEntityId(paymentInventory.getId()) //
+					.withLoanId(loanId) //
+					.build();
+
+		} catch (final DataIntegrityViolationException dve) {
 			handlePaymentInventoryDataIntegrityViolation(loanId, dve);
 			return CommandProcessingResult.empty();
 		}
-			}
-	
-	
+	}
+
 	@SuppressWarnings("unused")
-	private void handlePaymentInventoryDataIntegrityViolation(final Long loanId, final DataIntegrityViolationException dve){
-		if(dve.getMostSpecificCause().getMessage().contains("loan_id_unique")){
-			throw new PlatformDataIntegrityException("error.msg.payment.inventory.duplicate", "Payment Inventory with`", + loanId
-					+ "`already exists","loanId", loanId);
+	private void handlePaymentInventoryDataIntegrityViolation(final Long loanId,
+			final DataIntegrityViolationException dve) {
+		if (dve.getMostSpecificCause().getMessage().contains("loan_id_unique")) {
+			throw new PlatformDataIntegrityException("error.msg.payment.inventory.duplicate", "Payment Inventory with`",
+					+loanId + "`already exists", "loanId", loanId);
 		}
 		logAsErrorUnexpectedDataIntegrityException(dve);
-	}	
-	
-	private void logAsErrorUnexpectedDataIntegrityException(final DataIntegrityViolationException dve){
-		logger.error(dve.getMessage(),dve);
+	}
+
+	private void logAsErrorUnexpectedDataIntegrityException(final DataIntegrityViolationException dve) {
+		logger.error(dve.getMessage(), dve);
 	}
 
 	@Transactional
@@ -923,27 +921,34 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		final PaymentTypeData paymentType = this.paymentType.retrieveOne(paymentTypeId.longValue());
 
 		final String paymentName = paymentType.getName();
+		final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService
+				.createAndPersistPaymentDetail(command, changes);
+
 		if (paymentName.equals("PDC")) {
 
 			final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
+			final PaymentInventoryPdcData payment;
+			if (inventoryId.getPdcType().equals(PdcTypeEnumerations.pdcType(2))) {
+				payment = this.paymentInventoryService.retrieveByCheque(paymentDetail.getChequeNo(),
+						inventoryId.getId());
+			} else {
+				final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment = loan
+						.possibleNextRepaymentInstallment();
 
-			final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment = loan
-					.possibleNextRepaymentInstallment();
-
-			final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(
-					loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
+				payment = this.paymentInventoryService.retrieveByInstallment(
+						loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
+			}
 
 			final PaymentInventoryPdc paymentInventoryPdc = this.paymentInventoryPdc.findOne(payment.getId());
-			if(paymentInventoryPdc.getPresentationStatus().equals(4)){
+			
+			if (paymentInventoryPdc.getPresentationStatus().equals(4)) {
 				throw new PdcChequeAlreadyPresentedAndDeclined(paymentInventoryPdc.getChequeno());
-			}
-			else{
+			} else {
 				paymentInventoryPdc.setPresentationStatus(2);
 				paymentInventoryPdc.setMakePresentation(true);
 			}
 		}
-		final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService
-				.createAndPersistPaymentDetail(command, changes);
+
 		final Boolean isHolidayValidationDone = false;
 		final HolidayDetailDTO holidayDetailDto = null;
 		boolean isAccountTransfer = false;
@@ -951,7 +956,6 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 		this.loanAccountDomainService.makeRepayment(loan, commandProcessingResultBuilder, transactionDate,
 				transactionAmount, paymentDetail, noteText, txnExternalId, isRecoveryRepayment, isAccountTransfer,
 				holidayDetailDto, isHolidayValidationDone);
-
 
 		return commandProcessingResultBuilder.withCommandId(command.commandId()) //
 				.withLoanId(loanId) //
@@ -1168,18 +1172,17 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 			final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
 
 			final LoanRepaymentScheduleInstallment loanRepaymentScheduleInstallment;
-			if(transactionAmount.equals(new BigDecimal(0)))
+			if (transactionAmount.equals(new BigDecimal(0)))
 				loanRepaymentScheduleInstallment = loan.possibleNextRepaymentInstallment();
 			else
-				loanRepaymentScheduleInstallment= loan.fetchRepaymentScheduleInstallment(transactionDate);
-				
-			
+				loanRepaymentScheduleInstallment = loan.fetchRepaymentScheduleInstallment(transactionDate);
+
 			final PaymentInventoryPdcData payment = this.paymentInventoryService.retrieveByInstallment(
 					loanRepaymentScheduleInstallment.getInstallmentNumber().intValue(), inventoryId.getId());
 
 			final PaymentInventoryPdc paymentInventoryPdc = this.paymentInventoryPdc.findOne(payment.getId());
-			
-			if(transactionAmount.equals(new BigDecimal(0)))
+
+			if (transactionAmount.equals(new BigDecimal(0)))
 				paymentInventoryPdc.setPresentationStatus(4);
 			else
 				paymentInventoryPdc.setPresentationStatus(3);

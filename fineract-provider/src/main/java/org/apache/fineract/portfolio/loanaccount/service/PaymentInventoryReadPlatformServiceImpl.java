@@ -211,8 +211,19 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 		} catch (final EmptyResultDataAccessException e){
 			throw new PaymentInventoryPdcNotFound(inventoryId);
 		}
+	}	
 		
-		
+	@Override
+		public PaymentInventoryPdcData retrieveByCheque(String chequeNo, Long inventoryId) {
+			
+			try{
+				final PaymentInventoryPdcMapper rm = new PaymentInventoryPdcMapper();
+				String sql = "select " + rm.schema() + "where pdc.payment_id=? AND pdc.cheque_no=?";
+		    		return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { inventoryId , chequeNo});
+				
+			} catch (final EmptyResultDataAccessException e){
+				throw new PaymentInventoryPdcNotFound(inventoryId);
+			}
 		// TODO Auto-generated method stub
 		/*
 		 * We need to think-over 
@@ -233,8 +244,5 @@ public class PaymentInventoryReadPlatformServiceImpl implements PaymentInventory
 		 *   
 		 */
 	}
-
-
-
 	
 }
