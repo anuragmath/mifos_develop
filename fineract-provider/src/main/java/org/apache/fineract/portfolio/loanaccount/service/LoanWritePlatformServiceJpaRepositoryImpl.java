@@ -928,7 +928,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
 			final PaymentInventoryData inventoryId = this.paymentInventoryService.retrieveBasedOnLoanId(loanId);
 			final PaymentInventoryPdcData payment;
-			if (inventoryId.getPdcType().equals(PdcTypeEnumerations.pdcType(2))) {
+			if (inventoryId.getPdcType().getId() == 2) {
 				payment = this.paymentInventoryService.retrieveByCheque(paymentDetail.getChequeNo(),
 						inventoryId.getId());
 			} else {

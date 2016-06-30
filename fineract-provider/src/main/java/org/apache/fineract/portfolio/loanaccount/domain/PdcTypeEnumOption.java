@@ -32,6 +32,7 @@ public enum PdcTypeEnumOption {
 			break;
 		case 2:
 			pdcType = PdcTypeEnumOption.SECURITY_PDC;
+			break;
 		default:
 			pdcType = PdcTypeEnumOption.INVALID;
 			break;

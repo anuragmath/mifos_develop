@@ -106,9 +106,15 @@ public class PaymentInventoryPdc extends AbstractPersistable<Long>{
 			  final PdcPresentationEnumOption status, final boolean makePresentation){
 		  this.paymentInventory = payment;
 		  this.period = period;
-		  this.date = date.toDate();
+		  if(date == null)
+			  this.date = null;
+		  else
+			  this.date = date.toDate();
 		  this.amount = amount;
-		  this.chequeDate = chequeDate.toDate();
+		  if(chequeDate.equals(null))
+			  this.chequeDate = null;
+		  else
+			  this.chequeDate = chequeDate.toDate();
 		  this.chequeno = chequeno;
 		  this.nameOfBank = nameOfBank;
 		  this.ifscCode = ifscCode;

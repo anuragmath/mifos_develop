@@ -65,7 +65,7 @@ public class PaymentInventory extends AbstractPersistable<Long>{
     private List<PaymentInventoryPdc> paymentInventoryPdc = new ArrayList<>();
 	
 	@Column(name = "pdc_type", nullable = false)
-	private Integer pdcType;
+	private Integer pdcTypeId;
 	
 	@Column(name = "is_SeriesCheques", nullable = false)
 	private boolean isSeriesCheques;
@@ -82,13 +82,13 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		this.paymentInventoryPdc = null;
 		this.isChequesDispatched = false;
 		this.isSeriesCheques = false;
-		this.pdcType = null;
+		this.pdcTypeId = null;
 	}
 	
 	 public static PaymentInventory createNewFromJson(final Loan loan, final JsonCommand command) {
 	        final Integer periods = loan.getLoanRepaymentScheduleDetail().getNumberOfRepayments();
 	        final boolean isDirectDebitActive = command.booleanPrimitiveValueOfParameterNamed("isDirectDebitActive");
-	        final Integer pdcType = command.integerValueOfParameterNamed("pdcType");
+	        final Integer pdcType = command.integerValueOfParameterNamed("pdcTypeId");
 	        final boolean isSeriesCheques = command.booleanPrimitiveValueOfParameterNamed("isSeriesCheques");
 	        final boolean isChequesDispatched = command.booleanPrimitiveValueOfParameterNamed("isChequesDispatched");
 	        return createNewFromJson(loan,command, periods, isDirectDebitActive, pdcType, isSeriesCheques, isChequesDispatched);
@@ -109,7 +109,7 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 		this.isDirectDebitactive = isDirectDebitActive;
 		this.isChequesDispatched = isChequesDispatched;
 		this.isSeriesCheques = isSeriesCheques;
-		this.pdcType = pdcType.getValue();
+		this.pdcTypeId = pdcType.getValue();
 	}
 	
 
@@ -122,11 +122,11 @@ public class PaymentInventory extends AbstractPersistable<Long>{
 	}
 	
 	public void setPdcType(final Integer pdcTypeValue){
-		this.pdcType = pdcTypeValue;
+		this.pdcTypeId = pdcTypeValue;
 	}
 	
 	public Integer getPdcType(){
-		return this.pdcType;
+		return this.pdcTypeId;
 	}
 	
 	public boolean isSeriesCheques(){

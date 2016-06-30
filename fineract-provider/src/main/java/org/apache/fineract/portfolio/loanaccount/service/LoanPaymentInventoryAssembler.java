@@ -101,13 +101,15 @@ public class LoanPaymentInventoryAssembler {
             		final JsonObject paymentInventorys = array.get(i).getAsJsonObject();
             		this.fromJsonHelper.extractLongNamed("id", paymentInventorys);
 
-            		final Integer period = this.fromJsonHelper.extractIntegerNamed("period", paymentInventorys, locale);
-            		
-            		final LocalDate date = this.fromJsonHelper.extractLocalDateNamed("date", paymentInventorys, dateFormat, locale);
+            		Integer period = this.fromJsonHelper.extractIntegerNamed("period", paymentInventorys, locale);
+            		/*if(period.equals(null))
+            			period = 0;*/
             		
             		final BigDecimal amount = this.fromJsonHelper.extractBigDecimalNamed("amount", paymentInventorys, locale);
             		
             		final LocalDate chequeDate = this.fromJsonHelper.extractLocalDateNamed("chequeDate", paymentInventorys, dateFormat, locale);
+            		
+            		LocalDate date = this.fromJsonHelper.extractLocalDateNamed("date", paymentInventorys, dateFormat, locale);
             		
             		final Long chequeno = this.fromJsonHelper.extractLongNamed("chequeNo", paymentInventorys);
             		
